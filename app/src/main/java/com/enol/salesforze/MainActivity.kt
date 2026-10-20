@@ -79,23 +79,34 @@ import com.enol.salesforze.ui.enrollment.MechanicEnrollmentScreen
 import com.enol.salesforze.ui.gis.DistrictMapScreen
 import com.enol.salesforze.ui.order.OrderCartScreen
 import com.enol.salesforze.ui.visit.VisitExecutionScreen
+import com.enol.salesforze.ui.dashboard.DashboardScreen
+import com.enol.salesforze.ui.leaderboard.LeaderboardScreen
+import com.enol.salesforze.ui.admin.AdminApiPortalScreen
+import com.enol.salesforze.ui.tada.TadaClaimScreen
 import com.enol.salesforze.ui.theme.EnolNavy
 import com.enol.salesforze.ui.theme.LubricantAmber
 import com.enol.salesforze.ui.theme.SlateSteel
 import com.enol.salesforze.ui.theme.SlateSteelLight
 import com.enol.salesforze.ui.theme.spacing
 import com.enol.salesforze.ui.theme.statusColors
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Key
+import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 
 enum class AppNavigationTab(val title: String) {
-    DASHBOARD("Dispatch"),
-    GIS_MAP("Territory GIS"),
+    DASHBOARD("Dashboard"),
+    GIS_MAP("GIS Map"),
     ORDER_CART("Order Cart"),
     VISIT_EXECUTION("Visit Check-In"),
     CLIENT_ENROLL("New Customer"),
     MECHANIC_ENROLL("New Mechanic"),
     START_SHIFT("Start Day"),
-    END_SHIFT("End Day")
+    END_SHIFT("End Day"),
+    TADA_CLAIM("TADA Expense"),
+    LEADERBOARD("Sales Races"),
+    ADMIN_PORTAL("API Governance")
 }
 
 @AndroidEntryPoint
@@ -145,10 +156,10 @@ class MainActivity : ComponentActivity() {
                                 )
                             )
                             NavigationBarItem(
-                                selected = currentTab == AppNavigationTab.START_SHIFT,
-                                onClick = { currentTab = AppNavigationTab.START_SHIFT },
-                                icon = { Icon(Icons.Default.Badge, contentDescription = "Start Day") },
-                                label = { Text(AppNavigationTab.START_SHIFT.title, fontSize = 11.sp) },
+                                selected = currentTab == AppNavigationTab.ORDER_CART,
+                                onClick = { currentTab = AppNavigationTab.ORDER_CART },
+                                icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Order Cart") },
+                                label = { Text(AppNavigationTab.ORDER_CART.title, fontSize = 11.sp) },
                                 colors = NavigationBarItemDefaults.colors(
                                     selectedIconColor = EnolNavy,
                                     selectedTextColor = LubricantAmber,
@@ -158,10 +169,23 @@ class MainActivity : ComponentActivity() {
                                 )
                             )
                             NavigationBarItem(
-                                selected = currentTab == AppNavigationTab.END_SHIFT,
-                                onClick = { currentTab = AppNavigationTab.END_SHIFT },
-                                icon = { Icon(Icons.Default.PowerSettingsNew, contentDescription = "End Day") },
-                                label = { Text(AppNavigationTab.END_SHIFT.title, fontSize = 11.sp) },
+                                selected = currentTab == AppNavigationTab.TADA_CLAIM,
+                                onClick = { currentTab = AppNavigationTab.TADA_CLAIM },
+                                icon = { Icon(Icons.Default.ReceiptLong, contentDescription = "TADA") },
+                                label = { Text(AppNavigationTab.TADA_CLAIM.title, fontSize = 11.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = EnolNavy,
+                                    selectedTextColor = LubricantAmber,
+                                    indicatorColor = LubricantAmber,
+                                    unselectedIconColor = SlateSteelLight,
+                                    unselectedTextColor = SlateSteelLight
+                                )
+                            )
+                            NavigationBarItem(
+                                selected = currentTab == AppNavigationTab.LEADERBOARD,
+                                onClick = { currentTab = AppNavigationTab.LEADERBOARD },
+                                icon = { Icon(Icons.Default.EmojiEvents, contentDescription = "Sales Races") },
+                                label = { Text(AppNavigationTab.LEADERBOARD.title, fontSize = 11.sp) },
                                 colors = NavigationBarItemDefaults.colors(
                                     selectedIconColor = EnolNavy,
                                     selectedTextColor = LubricantAmber,
@@ -175,17 +199,17 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
                         when (currentTab) {
-                            AppNavigationTab.DASHBOARD -> IndustrialDashboardScreen(
-                                isDarkTheme = darkTheme,
-                                isHighContrast = highContrastMode,
-                                onToggleTheme = { darkTheme = !darkTheme },
-                                onToggleContrast = { highContrastMode = !highContrastMode },
-                                onNavigateToGis = { currentTab = AppNavigationTab.GIS_MAP },
-                                onNavigateToShift = { currentTab = AppNavigationTab.START_SHIFT },
+                            AppNavigationTab.DASHBOARD -> DashboardScreen(
                                 onNavigateToOrderCart = { currentTab = AppNavigationTab.ORDER_CART },
-                                onNavigateToVisit = { currentTab = AppNavigationTab.VISIT_EXECUTION },
+                                onNavigateToVisitExecution = { currentTab = AppNavigationTab.VISIT_EXECUTION },
                                 onNavigateToClientEnroll = { currentTab = AppNavigationTab.CLIENT_ENROLL },
-                                onNavigateToMechanicEnroll = { currentTab = AppNavigationTab.MECHANIC_ENROLL }
+                                onNavigateToMechanicEnroll = { currentTab = AppNavigationTab.MECHANIC_ENROLL },
+                                onNavigateToGisMap = { currentTab = AppNavigationTab.GIS_MAP },
+                                onNavigateToTada = { currentTab = AppNavigationTab.TADA_CLAIM },
+                                onNavigateToLeaderboard = { currentTab = AppNavigationTab.LEADERBOARD },
+                                onNavigateToAdminPortal = { currentTab = AppNavigationTab.ADMIN_PORTAL },
+                                onNavigateToStartShift = { currentTab = AppNavigationTab.START_SHIFT },
+                                onNavigateToEndShift = { currentTab = AppNavigationTab.END_SHIFT }
                             )
                             AppNavigationTab.ORDER_CART -> OrderCartScreen(
                                 onOrderPlaced = { currentTab = AppNavigationTab.DASHBOARD },
@@ -213,6 +237,16 @@ class MainActivity : ComponentActivity() {
                             )
                             AppNavigationTab.END_SHIFT -> EndShiftScreen(
                                 onShiftEnded = { currentTab = AppNavigationTab.DASHBOARD },
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                            AppNavigationTab.TADA_CLAIM -> TadaClaimScreen(
+                                onClaimSubmitted = { currentTab = AppNavigationTab.DASHBOARD },
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                            AppNavigationTab.LEADERBOARD -> LeaderboardScreen(
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                            AppNavigationTab.ADMIN_PORTAL -> AdminApiPortalScreen(
                                 onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
                             )
                         }

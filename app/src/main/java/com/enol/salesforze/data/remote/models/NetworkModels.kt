@@ -661,3 +661,65 @@ data class DeltaSyncResponseDto(
     @SerialName("counts") val counts: Map<String, Int> = emptyMap(),
     @SerialName("delta") val delta: DeltaPayloadDto = DeltaPayloadDto()
 )
+
+// ============================================================================
+// ADMIN API GOVERNANCE & WEBHOOKS
+// ============================================================================
+
+@Serializable
+data class ApiKeyDto(
+    @SerialName("id") val id: String,
+    @SerialName("key_name") val keyName: String,
+    @SerialName("key_prefix") val keyPrefix: String,
+    @SerialName("scopes") val scopes: List<String> = emptyList(),
+    @SerialName("is_active") val isActive: Boolean = true,
+    @SerialName("expires_at") val expiresAt: String? = null,
+    @SerialName("created_at") val createdAt: String? = null,
+    @SerialName("updated_at") val updatedAt: String? = null
+)
+
+@Serializable
+data class CreateApiKeyRequest(
+    @SerialName("key_name") val keyName: String,
+    @SerialName("scopes") val scopes: List<String> = emptyList(),
+    @SerialName("expires_at") val expiresAt: String? = null
+)
+
+@Serializable
+data class CreateApiKeyResponse(
+    @SerialName("success") val success: Boolean = true,
+    @SerialName("message") val message: String? = null,
+    @SerialName("apiKey") val apiKey: String? = null,
+    @SerialName("keyDetails") val keyDetails: ApiKeyDto? = null
+)
+
+@Serializable
+data class WebhookSubscriptionDto(
+    @SerialName("id") val id: String,
+    @SerialName("name") val name: String,
+    @SerialName("target_url") val targetUrl: String,
+    @SerialName("events") val events: List<String> = emptyList(),
+    @SerialName("is_active") val isActive: Boolean = true,
+    @SerialName("created_at") val createdAt: String? = null,
+    @SerialName("updated_at") val updatedAt: String? = null
+)
+
+@Serializable
+data class CreateWebhookSubscriptionRequest(
+    @SerialName("name") val name: String,
+    @SerialName("target_url") val targetUrl: String,
+    @SerialName("events") val events: List<String> = emptyList(),
+    @SerialName("secret") val secret: String? = null
+)
+
+@Serializable
+data class WebhookDeliveryLogDto(
+    @SerialName("id") val id: String,
+    @SerialName("subscription_id") val subscriptionId: String? = null,
+    @SerialName("event_type") val eventType: String,
+    @SerialName("target_url") val targetUrl: String? = null,
+    @SerialName("status_code") val statusCode: Int? = null,
+    @SerialName("duration_ms") val durationMs: Int? = null,
+    @SerialName("delivered_at") val deliveredAt: String? = null,
+    @SerialName("error_message") val errorMessage: String? = null
+)

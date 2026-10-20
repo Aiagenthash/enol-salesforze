@@ -33,6 +33,12 @@ import com.enol.salesforze.data.remote.models.ReviewTadaClaimRequest
 import com.enol.salesforze.data.remote.models.RouteGeoJsonDto
 import com.enol.salesforze.data.remote.models.StartShiftRequest
 import com.enol.salesforze.data.remote.models.SubmitTadaClaimRequest
+import com.enol.salesforze.data.remote.models.ApiKeyDto
+import com.enol.salesforze.data.remote.models.CreateApiKeyRequest
+import com.enol.salesforze.data.remote.models.CreateApiKeyResponse
+import com.enol.salesforze.data.remote.models.WebhookSubscriptionDto
+import com.enol.salesforze.data.remote.models.CreateWebhookSubscriptionRequest
+import com.enol.salesforze.data.remote.models.WebhookDeliveryLogDto
 import com.enol.salesforze.data.remote.models.SubordinatesResponse
 import com.enol.salesforze.data.remote.models.TadaClaimDto
 import com.enol.salesforze.data.remote.models.TargetKpiDto
@@ -381,4 +387,29 @@ interface EnterpriseFieldApi {
     suspend fun getDeltaSync(
         @Query("since") since: String? = null
     ): DeltaSyncResponseDto
+
+    // ========================================================================
+    // ADMIN API GOVERNANCE & WEBHOOKS
+    // ========================================================================
+
+    @GET("api/v1/auth/api-keys")
+    suspend fun getApiKeys(): ApiResponse<List<ApiKeyDto>>
+
+    @POST("api/v1/auth/api-keys")
+    suspend fun createApiKey(
+        @Body request: CreateApiKeyRequest
+    ): CreateApiKeyResponse
+
+    @GET("api/v1/webhooks/subscriptions")
+    suspend fun getWebhookSubscriptions(): ApiResponse<List<WebhookSubscriptionDto>>
+
+    @POST("api/v1/webhooks/subscriptions")
+    suspend fun createWebhookSubscription(
+        @Body request: CreateWebhookSubscriptionRequest
+    ): ApiResponse<WebhookSubscriptionDto>
+
+    @GET("api/v1/webhooks/logs")
+    suspend fun getWebhookLogs(
+        @Query("limit") limit: Int? = 50
+    ): ApiResponse<List<WebhookDeliveryLogDto>>
 }
