@@ -140,8 +140,8 @@ Features:
   });
 
   // Health check routes
-  app.get('/health', async () => ({ status: 'UP', service: 'enol-salesforze-api', timestamp: new Date().toISOString() }));
-  app.get('/api/v1/health', async () => ({ status: 'UP', service: 'enol-salesforze-api', timestamp: new Date().toISOString() }));
+  app.get('/health', async () => ({ status: 'UP', service: 'enol-salesforze-api', version: '1.0.0', timestamp: new Date().toISOString() }));
+  app.get('/api/v1/health', async () => ({ status: 'UP', service: 'enol-salesforze-api', version: '1.0.0', timestamp: new Date().toISOString() }));
 
   // Register all 12 domains + Core Services under /api/v1
   app.register(authRoutes, { prefix: '/api/v1/auth' });
