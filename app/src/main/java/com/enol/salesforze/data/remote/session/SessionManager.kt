@@ -3,6 +3,7 @@ package com.enol.salesforze.data.remote.session
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -43,6 +45,7 @@ class SessionManager @Inject constructor(
         private val KEY_HIERARCHY_PATH = stringPreferencesKey("hierarchy_path")
         private val KEY_API_KEY = stringPreferencesKey("api_key")
         private val KEY_LAST_SYNC_TIMESTAMP = stringPreferencesKey("last_sync_timestamp")
+        private val KEY_MOCK_LOCATION_BLOCKED = booleanPreferencesKey("is_mock_location_blocked")
     }
 
     // In-memory atomic state cache for instant interceptor reads without blocking I/O
@@ -52,6 +55,7 @@ class SessionManager @Inject constructor(
     private val inMemoryUserRole = MutableStateFlow<String?>(null)
     private val inMemoryManagerId = MutableStateFlow<String?>(null)
     private val inMemoryHierarchyPath = MutableStateFlow<String?>(null)
+    private val inMemoryMockLocationBlocked = MutableStateFlow(false)
 
     // Event bus to notify UI/repositories when session expires (401)
     private val _sessionExpiredEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
@@ -70,6 +74,7 @@ class SessionManager @Inject constructor(
                     inMemoryUserRole.value = prefs[KEY_USER_ROLE]
                     inMemoryManagerId.value = prefs[KEY_MANAGER_ID]
                     inMemoryHierarchyPath.value = prefs[KEY_HIERARCHY_PATH]
+                    inMemoryMockLocationBlocked.value = prefs[KEY_MOCK_LOCATION_BLOCKED] ?: false
                 }
         }
     }
@@ -118,6 +123,57 @@ class SessionManager @Inject constructor(
             if (exception is IOException) emit(emptyPreferences()) else throw exception
         }
         .map { it[KEY_LAST_SYNC_TIMESTAMP] }
+
+    val isMockLocationBlockedFlow: Flow<Boolean> = context.sessionDataStore.data
+        .catch { exception ->
+            if (exception is IOException) emit(emptyPreferences()) else throw exception
+        }
+        .map { it[KEY_MOCK_LOCATION_BLOCKED] ?: false }
+
+    /**
+     * Synchronously read in-memory cached user ID.
+     */
+    fun getCachedUserId(): String? = inMemoryUserId.value
+
+    /**
+     * Retrieve user ID from memory or fallback to DataStore.
+     */
+    suspend fun getUserId(): String? {
+        inMemoryUserId.value?.let { return it }
+        val userId = context.sessionDataStore.data
+            .catch { exception ->
+                if (exception is IOException) emit(emptyPreferences()) else throw exception
+            }
+            .map { it[KEY_USER_ID] }
+            .firstOrNull()
+        inMemoryUserId.value = userId
+        return userId
+    }
+
+    /**
+     * Check if mock location is currently flagged and blocking operations.
+     */
+    fun isMockLocationBlocked(): Boolean = inMemoryMockLocationBlocked.value
+
+    /**
+     * Set or clear the mock location security block state.
+     */
+    suspend fun setMockLocationBlocked(blocked: Boolean) {
+        inMemoryMockLocationBlocked.value = blocked
+        context.sessionDataStore.edit { preferences ->
+            preferences[KEY_MOCK_LOCATION_BLOCKED] = blocked
+        }
+    }
+
+    /**
+     * Asynchronously flag mock location blocked.
+     */
+    fun flagMockLocationBlocked(blocked: Boolean = true) {
+        inMemoryMockLocationBlocked.value = blocked
+        CoroutineScope(Dispatchers.IO).launch {
+            setMockLocationBlocked(blocked)
+        }
+    }
 
     /**
      * Persist last synchronization timestamp.
@@ -245,6 +301,7 @@ class SessionManager @Inject constructor(
         inMemoryUserRole.value = null
         inMemoryManagerId.value = null
         inMemoryHierarchyPath.value = null
+        inMemoryMockLocationBlocked.value = false
 
         context.sessionDataStore.edit { preferences ->
             preferences.remove(KEY_AUTH_TOKEN)
@@ -252,6 +309,7 @@ class SessionManager @Inject constructor(
             preferences.remove(KEY_USER_ROLE)
             preferences.remove(KEY_MANAGER_ID)
             preferences.remove(KEY_HIERARCHY_PATH)
+            preferences.remove(KEY_MOCK_LOCATION_BLOCKED)
         }
     }
 }

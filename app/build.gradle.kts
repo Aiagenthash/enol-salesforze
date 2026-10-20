@@ -24,6 +24,7 @@ android {
         }
 
         buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:4000/\"")
+        manifestPlaceholders["MAPS_API_KEY"] = "AIzaSy_ENOL_SALESFORZE_MAPS_KEY_DEMO"
     }
 
     buildTypes {
@@ -101,6 +102,17 @@ dependencies {
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    // Google Maps & Location
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.maps.compose)
+
+    // CameraX
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

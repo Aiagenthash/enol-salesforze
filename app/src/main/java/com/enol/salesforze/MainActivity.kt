@@ -62,10 +62,30 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.enol.salesforze.ui.theme.EnolSalesforzeTheme
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import com.enol.salesforze.ui.attendance.EndShiftScreen
+import com.enol.salesforze.ui.attendance.StartShiftScreen
+import com.enol.salesforze.ui.gis.DistrictMapScreen
+import com.enol.salesforze.ui.theme.EnolNavy
+import com.enol.salesforze.ui.theme.LubricantAmber
+import com.enol.salesforze.ui.theme.SlateSteel
+import com.enol.salesforze.ui.theme.SlateSteelLight
 import com.enol.salesforze.ui.theme.spacing
 import com.enol.salesforze.ui.theme.statusColors
 import dagger.hilt.android.AndroidEntryPoint
+
+enum class AppNavigationTab(val title: String) {
+    DASHBOARD("Dispatch"),
+    GIS_MAP("Territory GIS"),
+    START_SHIFT("Start Day"),
+    END_SHIFT("End Day")
+}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -75,17 +95,97 @@ class MainActivity : ComponentActivity() {
         setContent {
             var darkTheme by remember { mutableStateOf(false) }
             var highContrastMode by remember { mutableStateOf(false) }
+            var currentTab by remember { mutableStateOf(AppNavigationTab.DASHBOARD) }
 
             EnolSalesforzeTheme(
                 darkTheme = darkTheme,
                 highContrast = highContrastMode
             ) {
-                IndustrialDashboardScreen(
-                    isDarkTheme = darkTheme,
-                    isHighContrast = highContrastMode,
-                    onToggleTheme = { darkTheme = !darkTheme },
-                    onToggleContrast = { highContrastMode = !highContrastMode }
-                )
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar(
+                            containerColor = EnolNavy,
+                            contentColor = Color.White
+                        ) {
+                            NavigationBarItem(
+                                selected = currentTab == AppNavigationTab.DASHBOARD,
+                                onClick = { currentTab = AppNavigationTab.DASHBOARD },
+                                icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
+                                label = { Text(AppNavigationTab.DASHBOARD.title, fontSize = 11.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = EnolNavy,
+                                    selectedTextColor = LubricantAmber,
+                                    indicatorColor = LubricantAmber,
+                                    unselectedIconColor = SlateSteelLight,
+                                    unselectedTextColor = SlateSteelLight
+                                )
+                            )
+                            NavigationBarItem(
+                                selected = currentTab == AppNavigationTab.GIS_MAP,
+                                onClick = { currentTab = AppNavigationTab.GIS_MAP },
+                                icon = { Icon(Icons.Default.Map, contentDescription = "GIS Map") },
+                                label = { Text(AppNavigationTab.GIS_MAP.title, fontSize = 11.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = EnolNavy,
+                                    selectedTextColor = LubricantAmber,
+                                    indicatorColor = LubricantAmber,
+                                    unselectedIconColor = SlateSteelLight,
+                                    unselectedTextColor = SlateSteelLight
+                                )
+                            )
+                            NavigationBarItem(
+                                selected = currentTab == AppNavigationTab.START_SHIFT,
+                                onClick = { currentTab = AppNavigationTab.START_SHIFT },
+                                icon = { Icon(Icons.Default.Badge, contentDescription = "Start Day") },
+                                label = { Text(AppNavigationTab.START_SHIFT.title, fontSize = 11.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = EnolNavy,
+                                    selectedTextColor = LubricantAmber,
+                                    indicatorColor = LubricantAmber,
+                                    unselectedIconColor = SlateSteelLight,
+                                    unselectedTextColor = SlateSteelLight
+                                )
+                            )
+                            NavigationBarItem(
+                                selected = currentTab == AppNavigationTab.END_SHIFT,
+                                onClick = { currentTab = AppNavigationTab.END_SHIFT },
+                                icon = { Icon(Icons.Default.PowerSettingsNew, contentDescription = "End Day") },
+                                label = { Text(AppNavigationTab.END_SHIFT.title, fontSize = 11.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = EnolNavy,
+                                    selectedTextColor = LubricantAmber,
+                                    indicatorColor = LubricantAmber,
+                                    unselectedIconColor = SlateSteelLight,
+                                    unselectedTextColor = SlateSteelLight
+                                )
+                            )
+                        }
+                    }
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        when (currentTab) {
+                            AppNavigationTab.DASHBOARD -> IndustrialDashboardScreen(
+                                isDarkTheme = darkTheme,
+                                isHighContrast = highContrastMode,
+                                onToggleTheme = { darkTheme = !darkTheme },
+                                onToggleContrast = { highContrastMode = !highContrastMode },
+                                onNavigateToGis = { currentTab = AppNavigationTab.GIS_MAP },
+                                onNavigateToShift = { currentTab = AppNavigationTab.START_SHIFT }
+                            )
+                            AppNavigationTab.GIS_MAP -> DistrictMapScreen(
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                            AppNavigationTab.START_SHIFT -> StartShiftScreen(
+                                onShiftStarted = { currentTab = AppNavigationTab.DASHBOARD },
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                            AppNavigationTab.END_SHIFT -> EndShiftScreen(
+                                onShiftEnded = { currentTab = AppNavigationTab.DASHBOARD },
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -97,7 +197,9 @@ fun IndustrialDashboardScreen(
     isDarkTheme: Boolean = false,
     isHighContrast: Boolean = false,
     onToggleTheme: () -> Unit = {},
-    onToggleContrast: () -> Unit = {}
+    onToggleContrast: () -> Unit = {},
+    onNavigateToGis: () -> Unit = {},
+    onNavigateToShift: () -> Unit = {}
 ) {
     val spacing = MaterialTheme.spacing
     val statusColors = MaterialTheme.statusColors
@@ -351,6 +453,35 @@ fun IndustrialDashboardScreen(
                     Icon(imageVector = Icons.Default.LocationOn, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(spacing.grid1))
                     Text(text = "Check-In", style = MaterialTheme.typography.labelLarge)
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.grid2)
+            ) {
+                OutlinedButton(
+                    onClick = onNavigateToGis,
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(spacing.touchTargetMin)
+                ) {
+                    Icon(imageVector = Icons.Default.Map, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(spacing.grid1))
+                    Text(text = "Territory GIS", style = MaterialTheme.typography.labelLarge)
+                }
+
+                OutlinedButton(
+                    onClick = onNavigateToShift,
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(spacing.touchTargetMin)
+                ) {
+                    Icon(imageVector = Icons.Default.Badge, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(spacing.grid1))
+                    Text(text = "Start Field Day", style = MaterialTheme.typography.labelLarge)
                 }
             }
 

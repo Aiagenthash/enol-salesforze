@@ -1,0 +1,1717 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "dist-pk-lhr",
+      "properties": {
+        "id": "dist-pk-lhr",
+        "name": "Lahore",
+        "code": "PK-LHR",
+        "province": "Punjab",
+        "assigned_rep_name": "Tariq Mahmood",
+        "assigned_rep_id": "usr-rep-001",
+        "reporting_asm_name": "Kamran Akram (ASM Punjab North)",
+        "reporting_asm_id": "usr-asm-001",
+        "active_clients_count": 142,
+        "active_mechanics_count": 86,
+        "target_volume_liters": 15000.0,
+        "achieved_volume_liters": 13200.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.215,
+              31.642
+            ],
+            [
+              74.285,
+              31.685
+            ],
+            [
+              74.365,
+              31.67
+            ],
+            [
+              74.455,
+              31.615
+            ],
+            [
+              74.52,
+              31.56
+            ],
+            [
+              74.515,
+              31.47
+            ],
+            [
+              74.46,
+              31.375
+            ],
+            [
+              74.38,
+              31.33
+            ],
+            [
+              74.27,
+              31.345
+            ],
+            [
+              74.205,
+              31.415
+            ],
+            [
+              74.175,
+              31.51
+            ],
+            [
+              74.215,
+              31.642
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-fsd",
+      "properties": {
+        "id": "dist-pk-fsd",
+        "name": "Faisalabad",
+        "code": "PK-FSD",
+        "province": "Punjab",
+        "assigned_rep_name": "Hamza Rafiq",
+        "assigned_rep_id": "usr-rep-002",
+        "reporting_asm_name": "Zahid Hussain (ASM Punjab Central)",
+        "reporting_asm_id": "usr-asm-002",
+        "active_clients_count": 118,
+        "active_mechanics_count": 72,
+        "target_volume_liters": 12500.0,
+        "achieved_volume_liters": 11500.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.92,
+              31.58
+            ],
+            [
+              73.06,
+              31.625
+            ],
+            [
+              73.22,
+              31.575
+            ],
+            [
+              73.31,
+              31.46
+            ],
+            [
+              73.285,
+              31.31
+            ],
+            [
+              73.19,
+              31.22
+            ],
+            [
+              73.03,
+              31.205
+            ],
+            [
+              72.91,
+              31.29
+            ],
+            [
+              72.86,
+              31.425
+            ],
+            [
+              72.92,
+              31.58
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-rwp",
+      "properties": {
+        "id": "dist-pk-rwp",
+        "name": "Rawalpindi",
+        "code": "PK-RWP",
+        "province": "Punjab",
+        "assigned_rep_name": "Bilal Ahmed",
+        "assigned_rep_id": "usr-rep-003",
+        "reporting_asm_name": "Kamran Akram (ASM Punjab North)",
+        "reporting_asm_id": "usr-asm-001",
+        "active_clients_count": 96,
+        "active_mechanics_count": 58,
+        "target_volume_liters": 11000.0,
+        "achieved_volume_liters": 9240.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.84,
+              33.72
+            ],
+            [
+              72.98,
+              33.74
+            ],
+            [
+              73.07,
+              33.68
+            ],
+            [
+              73.21,
+              33.63
+            ],
+            [
+              73.34,
+              33.51
+            ],
+            [
+              73.28,
+              33.36
+            ],
+            [
+              73.15,
+              33.25
+            ],
+            [
+              72.98,
+              33.29
+            ],
+            [
+              72.82,
+              33.43
+            ],
+            [
+              72.78,
+              33.59
+            ],
+            [
+              72.84,
+              33.72
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-mux",
+      "properties": {
+        "id": "dist-pk-mux",
+        "name": "Multan",
+        "code": "PK-MUX",
+        "province": "Punjab",
+        "assigned_rep_name": "Shahid Bashir",
+        "assigned_rep_id": "usr-rep-004",
+        "reporting_asm_name": "Usman Malik (ASM Punjab South)",
+        "reporting_asm_id": "usr-asm-003",
+        "active_clients_count": 84,
+        "active_mechanics_count": 52,
+        "target_volume_liters": 9500.0,
+        "achieved_volume_liters": 6840.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.32,
+              30.33
+            ],
+            [
+              71.49,
+              30.38
+            ],
+            [
+              71.68,
+              30.34
+            ],
+            [
+              71.77,
+              30.21
+            ],
+            [
+              71.74,
+              30.04
+            ],
+            [
+              71.59,
+              29.93
+            ],
+            [
+              71.41,
+              29.96
+            ],
+            [
+              71.29,
+              30.09
+            ],
+            [
+              71.26,
+              30.22
+            ],
+            [
+              71.32,
+              30.33
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-guj",
+      "properties": {
+        "id": "dist-pk-guj",
+        "name": "Gujranwala",
+        "code": "PK-GUJ",
+        "province": "Punjab",
+        "assigned_rep_name": "Waqas Aslam",
+        "assigned_rep_id": "usr-rep-005",
+        "reporting_asm_name": "Kamran Akram (ASM Punjab North)",
+        "reporting_asm_id": "usr-asm-001",
+        "active_clients_count": 92,
+        "active_mechanics_count": 64,
+        "target_volume_liters": 10000.0,
+        "achieved_volume_liters": 6500.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.02,
+              32.32
+            ],
+            [
+              74.19,
+              32.36
+            ],
+            [
+              74.36,
+              32.31
+            ],
+            [
+              74.42,
+              32.19
+            ],
+            [
+              74.39,
+              32.06
+            ],
+            [
+              74.24,
+              31.98
+            ],
+            [
+              74.09,
+              32.01
+            ],
+            [
+              73.98,
+              32.12
+            ],
+            [
+              74.02,
+              32.32
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-skt",
+      "properties": {
+        "id": "dist-pk-skt",
+        "name": "Sialkot",
+        "code": "PK-SKT",
+        "province": "Punjab",
+        "assigned_rep_name": "Fahad Mustafa",
+        "assigned_rep_id": "usr-rep-006",
+        "reporting_asm_name": "Kamran Akram (ASM Punjab North)",
+        "reporting_asm_id": "usr-asm-001",
+        "active_clients_count": 76,
+        "active_mechanics_count": 48,
+        "target_volume_liters": 8500.0,
+        "achieved_volume_liters": 6290.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.38,
+              32.61
+            ],
+            [
+              74.53,
+              32.65
+            ],
+            [
+              74.72,
+              32.62
+            ],
+            [
+              74.81,
+              32.5
+            ],
+            [
+              74.76,
+              32.38
+            ],
+            [
+              74.62,
+              32.31
+            ],
+            [
+              74.45,
+              32.34
+            ],
+            [
+              74.35,
+              32.45
+            ],
+            [
+              74.38,
+              32.61
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-skp",
+      "properties": {
+        "id": "dist-pk-skp",
+        "name": "Sheikhupura",
+        "code": "PK-SKP",
+        "province": "Punjab",
+        "assigned_rep_name": "Noman Dar",
+        "assigned_rep_id": "usr-rep-007",
+        "reporting_asm_name": "Zahid Hussain (ASM Punjab Central)",
+        "reporting_asm_id": "usr-asm-002",
+        "active_clients_count": 64,
+        "active_mechanics_count": 39,
+        "target_volume_liters": 7000.0,
+        "achieved_volume_liters": 2940.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.81,
+              31.86
+            ],
+            [
+              73.99,
+              31.91
+            ],
+            [
+              74.15,
+              31.84
+            ],
+            [
+              74.22,
+              31.71
+            ],
+            [
+              74.17,
+              31.57
+            ],
+            [
+              73.98,
+              31.52
+            ],
+            [
+              73.82,
+              31.59
+            ],
+            [
+              73.74,
+              31.72
+            ],
+            [
+              73.81,
+              31.86
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-sgd",
+      "properties": {
+        "id": "dist-pk-sgd",
+        "name": "Sargodha",
+        "code": "PK-SGD",
+        "province": "Punjab",
+        "assigned_rep_name": "Irfan Qureshi",
+        "assigned_rep_id": "usr-rep-008",
+        "reporting_asm_name": "Zahid Hussain (ASM Punjab Central)",
+        "reporting_asm_id": "usr-asm-002",
+        "active_clients_count": 71,
+        "active_mechanics_count": 45,
+        "target_volume_liters": 7800.0,
+        "achieved_volume_liters": 6318.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.5,
+              32.25
+            ],
+            [
+              72.69,
+              32.3
+            ],
+            [
+              72.88,
+              32.22
+            ],
+            [
+              72.96,
+              32.08
+            ],
+            [
+              72.87,
+              31.92
+            ],
+            [
+              72.68,
+              31.88
+            ],
+            [
+              72.52,
+              31.96
+            ],
+            [
+              72.44,
+              32.11
+            ],
+            [
+              72.5,
+              32.25
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-bwp",
+      "properties": {
+        "id": "dist-pk-bwp",
+        "name": "Bahawalpur",
+        "code": "PK-BWP",
+        "province": "Punjab",
+        "assigned_rep_name": "Kashif Riaz",
+        "assigned_rep_id": "usr-rep-009",
+        "reporting_asm_name": "Usman Malik (ASM Punjab South)",
+        "reporting_asm_id": "usr-asm-003",
+        "active_clients_count": 58,
+        "active_mechanics_count": 34,
+        "target_volume_liters": 6500.0,
+        "achieved_volume_liters": 3120.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.45,
+              29.58
+            ],
+            [
+              71.72,
+              29.62
+            ],
+            [
+              72.01,
+              29.51
+            ],
+            [
+              72.18,
+              29.33
+            ],
+            [
+              72.09,
+              29.12
+            ],
+            [
+              71.82,
+              29.05
+            ],
+            [
+              71.53,
+              29.14
+            ],
+            [
+              71.39,
+              29.36
+            ],
+            [
+              71.45,
+              29.58
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-swl",
+      "properties": {
+        "id": "dist-pk-swl",
+        "name": "Sahiwal",
+        "code": "PK-SWL",
+        "province": "Punjab",
+        "assigned_rep_name": "Muddasir Nazar",
+        "assigned_rep_id": "usr-rep-010",
+        "reporting_asm_name": "Zahid Hussain (ASM Punjab Central)",
+        "reporting_asm_id": "usr-asm-002",
+        "active_clients_count": 62,
+        "active_mechanics_count": 38,
+        "target_volume_liters": 6800.0,
+        "achieved_volume_liters": 5168.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.95,
+              30.81
+            ],
+            [
+              73.13,
+              30.86
+            ],
+            [
+              73.32,
+              30.79
+            ],
+            [
+              73.39,
+              30.64
+            ],
+            [
+              73.32,
+              30.5
+            ],
+            [
+              73.11,
+              30.46
+            ],
+            [
+              72.94,
+              30.55
+            ],
+            [
+              72.88,
+              30.68
+            ],
+            [
+              72.95,
+              30.81
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-ryk",
+      "properties": {
+        "id": "dist-pk-ryk",
+        "name": "Rahim Yar Khan",
+        "code": "PK-RYK",
+        "province": "Punjab",
+        "assigned_rep_name": "Babar Shah",
+        "assigned_rep_id": "usr-rep-011",
+        "reporting_asm_name": "Usman Malik (ASM Punjab South)",
+        "reporting_asm_id": "usr-asm-003",
+        "active_clients_count": 52,
+        "active_mechanics_count": 31,
+        "target_volume_liters": 6000.0,
+        "achieved_volume_liters": 2400.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.08,
+              28.62
+            ],
+            [
+              70.32,
+              28.69
+            ],
+            [
+              70.61,
+              28.58
+            ],
+            [
+              70.74,
+              28.41
+            ],
+            [
+              70.66,
+              28.21
+            ],
+            [
+              70.39,
+              28.14
+            ],
+            [
+              70.12,
+              28.23
+            ],
+            [
+              70.01,
+              28.42
+            ],
+            [
+              70.08,
+              28.62
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-khi-s",
+      "properties": {
+        "id": "dist-pk-khi-s",
+        "name": "Karachi South",
+        "code": "PK-KHI-S",
+        "province": "Sindh",
+        "assigned_rep_name": "Adnan Siddiqui",
+        "assigned_rep_id": "usr-rep-012",
+        "reporting_asm_name": "Syed Murtaza (ASM Sindh South)",
+        "reporting_asm_id": "usr-asm-004",
+        "active_clients_count": 135,
+        "active_mechanics_count": 82,
+        "target_volume_liters": 14000.0,
+        "achieved_volume_liters": 9520.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              66.955,
+              24.872
+            ],
+            [
+              67.025,
+              24.885
+            ],
+            [
+              67.07,
+              24.858
+            ],
+            [
+              67.085,
+              24.815
+            ],
+            [
+              67.05,
+              24.785
+            ],
+            [
+              66.975,
+              24.792
+            ],
+            [
+              66.938,
+              24.831
+            ],
+            [
+              66.955,
+              24.872
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-khi-e",
+      "properties": {
+        "id": "dist-pk-khi-e",
+        "name": "Karachi East",
+        "code": "PK-KHI-E",
+        "province": "Sindh",
+        "assigned_rep_name": "Ovais Khan",
+        "assigned_rep_id": "usr-rep-013",
+        "reporting_asm_name": "Syed Murtaza (ASM Sindh South)",
+        "reporting_asm_id": "usr-asm-004",
+        "active_clients_count": 128,
+        "active_mechanics_count": 79,
+        "target_volume_liters": 13000.0,
+        "achieved_volume_liters": 11310.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              67.05,
+              24.935
+            ],
+            [
+              67.125,
+              24.952
+            ],
+            [
+              67.195,
+              24.912
+            ],
+            [
+              67.185,
+              24.855
+            ],
+            [
+              67.12,
+              24.832
+            ],
+            [
+              67.06,
+              24.862
+            ],
+            [
+              67.05,
+              24.935
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-khi-c",
+      "properties": {
+        "id": "dist-pk-khi-c",
+        "name": "Karachi Central",
+        "code": "PK-KHI-C",
+        "province": "Sindh",
+        "assigned_rep_name": "Danish Ali",
+        "assigned_rep_id": "usr-rep-014",
+        "reporting_asm_name": "Syed Murtaza (ASM Sindh South)",
+        "reporting_asm_id": "usr-asm-004",
+        "active_clients_count": 115,
+        "active_mechanics_count": 68,
+        "target_volume_liters": 11500.0,
+        "achieved_volume_liters": 9430.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              67.01,
+              24.982
+            ],
+            [
+              67.068,
+              24.995
+            ],
+            [
+              67.098,
+              24.952
+            ],
+            [
+              67.085,
+              24.908
+            ],
+            [
+              67.032,
+              24.892
+            ],
+            [
+              66.998,
+              24.928
+            ],
+            [
+              67.01,
+              24.982
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-hyd",
+      "properties": {
+        "id": "dist-pk-hyd",
+        "name": "Hyderabad",
+        "code": "PK-HYD",
+        "province": "Sindh",
+        "assigned_rep_name": "Junaid Memon",
+        "assigned_rep_id": "usr-rep-015",
+        "reporting_asm_name": "Abdul Rasheed (ASM Sindh North & Interior)",
+        "reporting_asm_id": "usr-asm-005",
+        "active_clients_count": 88,
+        "active_mechanics_count": 54,
+        "target_volume_liters": 9000.0,
+        "achieved_volume_liters": 5220.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.21,
+              25.54
+            ],
+            [
+              68.41,
+              25.59
+            ],
+            [
+              68.58,
+              25.49
+            ],
+            [
+              68.64,
+              25.34
+            ],
+            [
+              68.52,
+              25.21
+            ],
+            [
+              68.33,
+              25.18
+            ],
+            [
+              68.18,
+              25.29
+            ],
+            [
+              68.14,
+              25.42
+            ],
+            [
+              68.21,
+              25.54
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-skr",
+      "properties": {
+        "id": "dist-pk-skr",
+        "name": "Sukkur",
+        "code": "PK-SKR",
+        "province": "Sindh",
+        "assigned_rep_name": "Farhan Soomro",
+        "assigned_rep_id": "usr-rep-016",
+        "reporting_asm_name": "Abdul Rasheed (ASM Sindh North & Interior)",
+        "reporting_asm_id": "usr-asm-005",
+        "active_clients_count": 60,
+        "active_mechanics_count": 36,
+        "target_volume_liters": 7200.0,
+        "achieved_volume_liters": 2736.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.68,
+              27.86
+            ],
+            [
+              68.91,
+              27.91
+            ],
+            [
+              69.11,
+              27.82
+            ],
+            [
+              69.19,
+              27.67
+            ],
+            [
+              69.07,
+              27.52
+            ],
+            [
+              68.86,
+              27.48
+            ],
+            [
+              68.69,
+              27.58
+            ],
+            [
+              68.62,
+              27.73
+            ],
+            [
+              68.68,
+              27.86
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-lrk",
+      "properties": {
+        "id": "dist-pk-lrk",
+        "name": "Larkana",
+        "code": "PK-LRK",
+        "province": "Sindh",
+        "assigned_rep_name": "Naveed Chandio",
+        "assigned_rep_id": "usr-rep-017",
+        "reporting_asm_name": "Abdul Rasheed (ASM Sindh North & Interior)",
+        "reporting_asm_id": "usr-asm-005",
+        "active_clients_count": 55,
+        "active_mechanics_count": 32,
+        "target_volume_liters": 6500.0,
+        "achieved_volume_liters": 2925.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.04,
+              27.71
+            ],
+            [
+              68.24,
+              27.76
+            ],
+            [
+              68.42,
+              27.68
+            ],
+            [
+              68.49,
+              27.53
+            ],
+            [
+              68.39,
+              27.38
+            ],
+            [
+              68.19,
+              27.35
+            ],
+            [
+              68.03,
+              27.45
+            ],
+            [
+              67.98,
+              27.59
+            ],
+            [
+              68.04,
+              27.71
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-pew",
+      "properties": {
+        "id": "dist-pk-pew",
+        "name": "Peshawar",
+        "code": "PK-PEW",
+        "province": "Khyber Pakhtunkhwa",
+        "assigned_rep_name": "Sarmad Afridi",
+        "assigned_rep_id": "usr-rep-018",
+        "reporting_asm_name": "Sheraz Khattak (ASM KPK & FATA)",
+        "reporting_asm_id": "usr-asm-006",
+        "active_clients_count": 104,
+        "active_mechanics_count": 65,
+        "target_volume_liters": 11000.0,
+        "achieved_volume_liters": 9350.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.38,
+              34.14
+            ],
+            [
+              71.55,
+              34.18
+            ],
+            [
+              71.71,
+              34.11
+            ],
+            [
+              71.77,
+              33.98
+            ],
+            [
+              71.69,
+              33.86
+            ],
+            [
+              71.51,
+              33.84
+            ],
+            [
+              71.37,
+              33.93
+            ],
+            [
+              71.32,
+              34.04
+            ],
+            [
+              71.38,
+              34.14
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-mar",
+      "properties": {
+        "id": "dist-pk-mar",
+        "name": "Mardan",
+        "code": "PK-MAR",
+        "province": "Khyber Pakhtunkhwa",
+        "assigned_rep_name": "Asfandyar Khan",
+        "assigned_rep_id": "usr-rep-019",
+        "reporting_asm_name": "Sheraz Khattak (ASM KPK & FATA)",
+        "reporting_asm_id": "usr-asm-006",
+        "active_clients_count": 68,
+        "active_mechanics_count": 42,
+        "target_volume_liters": 7500.0,
+        "achieved_volume_liters": 4650.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.89,
+              34.33
+            ],
+            [
+              72.07,
+              34.37
+            ],
+            [
+              72.24,
+              34.29
+            ],
+            [
+              72.29,
+              34.15
+            ],
+            [
+              72.19,
+              34.04
+            ],
+            [
+              72.01,
+              34.03
+            ],
+            [
+              71.87,
+              34.12
+            ],
+            [
+              71.83,
+              34.23
+            ],
+            [
+              71.89,
+              34.33
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-abt",
+      "properties": {
+        "id": "dist-pk-abt",
+        "name": "Abbottabad",
+        "code": "PK-ABT",
+        "province": "Khyber Pakhtunkhwa",
+        "assigned_rep_name": "Zubair Abbasi",
+        "assigned_rep_id": "usr-rep-020",
+        "reporting_asm_name": "Sheraz Khattak (ASM KPK & FATA)",
+        "reporting_asm_id": "usr-asm-006",
+        "active_clients_count": 56,
+        "active_mechanics_count": 35,
+        "target_volume_liters": 6200.0,
+        "achieved_volume_liters": 5022.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.09,
+              34.31
+            ],
+            [
+              73.27,
+              34.35
+            ],
+            [
+              73.42,
+              34.26
+            ],
+            [
+              73.47,
+              34.11
+            ],
+            [
+              73.36,
+              33.99
+            ],
+            [
+              73.18,
+              33.98
+            ],
+            [
+              73.06,
+              34.08
+            ],
+            [
+              73.03,
+              34.21
+            ],
+            [
+              73.09,
+              34.31
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-swt",
+      "properties": {
+        "id": "dist-pk-swt",
+        "name": "Swat",
+        "code": "PK-SWT",
+        "province": "Khyber Pakhtunkhwa",
+        "assigned_rep_name": "Gulzar Yousafzai",
+        "assigned_rep_id": "usr-rep-021",
+        "reporting_asm_name": "Sheraz Khattak (ASM KPK & FATA)",
+        "reporting_asm_id": "usr-asm-006",
+        "active_clients_count": 46,
+        "active_mechanics_count": 28,
+        "target_volume_liters": 5500.0,
+        "achieved_volume_liters": 1925.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.21,
+              35.48
+            ],
+            [
+              72.46,
+              35.56
+            ],
+            [
+              72.71,
+              35.43
+            ],
+            [
+              72.82,
+              35.18
+            ],
+            [
+              72.69,
+              34.92
+            ],
+            [
+              72.42,
+              34.88
+            ],
+            [
+              72.19,
+              35.04
+            ],
+            [
+              72.13,
+              35.28
+            ],
+            [
+              72.21,
+              35.48
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-qta",
+      "properties": {
+        "id": "dist-pk-qta",
+        "name": "Quetta",
+        "code": "PK-QTA",
+        "province": "Balochistan",
+        "assigned_rep_name": "Mirza Jahangir",
+        "assigned_rep_id": "usr-rep-022",
+        "reporting_asm_name": "Niamatullah Mengal (ASM Balochistan)",
+        "reporting_asm_id": "usr-asm-007",
+        "active_clients_count": 62,
+        "active_mechanics_count": 40,
+        "target_volume_liters": 7000.0,
+        "achieved_volume_liters": 3850.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              66.81,
+              30.36
+            ],
+            [
+              67.03,
+              30.41
+            ],
+            [
+              67.24,
+              30.31
+            ],
+            [
+              67.31,
+              30.14
+            ],
+            [
+              67.21,
+              29.98
+            ],
+            [
+              66.98,
+              29.95
+            ],
+            [
+              66.79,
+              30.06
+            ],
+            [
+              66.74,
+              30.22
+            ],
+            [
+              66.81,
+              30.36
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-gwd",
+      "properties": {
+        "id": "dist-pk-gwd",
+        "name": "Gwadar",
+        "code": "PK-GWD",
+        "province": "Balochistan",
+        "assigned_rep_name": null,
+        "assigned_rep_id": null,
+        "reporting_asm_name": null,
+        "reporting_asm_id": null,
+        "active_clients_count": 14,
+        "active_mechanics_count": 8,
+        "target_volume_liters": 0.0,
+        "achieved_volume_liters": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              62.11,
+              25.34
+            ],
+            [
+              62.37,
+              25.39
+            ],
+            [
+              62.59,
+              25.29
+            ],
+            [
+              62.68,
+              25.12
+            ],
+            [
+              62.56,
+              24.97
+            ],
+            [
+              62.32,
+              24.95
+            ],
+            [
+              62.14,
+              25.04
+            ],
+            [
+              62.06,
+              25.19
+            ],
+            [
+              62.11,
+              25.34
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-isb",
+      "properties": {
+        "id": "dist-pk-isb",
+        "name": "Islamabad",
+        "code": "PK-ISB",
+        "province": "Islamabad Capital Territory",
+        "assigned_rep_name": "Mustafa Shah",
+        "assigned_rep_id": "usr-rep-023",
+        "reporting_asm_name": "Kamran Akram (ASM Punjab North & ICT)",
+        "reporting_asm_id": "usr-asm-001",
+        "active_clients_count": 82,
+        "active_mechanics_count": 48,
+        "target_volume_liters": 9000.0,
+        "achieved_volume_liters": 8550.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.96,
+              33.78
+            ],
+            [
+              73.09,
+              33.82
+            ],
+            [
+              73.19,
+              33.74
+            ],
+            [
+              73.22,
+              33.64
+            ],
+            [
+              73.16,
+              33.58
+            ],
+            [
+              73.02,
+              33.59
+            ],
+            [
+              72.94,
+              33.66
+            ],
+            [
+              72.96,
+              33.78
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-glt",
+      "properties": {
+        "id": "dist-pk-glt",
+        "name": "Gilgit",
+        "code": "PK-GLT",
+        "province": "Gilgit-Baltistan",
+        "assigned_rep_name": null,
+        "assigned_rep_id": null,
+        "reporting_asm_name": null,
+        "reporting_asm_id": null,
+        "active_clients_count": 19,
+        "active_mechanics_count": 12,
+        "target_volume_liters": 0.0,
+        "achieved_volume_liters": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.12,
+              36.11
+            ],
+            [
+              74.36,
+              36.16
+            ],
+            [
+              74.58,
+              36.05
+            ],
+            [
+              74.66,
+              35.88
+            ],
+            [
+              74.52,
+              35.73
+            ],
+            [
+              74.29,
+              35.72
+            ],
+            [
+              74.13,
+              35.83
+            ],
+            [
+              74.06,
+              35.98
+            ],
+            [
+              74.12,
+              36.11
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-skd",
+      "properties": {
+        "id": "dist-pk-skd",
+        "name": "Skardu",
+        "code": "PK-SKD",
+        "province": "Gilgit-Baltistan",
+        "assigned_rep_name": null,
+        "assigned_rep_id": null,
+        "reporting_asm_name": null,
+        "reporting_asm_id": null,
+        "active_clients_count": 15,
+        "active_mechanics_count": 9,
+        "target_volume_liters": 0.0,
+        "achieved_volume_liters": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              75.42,
+              35.48
+            ],
+            [
+              75.67,
+              35.53
+            ],
+            [
+              75.89,
+              35.42
+            ],
+            [
+              75.98,
+              35.24
+            ],
+            [
+              75.86,
+              35.08
+            ],
+            [
+              75.61,
+              35.06
+            ],
+            [
+              75.44,
+              35.17
+            ],
+            [
+              75.38,
+              35.33
+            ],
+            [
+              75.42,
+              35.48
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-mzf",
+      "properties": {
+        "id": "dist-pk-mzf",
+        "name": "Muzaffarabad",
+        "code": "PK-MZF",
+        "province": "Azad Jammu & Kashmir",
+        "assigned_rep_name": null,
+        "assigned_rep_id": null,
+        "reporting_asm_name": null,
+        "reporting_asm_id": null,
+        "active_clients_count": 22,
+        "active_mechanics_count": 14,
+        "target_volume_liters": 0.0,
+        "achieved_volume_liters": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.34,
+              34.52
+            ],
+            [
+              73.53,
+              34.57
+            ],
+            [
+              73.69,
+              34.46
+            ],
+            [
+              73.74,
+              34.31
+            ],
+            [
+              73.63,
+              34.19
+            ],
+            [
+              73.44,
+              34.18
+            ],
+            [
+              73.31,
+              34.28
+            ],
+            [
+              73.28,
+              34.41
+            ],
+            [
+              73.34,
+              34.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dist-pk-mpr",
+      "properties": {
+        "id": "dist-pk-mpr",
+        "name": "Mirpur",
+        "code": "PK-MPR",
+        "province": "Azad Jammu & Kashmir",
+        "assigned_rep_name": "Raja Naveed",
+        "assigned_rep_id": "usr-rep-024",
+        "reporting_asm_name": "Kamran Akram (ASM Punjab North & AJK)",
+        "reporting_asm_id": "usr-asm-001",
+        "active_clients_count": 48,
+        "active_mechanics_count": 30,
+        "target_volume_liters": 5000.0,
+        "achieved_volume_liters": 3500.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.62,
+              33.27
+            ],
+            [
+              73.79,
+              33.31
+            ],
+            [
+              73.94,
+              33.22
+            ],
+            [
+              73.99,
+              33.09
+            ],
+            [
+              73.89,
+              32.97
+            ],
+            [
+              73.72,
+              32.96
+            ],
+            [
+              73.59,
+              33.05
+            ],
+            [
+              73.56,
+              33.17
+            ],
+            [
+              73.62,
+              33.27
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
