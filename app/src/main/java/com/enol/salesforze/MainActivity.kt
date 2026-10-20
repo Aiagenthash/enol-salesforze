@@ -63,15 +63,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import com.enol.salesforze.ui.attendance.EndShiftScreen
 import com.enol.salesforze.ui.attendance.StartShiftScreen
+import com.enol.salesforze.ui.enrollment.ClientEnrollmentScreen
+import com.enol.salesforze.ui.enrollment.MechanicEnrollmentScreen
 import com.enol.salesforze.ui.gis.DistrictMapScreen
+import com.enol.salesforze.ui.order.OrderCartScreen
+import com.enol.salesforze.ui.visit.VisitExecutionScreen
 import com.enol.salesforze.ui.theme.EnolNavy
 import com.enol.salesforze.ui.theme.LubricantAmber
 import com.enol.salesforze.ui.theme.SlateSteel
@@ -83,6 +90,10 @@ import dagger.hilt.android.AndroidEntryPoint
 enum class AppNavigationTab(val title: String) {
     DASHBOARD("Dispatch"),
     GIS_MAP("Territory GIS"),
+    ORDER_CART("Order Cart"),
+    VISIT_EXECUTION("Visit Check-In"),
+    CLIENT_ENROLL("New Customer"),
+    MECHANIC_ENROLL("New Mechanic"),
     START_SHIFT("Start Day"),
     END_SHIFT("End Day")
 }
@@ -170,7 +181,28 @@ class MainActivity : ComponentActivity() {
                                 onToggleTheme = { darkTheme = !darkTheme },
                                 onToggleContrast = { highContrastMode = !highContrastMode },
                                 onNavigateToGis = { currentTab = AppNavigationTab.GIS_MAP },
-                                onNavigateToShift = { currentTab = AppNavigationTab.START_SHIFT }
+                                onNavigateToShift = { currentTab = AppNavigationTab.START_SHIFT },
+                                onNavigateToOrderCart = { currentTab = AppNavigationTab.ORDER_CART },
+                                onNavigateToVisit = { currentTab = AppNavigationTab.VISIT_EXECUTION },
+                                onNavigateToClientEnroll = { currentTab = AppNavigationTab.CLIENT_ENROLL },
+                                onNavigateToMechanicEnroll = { currentTab = AppNavigationTab.MECHANIC_ENROLL }
+                            )
+                            AppNavigationTab.ORDER_CART -> OrderCartScreen(
+                                onOrderPlaced = { currentTab = AppNavigationTab.DASHBOARD },
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                            AppNavigationTab.VISIT_EXECUTION -> VisitExecutionScreen(
+                                onNavigateToOrderCart = { currentTab = AppNavigationTab.ORDER_CART },
+                                onVisitCompleted = { currentTab = AppNavigationTab.DASHBOARD },
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                            AppNavigationTab.CLIENT_ENROLL -> ClientEnrollmentScreen(
+                                onClientEnrolled = { currentTab = AppNavigationTab.DASHBOARD },
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                            )
+                            AppNavigationTab.MECHANIC_ENROLL -> MechanicEnrollmentScreen(
+                                onMechanicEnrolled = { currentTab = AppNavigationTab.DASHBOARD },
+                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
                             )
                             AppNavigationTab.GIS_MAP -> DistrictMapScreen(
                                 onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
@@ -199,7 +231,11 @@ fun IndustrialDashboardScreen(
     onToggleTheme: () -> Unit = {},
     onToggleContrast: () -> Unit = {},
     onNavigateToGis: () -> Unit = {},
-    onNavigateToShift: () -> Unit = {}
+    onNavigateToShift: () -> Unit = {},
+    onNavigateToOrderCart: () -> Unit = {},
+    onNavigateToVisit: () -> Unit = {},
+    onNavigateToClientEnroll: () -> Unit = {},
+    onNavigateToMechanicEnroll: () -> Unit = {}
 ) {
     val spacing = MaterialTheme.spacing
     val statusColors = MaterialTheme.statusColors
@@ -424,7 +460,7 @@ fun IndustrialDashboardScreen(
                 horizontalArrangement = Arrangement.spacedBy(spacing.grid2)
             ) {
                 Button(
-                    onClick = { /* Action: New Order Booking */ },
+                    onClick = onNavigateToOrderCart,
                     shape = MaterialTheme.shapes.small,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -440,7 +476,7 @@ fun IndustrialDashboardScreen(
                 }
 
                 FilledTonalButton(
-                    onClick = { /* Action: Visit Check-in */ },
+                    onClick = onNavigateToVisit,
                     shape = MaterialTheme.shapes.small,
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -482,6 +518,35 @@ fun IndustrialDashboardScreen(
                     Icon(imageVector = Icons.Default.Badge, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(spacing.grid1))
                     Text(text = "Start Field Day", style = MaterialTheme.typography.labelLarge)
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.grid2)
+            ) {
+                OutlinedButton(
+                    onClick = onNavigateToClientEnroll,
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(spacing.touchTargetMin)
+                ) {
+                    Icon(imageVector = Icons.Default.Storefront, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(spacing.grid1))
+                    Text(text = "New Customer", style = MaterialTheme.typography.labelLarge)
+                }
+
+                OutlinedButton(
+                    onClick = onNavigateToMechanicEnroll,
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(spacing.touchTargetMin)
+                ) {
+                    Icon(imageVector = Icons.Default.Build, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(spacing.grid1))
+                    Text(text = "New Mechanic", style = MaterialTheme.typography.labelLarge)
                 }
             }
 
