@@ -1,0 +1,2426 @@
+openapi: 3.1.0
+info:
+  title: ENOL SALESFORZE - Enterprise Field Force Automation & Territory
+    Management API
+  description: "
+
+    ### Overview
+
+    Backend REST API & Webhook Gateway for Automotive Lubricant Field Force
+    Automation (FFA) in Pakistan.
+
+    Features:
+
+    - **5-Tier Organizational Hierarchy**: Director -> ZSM -> ASM -> Sales Rep
+    -> Admin with materialized path queries
+
+    - **Territory & Route Beat Management**: PostGIS multi-polygon district
+    boundaries & daily rep beat schedules
+
+    - **Retail & Workshop CRM**: Geocoded shop locations, credit limit hold
+    enforcement & customer statement ledgers
+
+    - **Mechanic Influencer Loyalty Network**: QR code scans & digital wallet
+    payouts (JazzCash, Easypaisa)
+
+    - **Lubricant SKU Catalog**: Carton units, pack sizes in liters, trade
+    prices & automated commercial promotion schemes
+
+    - **Order Booking & Idempotency**: Offline order booking with idempotency
+    keys & automatic credit balance verification
+
+    - **Shift & Attendance Tracking**: Shift punch-in/out with selfie
+    verification & odometer image telemetry
+
+    - **Field Visit Audit**: Real-time geofence distance calculation, mock GPS
+    detection, and cash recovery slips
+
+    - **GPS Breadcrumb Tracking**: Real-time location stream & route playback
+    LineString generation
+
+    - **TADA Claim Fraud Audit**: Automated odometer delta vs GPS distance
+    comparison with variance % fraud flagging
+
+    - **Sales Gamification & KPIs**: Real-time leaderboard rankings, target
+    scorecards, and incentive races
+
+    - **Offline Delta Sync**: High-efficiency delta synchronization for field
+    mobile apps
+
+    - **Bulk Data Exports**: High-throughput streaming CSV and JSON exports for
+    enterprise data lakes
+
+    - **Outbound Webhook Dispatcher**: Asynchronous event dispatch with
+    HMAC-SHA256 signatures & auto-retry backoff
+
+    \        "
+  version: 1.0.0
+  contact:
+    name: ENOL Salesforze Architecture Team
+    email: architecture@enollubricants.com
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter your JWT Bearer token obtained from POST /api/v1/auth/login
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+      description: API Key for backend integrations, external OMS/ERP connectors, or
+        automated pipelines
+  schemas: {}
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      description: Authenticate user with email and password, returning JWT Bearer
+        token and user profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      full_name:
+                        type: string
+                      phone:
+                        type: string
+                      role:
+                        type: string
+                      manager_id:
+                        type: string
+                        nullable: true
+                      hierarchy_path:
+                        type: string
+                      vehicle_type:
+                        type: string
+                      vehicle_number:
+                        type: string
+                        nullable: true
+                      fuel_rate_per_km:
+                        type: number
+                      daily_allowance:
+                        type: number
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+  /api/v1/auth/me:
+    get:
+      tags:
+        - Authentication
+      description: Get profile details of currently authenticated user
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/auth/api-keys:
+    post:
+      tags:
+        - Authentication
+      description: Generate a new API key for external OMS/ERP or backend integration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - key_name
+              properties:
+                key_name:
+                  type: string
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                expires_in_days:
+                  type: integer
+                  minimum: 1
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+    get:
+      tags:
+        - Authentication
+      description: List API keys owned by currently authenticated user
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/users/:
+    get:
+      tags:
+        - Users & Hierarchy
+      description: Get paginated list of users with role, manager, and search filtering
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 25
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            enum:
+              - DIRECTOR
+              - ZSM
+              - ASM
+              - SALES_REP
+              - ADMIN
+          in: query
+          name: role
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: manager_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+        - schema:
+            type: boolean
+          in: query
+          name: is_active
+          required: false
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Users & Hierarchy
+      description: Create a new user in the 5-tier sales force organization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - full_name
+                - phone
+                - role
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                full_name:
+                  type: string
+                phone:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                    - DIRECTOR
+                    - ZSM
+                    - ASM
+                    - SALES_REP
+                    - ADMIN
+                manager_id:
+                  type: string
+                  nullable: true
+                bound_device_id:
+                  type: string
+                  nullable: true
+                vehicle_type:
+                  type: string
+                  enum:
+                    - MOTORCYCLE
+                    - CAR
+                    - VAN
+                    - OTHER
+                vehicle_number:
+                  type: string
+                  nullable: true
+                fuel_rate_per_km:
+                  type: number
+                daily_allowance:
+                  type: number
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/users/{id}:
+    get:
+      tags:
+        - Users & Hierarchy
+      description: Get user details by ID including manager info and direct
+        subordinate count
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    put:
+      tags:
+        - Users & Hierarchy
+      description: Update user profile, vehicle rates, or manager assignment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                phone:
+                  type: string
+                manager_id:
+                  type: string
+                  nullable: true
+                bound_device_id:
+                  type: string
+                  nullable: true
+                vehicle_type:
+                  type: string
+                  enum:
+                    - MOTORCYCLE
+                    - CAR
+                    - VAN
+                    - OTHER
+                vehicle_number:
+                  type: string
+                  nullable: true
+                fuel_rate_per_km:
+                  type: number
+                daily_allowance:
+                  type: number
+                is_active:
+                  type: boolean
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    delete:
+      tags:
+        - Users & Hierarchy
+      description: Deactivate user account (soft delete)
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/users/{id}/subordinates:
+    get:
+      tags:
+        - Users & Hierarchy
+      description: Get tree of all hierarchical subordinates down the materialized
+        path for given user
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/territories/districts:
+    get:
+      tags:
+        - Territories & Beats
+      description: Get list of Pakistan territory districts with assigned ZSM/ASM and counts
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: province
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: assigned_zsm_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: assigned_asm_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Territories & Beats
+      description: Create a new territory district with boundary polygon GeoJSON
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - code
+                - province
+              properties:
+                name:
+                  type: string
+                code:
+                  type: string
+                province:
+                  type: string
+                  enum:
+                    - Punjab
+                    - Sindh
+                    - Khyber Pakhtunkhwa
+                    - Balochistan
+                    - Islamabad Capital Territory
+                    - Gilgit-Baltistan
+                    - Azad Jammu & Kashmir
+                polygon_geojson:
+                  type: object
+                assigned_zsm_id:
+                  type: string
+                  nullable: true
+                assigned_asm_id:
+                  type: string
+                  nullable: true
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/territories/districts/{id}:
+    get:
+      tags:
+        - Territories & Beats
+      description: Get territory district detail with polygon boundaries and active beats
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    put:
+      tags:
+        - Territories & Beats
+      description: Update district boundaries, name, or assigned managers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                polygon_geojson:
+                  type: object
+                assigned_zsm_id:
+                  type: string
+                  nullable: true
+                assigned_asm_id:
+                  type: string
+                  nullable: true
+                is_active:
+                  type: boolean
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/territories/beats:
+    get:
+      tags:
+        - Territories & Beats
+      description: Get list of territory beats filtered by district, day of week, or
+        assigned rep
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: district_id
+          required: false
+        - schema:
+            type: string
+            enum:
+              - MONDAY
+              - TUESDAY
+              - WEDNESDAY
+              - THURSDAY
+              - FRIDAY
+              - SATURDAY
+              - SUNDAY
+          in: query
+          name: day_of_week
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: assigned_rep_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Territories & Beats
+      description: Create a new beat route for field sales force
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - district_id
+                - name
+                - code
+                - day_of_week
+              properties:
+                district_id:
+                  type: string
+                name:
+                  type: string
+                code:
+                  type: string
+                day_of_week:
+                  type: string
+                  enum:
+                    - MONDAY
+                    - TUESDAY
+                    - WEDNESDAY
+                    - THURSDAY
+                    - FRIDAY
+                    - SATURDAY
+                    - SUNDAY
+                assigned_rep_id:
+                  type: string
+                  nullable: true
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/territories/beats/{id}:
+    get:
+      tags:
+        - Territories & Beats
+      description: Get beat details and list of all clients on this beat route
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    put:
+      tags:
+        - Territories & Beats
+      description: Update beat details or rep assignment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                day_of_week:
+                  type: string
+                  enum:
+                    - MONDAY
+                    - TUESDAY
+                    - WEDNESDAY
+                    - THURSDAY
+                    - FRIDAY
+                    - SATURDAY
+                    - SUNDAY
+                assigned_rep_id:
+                  type: string
+                  nullable: true
+                is_active:
+                  type: boolean
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/clients/:
+    get:
+      tags:
+        - Clients & Ledger
+      description: Get paginated list of retail and distributor clients with credit
+        and location details
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: beat_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: district_id
+          required: false
+        - schema:
+            type: boolean
+          in: query
+          name: credit_hold
+          required: false
+        - schema:
+            type: string
+            enum:
+              - PENDING
+              - APPROVED
+              - REJECTED
+              - SUSPENDED
+          in: query
+          name: approval_status
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Clients & Ledger
+      description: Register a new retail or workshop client
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - district_id
+                - business_name
+                - owner_name
+                - phone
+                - address
+                - latitude
+                - longitude
+              properties:
+                district_id:
+                  type: string
+                beat_id:
+                  type: string
+                  nullable: true
+                business_name:
+                  type: string
+                owner_name:
+                  type: string
+                phone:
+                  type: string
+                cnic:
+                  type: string
+                  nullable: true
+                address:
+                  type: string
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+                credit_limit:
+                  type: number
+                  default: 100000
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/clients/{id}:
+    get:
+      tags:
+        - Clients & Ledger
+      description: Get client profile, coordinates, credit limits, and recent ledger entries
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    put:
+      tags:
+        - Clients & Ledger
+      description: Update client details, coordinates, or credit terms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                beat_id:
+                  type: string
+                  nullable: true
+                business_name:
+                  type: string
+                owner_name:
+                  type: string
+                phone:
+                  type: string
+                cnic:
+                  type: string
+                  nullable: true
+                address:
+                  type: string
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+                credit_limit:
+                  type: number
+                credit_hold:
+                  type: boolean
+                approval_status:
+                  type: string
+                  enum:
+                    - PENDING
+                    - APPROVED
+                    - REJECTED
+                    - SUSPENDED
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/clients/{id}/ledger:
+    get:
+      tags:
+        - Clients & Ledger
+      description: Get complete statement of account ledger entries for a client
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Clients & Ledger
+      description: Post a payment, invoice, or credit adjustment to client ledger and
+        update outstanding balance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - entry_type
+                - amount
+              properties:
+                entry_type:
+                  type: string
+                  enum:
+                    - INVOICE
+                    - PAYMENT
+                    - CREDIT_NOTE
+                    - DEBIT_NOTE
+                    - ADJUSTMENT
+                amount:
+                  type: number
+                  minimum: 0.01
+                reference_type:
+                  type: string
+                  enum:
+                    - ORDER
+                    - RECOVERY_SLIP
+                    - BANK_TRANSFER
+                    - CHEQUE
+                    - MANUAL
+                  default: MANUAL
+                reference_id:
+                  type: string
+                description:
+                  type: string
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/mechanics/:
+    get:
+      tags:
+        - Mechanics & Loyalty
+      description: Get paginated list of mechanics in the loyalty influencer program
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - 4-STROKE_MOTORCYCLE
+              - HEAVY_DIESEL
+              - PASSENGER_CAR
+              - TRACTOR_AGRI
+              - GENERAL_AUTO
+          in: query
+          name: specialty
+          required: false
+        - schema:
+            type: string
+            enum:
+              - EASYPAISA
+              - JAZZCASH
+              - NAYAPAY
+              - SADAPAY
+              - BANK_ACCOUNT
+          in: query
+          name: wallet_provider
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: client_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: qr_code_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Mechanics & Loyalty
+      description: Register a new mechanic in the loyalty network
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - phone
+                - specialty
+                - wallet_provider
+                - wallet_account_number
+              properties:
+                client_id:
+                  type: string
+                  nullable: true
+                name:
+                  type: string
+                phone:
+                  type: string
+                cnic:
+                  type: string
+                  nullable: true
+                specialty:
+                  type: string
+                  enum:
+                    - 4-STROKE_MOTORCYCLE
+                    - HEAVY_DIESEL
+                    - PASSENGER_CAR
+                    - TRACTOR_AGRI
+                    - GENERAL_AUTO
+                wallet_provider:
+                  type: string
+                  enum:
+                    - EASYPAISA
+                    - JAZZCASH
+                    - NAYAPAY
+                    - SADAPAY
+                    - BANK_ACCOUNT
+                wallet_account_number:
+                  type: string
+                qr_code_id:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/mechanics/{id}:
+    get:
+      tags:
+        - Mechanics & Loyalty
+      description: Get mechanic details, wallet numbers, loyalty points, and workshop link
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    put:
+      tags:
+        - Mechanics & Loyalty
+      description: Update mechanic profile or payout wallet account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  nullable: true
+                name:
+                  type: string
+                specialty:
+                  type: string
+                  enum:
+                    - 4-STROKE_MOTORCYCLE
+                    - HEAVY_DIESEL
+                    - PASSENGER_CAR
+                    - TRACTOR_AGRI
+                    - GENERAL_AUTO
+                wallet_provider:
+                  type: string
+                  enum:
+                    - EASYPAISA
+                    - JAZZCASH
+                    - NAYAPAY
+                    - SADAPAY
+                    - BANK_ACCOUNT
+                wallet_account_number:
+                  type: string
+                is_verified:
+                  type: boolean
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/mechanics/{id}/points:
+    post:
+      tags:
+        - Mechanics & Loyalty
+      description: Award loyalty points for cap coupon QR scan or promotion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - points
+              properties:
+                points:
+                  type: integer
+                  minimum: 1
+                reason:
+                  type: string
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/products/:
+    get:
+      tags:
+        - Product Catalog
+      description: Get paginated catalog of automotive lubricants, pack sizes, carton
+        units, and schemes
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - PASSENGER_CAR_MOTOR_OIL
+              - HEAVY_DUTY_DIESEL
+              - MOTORCYCLE_4T
+              - GEAR_OIL
+              - TRANSMISSION_FLUID
+              - COOLANT
+              - GREASE
+              - SPECIALTY
+          in: query
+          name: category
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: viscosity_grade
+          required: false
+        - schema:
+            type: boolean
+          in: query
+          name: is_active
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Product Catalog
+      description: Add a new automotive lubricant SKU to the catalog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - sku
+                - name
+                - category
+                - viscosity_grade
+                - pack_size_liters
+                - trade_price
+                - retail_price
+              properties:
+                sku:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                  enum:
+                    - PASSENGER_CAR_MOTOR_OIL
+                    - HEAVY_DUTY_DIESEL
+                    - MOTORCYCLE_4T
+                    - GEAR_OIL
+                    - TRANSMISSION_FLUID
+                    - COOLANT
+                    - GREASE
+                    - SPECIALTY
+                viscosity_grade:
+                  type: string
+                pack_size_liters:
+                  type: number
+                units_per_carton:
+                  type: integer
+                  default: 1
+                trade_price:
+                  type: number
+                retail_price:
+                  type: number
+                active_schemes:
+                  type: array
+                  items:
+                    type: object
+                stock_quantity:
+                  type: integer
+                  default: 1000
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/products/{id}:
+    get:
+      tags:
+        - Product Catalog
+      description: Get product SKU detail with pricing, carton packing, and active
+        trade schemes
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    put:
+      tags:
+        - Product Catalog
+      description: Update lubricant prices, schemes, or inventory details
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                trade_price:
+                  type: number
+                retail_price:
+                  type: number
+                active_schemes:
+                  type: array
+                  items:
+                    type: object
+                stock_quantity:
+                  type: integer
+                is_active:
+                  type: boolean
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    delete:
+      tags:
+        - Product Catalog
+      description: Deactivate a product SKU
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/orders/:
+    get:
+      tags:
+        - Orders & Line Items
+      description: Get paginated list of sales orders with credit hold and status filtering
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: client_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: sales_rep_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: beat_id
+          required: false
+        - schema:
+            type: string
+            enum:
+              - PENDING
+              - APPROVED
+              - DISPATCHED
+              - DELIVERED
+              - CANCELLED
+              - REJECTED_CREDIT_HOLD
+          in: query
+          name: status
+          required: false
+        - schema:
+            type: boolean
+          in: query
+          name: credit_hold_flag
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: from_date
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: to_date
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Orders & Line Items
+      description: Create a new sales order with line items, idempotency check, and
+        credit hold verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - client_id
+                - items
+              properties:
+                client_id:
+                  type: string
+                beat_id:
+                  type: string
+                  nullable: true
+                idempotency_key:
+                  type: string
+                payment_terms:
+                  type: string
+                  enum:
+                    - CASH_ON_DELIVERY
+                    - CREDIT_7_DAYS
+                    - CREDIT_15_DAYS
+                    - CREDIT_30_DAYS
+                    - ADVANCE
+                  default: CREDIT_15_DAYS
+                notes:
+                  type: string
+                  nullable: true
+                external_oms_reference:
+                  type: string
+                  nullable: true
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required:
+                      - product_id
+                    properties:
+                      product_id:
+                        type: string
+                      cartons:
+                        type: number
+                        minimum: 0
+                      units:
+                        type: integer
+                        minimum: 0
+                      scheme_discount:
+                        type: number
+                        default: 0
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/orders/{id}:
+    get:
+      tags:
+        - Orders & Line Items
+      description: Get order header and detailed line items
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/orders/{id}/status:
+    put:
+      tags:
+        - Orders & Line Items
+      description: Update order lifecycle status (approve, dispatch, deliver, cancel)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - PENDING
+                    - APPROVED
+                    - DISPATCHED
+                    - DELIVERED
+                    - CANCELLED
+                    - REJECTED_CREDIT_HOLD
+                notes:
+                  type: string
+                external_oms_reference:
+                  type: string
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/orders/{id}/items:
+    get:
+      tags:
+        - Orders & Line Items
+      description: Get list of line items for a specific order
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/attendance/:
+    get:
+      tags:
+        - Daily Attendance & Shifts
+      description: Get paginated daily attendance records for field force
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: user_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: date
+          required: false
+        - schema:
+            type: string
+            enum:
+              - ACTIVE
+              - COMPLETED
+              - AUTO_CLOSED
+              - REJECTED
+          in: query
+          name: status
+          required: false
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/attendance/{id}:
+    get:
+      tags:
+        - Daily Attendance & Shifts
+      description: Get single attendance shift record by ID
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/attendance/start-shift:
+    post:
+      tags:
+        - Daily Attendance & Shifts
+      description: Punch-in and start field sales shift with photo selfie, odometer
+        reading & photo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - start_latitude
+                - start_longitude
+                - start_selfie_url
+                - start_odometer_reading
+                - start_odometer_photo_url
+              properties:
+                start_latitude:
+                  type: number
+                start_longitude:
+                  type: number
+                start_selfie_url:
+                  type: string
+                  format: uri
+                start_odometer_reading:
+                  type: number
+                  minimum: 0
+                start_odometer_photo_url:
+                  type: string
+                  format: uri
+                notes:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/attendance/{id}/end-shift:
+    post:
+      tags:
+        - Daily Attendance & Shifts
+      description: Punch-out and complete daily shift with closing selfie, odometer
+        reading, and hours calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - end_latitude
+                - end_longitude
+                - end_selfie_url
+                - end_odometer_reading
+                - end_odometer_photo_url
+              properties:
+                end_latitude:
+                  type: number
+                end_longitude:
+                  type: number
+                end_selfie_url:
+                  type: string
+                  format: uri
+                end_odometer_reading:
+                  type: number
+                  minimum: 0
+                end_odometer_photo_url:
+                  type: string
+                  format: uri
+                notes:
+                  type: string
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/visits/:
+    get:
+      tags:
+        - Field Shop Visits
+      description: Get paginated list of field client visits with geofence distance &
+        outcomes
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: sales_rep_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: client_id
+          required: false
+        - schema:
+            type: string
+            enum:
+              - ORDER_PLACED
+              - PAYMENT_COLLECTED
+              - STOCK_AUDIT_ONLY
+              - CLIENT_CLOSED
+              - NO_ORDER
+              - MERCHANDISING_ONLY
+          in: query
+          name: outcome
+          required: false
+        - schema:
+            type: boolean
+          in: query
+          name: is_mock_gps
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: from_date
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: to_date
+          required: false
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/visits/{id}:
+    get:
+      tags:
+        - Field Shop Visits
+      description: Get single visit details including geofence distance and recovery slip
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/visits/check-in:
+    post:
+      tags:
+        - Field Shop Visits
+      description: Check-in at client location with geofence distance calculation and
+        mock GPS detection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - client_id
+                - check_in_latitude
+                - check_in_longitude
+              properties:
+                client_id:
+                  type: string
+                attendance_id:
+                  type: string
+                  nullable: true
+                scheduled_at:
+                  type: string
+                  nullable: true
+                check_in_latitude:
+                  type: number
+                check_in_longitude:
+                  type: number
+                is_mock_gps:
+                  type: boolean
+                  default: false
+                outcome:
+                  type: string
+                  enum:
+                    - ORDER_PLACED
+                    - PAYMENT_COLLECTED
+                    - STOCK_AUDIT_ONLY
+                    - CLIENT_CLOSED
+                    - NO_ORDER
+                    - MERCHANDISING_ONLY
+                  default: NO_ORDER
+                notes:
+                  type: string
+                  nullable: true
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/visits/{id}/check-out:
+    put:
+      tags:
+        - Field Shop Visits
+      description: Complete visit check-out, record outcome, recovery cash collection
+        & update ledger
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - check_out_latitude
+                - check_out_longitude
+                - outcome
+              properties:
+                check_out_latitude:
+                  type: number
+                check_out_longitude:
+                  type: number
+                outcome:
+                  type: string
+                  enum:
+                    - ORDER_PLACED
+                    - PAYMENT_COLLECTED
+                    - STOCK_AUDIT_ONLY
+                    - CLIENT_CLOSED
+                    - NO_ORDER
+                    - MERCHANDISING_ONLY
+                notes:
+                  type: string
+                  nullable: true
+                recovery_slip_number:
+                  type: string
+                  nullable: true
+                recovery_amount:
+                  type: number
+                  minimum: 0
+                  default: 0
+                order_id:
+                  type: string
+                  nullable: true
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/breadcrumbs/:
+    get:
+      tags:
+        - Location Breadcrumbs & GPS
+      description: Get paginated GPS location breadcrumbs for a sales rep
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: user_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: attendance_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: from_time
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: to_time
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Location Breadcrumbs & GPS
+      description: Batch ingest GPS breadcrumbs from mobile field app (single or bulk array)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attendance_id:
+                  type: string
+                  nullable: true
+                breadcrumbs:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - latitude
+                      - longitude
+                      - recorded_at
+                    properties:
+                      latitude:
+                        type: number
+                      longitude:
+                        type: number
+                      accuracy_meters:
+                        type: number
+                        default: 5
+                      speed:
+                        type: number
+                        nullable: true
+                      bearing:
+                        type: number
+                        nullable: true
+                      battery_level:
+                        type: number
+                        nullable: true
+                      is_mock_gps:
+                        type: boolean
+                        default: false
+                      recorded_at:
+                        type: string
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/breadcrumbs/user/{userId}/route:
+    get:
+      tags:
+        - Location Breadcrumbs & GPS
+      description: Get route playback GeoJSON LineString for map rendering on a given date
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: date
+          required: false
+          description: YYYY-MM-DD
+        - schema:
+            type: string
+          in: path
+          name: userId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/tada-claims/:
+    get:
+      tags:
+        - TADA Claims & Allowances
+      description: Get paginated list of Travel & Daily Allowance (TADA) claims with
+        variance audit flags
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: user_id
+          required: false
+        - schema:
+            type: string
+            enum:
+              - SUBMITTED
+              - VERIFIED_FLAGGED
+              - APPROVED
+              - REJECTED
+              - DISBURSED
+          in: query
+          name: status
+          required: false
+        - schema:
+            type: boolean
+          in: query
+          name: flagged_only
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: from_date
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: to_date
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - TADA Claims & Allowances
+      description: Submit daily fuel & TADA claim with odometer readings and variance
+        calculation against GPS
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - attendance_id
+                - claim_date
+                - start_odometer
+                - end_odometer
+                - gps_distance_km
+              properties:
+                attendance_id:
+                  type: string
+                claim_date:
+                  type: string
+                start_odometer:
+                  type: number
+                  minimum: 0
+                end_odometer:
+                  type: number
+                  minimum: 0
+                gps_distance_km:
+                  type: number
+                  minimum: 0
+                toll_parking_amount:
+                  type: number
+                  default: 0
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/tada-claims/{id}:
+    get:
+      tags:
+        - TADA Claims & Allowances
+      description: Get TADA claim detail with audit comparison between odometer delta
+        and GPS distance
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/tada-claims/{id}/review:
+    put:
+      tags:
+        - TADA Claims & Allowances
+      description: Review, approve, reject, or disburse TADA expense claim
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - APPROVED
+                    - REJECTED
+                    - DISBURSED
+                rejection_reason:
+                  type: string
+                  nullable: true
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/kpis/:
+    get:
+      tags:
+        - Targets & KPIs
+      description: Get paginated list of sales performance targets and KPI scorecards
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: user_id
+          required: false
+        - schema:
+            type: string
+            enum:
+              - MONTHLY
+              - QUARTERLY
+              - ANNUAL
+          in: query
+          name: period_type
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: period_start
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Targets & KPIs
+      description: Set performance targets for a sales rep or manager
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - period_type
+                - period_start
+                - period_end
+                - target_volume_liters
+                - target_revenue
+              properties:
+                user_id:
+                  type: string
+                period_type:
+                  type: string
+                  enum:
+                    - MONTHLY
+                    - QUARTERLY
+                    - ANNUAL
+                period_start:
+                  type: string
+                period_end:
+                  type: string
+                target_volume_liters:
+                  type: number
+                  minimum: 0
+                target_revenue:
+                  type: number
+                  minimum: 0
+                target_visits:
+                  type: integer
+                  default: 0
+                target_new_clients:
+                  type: integer
+                  default: 0
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/kpis/user/{userId}:
+    get:
+      tags:
+        - Targets & KPIs
+      description: Get comprehensive KPI scorecard for a specific sales rep or manager
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: userId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/kpis/{id}:
+    put:
+      tags:
+        - Targets & KPIs
+      description: Update target or actual achievements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                achieved_volume_liters:
+                  type: number
+                achieved_revenue:
+                  type: number
+                achieved_visits:
+                  type: integer
+                achieved_new_clients:
+                  type: integer
+                calculated_kpi_score:
+                  type: number
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/competitions/:
+    get:
+      tags:
+        - Sales Competitions & Gamification
+      description: Get list of field sales competitions, leaderboards, and incentive
+        campaigns
+      parameters:
+        - schema:
+            type: boolean
+          in: query
+          name: is_active
+          required: false
+        - schema:
+            type: string
+            enum:
+              - VOLUME_LITERS
+              - REVENUE_PKR
+              - NEW_CLIENTS
+              - SYNTHETIC_RATIO
+              - COLLECTION_RATE
+          in: query
+          name: target_metric
+          required: false
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Sales Competitions & Gamification
+      description: Create a new sales competition with metric targets & reward structures
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - start_date
+                - end_date
+                - target_metric
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                start_date:
+                  type: string
+                end_date:
+                  type: string
+                target_metric:
+                  type: string
+                  enum:
+                    - VOLUME_LITERS
+                    - REVENUE_PKR
+                    - NEW_CLIENTS
+                    - SYNTHETIC_RATIO
+                    - COLLECTION_RATE
+                reward_details:
+                  type: object
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/competitions/{id}:
+    get:
+      tags:
+        - Sales Competitions & Gamification
+      description: Get competition details and incentive reward tiers
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/competitions/{id}/leaderboard:
+    get:
+      tags:
+        - Sales Competitions & Gamification
+      description: Get real-time ranked leaderboard for a sales competition
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/competitions/{id}/scores:
+    post:
+      tags:
+        - Sales Competitions & Gamification
+      description: Update or record rep progress metrics and points in a competition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - metric_value
+              properties:
+                user_id:
+                  type: string
+                metric_value:
+                  type: number
+                  minimum: 0
+                points:
+                  type: integer
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/sync/delta:
+    get:
+      tags:
+        - Offline Delta Sync
+      description: Delta-Sync endpoint for offline-first mobile apps. Returns all
+        records created or modified since specified ISO8601 timestamp.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: since
+          required: false
+          description: ISO 8601 timestamp of last successful sync (e.g.
+            2026-10-20T10:00:00Z)
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  sync_timestamp:
+                    type: string
+                  since:
+                    type: string
+                    nullable: true
+                  counts:
+                    type: object
+                    additionalProperties:
+                      type: integer
+                  delta:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          type: object
+                      districts:
+                        type: array
+                        items:
+                          type: object
+                      beats:
+                        type: array
+                        items:
+                          type: object
+                      clients:
+                        type: array
+                        items:
+                          type: object
+                      products:
+                        type: array
+                        items:
+                          type: object
+                      orders:
+                        type: array
+                        items:
+                          type: object
+                      mechanics:
+                        type: array
+                        items:
+                          type: object
+                      kpis:
+                        type: array
+                        items:
+                          type: object
+                      competitions:
+                        type: array
+                        items:
+                          type: object
+  /api/v1/exports/{entity}:
+    get:
+      tags:
+        - Bulk Data Exports
+      description: Bulk data export endpoint generating streaming CSV or JSON for data
+        warehouse and enterprise BI integration
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - json
+              - csv
+            default: json
+          in: query
+          name: format
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: from
+          required: false
+          description: Start date / timestamp filter
+        - schema:
+            type: string
+          in: query
+          name: to
+          required: false
+          description: End date / timestamp filter
+        - schema:
+            type: integer
+            default: 5000
+            maximum: 10000
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            enum:
+              - users
+              - clients
+              - districts
+              - beats
+              - products
+              - orders
+              - visits
+              - attendance
+              - breadcrumbs
+              - tada-claims
+              - mechanics
+              - kpis
+              - ledger
+          in: path
+          name: entity
+          required: true
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/webhooks/subscriptions:
+    get:
+      tags:
+        - Outbound Webhooks Gateway
+      description: Get list of registered outbound webhook subscriptions
+      responses:
+        "200":
+          description: Default Response
+    post:
+      tags:
+        - Outbound Webhooks Gateway
+      description: Register a new outbound webhook subscriber endpoint with
+        HMAC-SHA256 secret
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - target_url
+                - events
+              properties:
+                name:
+                  type: string
+                target_url:
+                  type: string
+                  format: uri
+                secret:
+                  type: string
+                  minLength: 16
+                events:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum:
+                      - order.created
+                      - order.approved
+                      - order.delivered
+                      - visit.completed
+                      - client.created
+                      - tada.submitted
+                headers:
+                  type: object
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/webhooks/subscriptions/{id}:
+    put:
+      tags:
+        - Outbound Webhooks Gateway
+      description: Update webhook subscription URL, events, secret, or active state
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                target_url:
+                  type: string
+                  format: uri
+                secret:
+                  type: string
+                events:
+                  type: array
+                  items:
+                    type: string
+                is_active:
+                  type: boolean
+                headers:
+                  type: object
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+    delete:
+      tags:
+        - Outbound Webhooks Gateway
+      description: Delete webhook subscription
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/webhooks/logs:
+    get:
+      tags:
+        - Outbound Webhooks Gateway
+      description: Get paginated audit logs of webhook delivery attempts, HTTP
+        responses, and error traces
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: subscription_id
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: event_name
+          required: false
+        - schema:
+            type: boolean
+          in: query
+          name: failed_only
+          required: false
+      responses:
+        "200":
+          description: Default Response
+  /api/v1/webhooks/test-dispatch:
+    post:
+      tags:
+        - Outbound Webhooks Gateway
+      description: Trigger a simulated webhook event for external developers to verify
+        HMAC-SHA256 signature verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - event_name
+              properties:
+                event_name:
+                  type: string
+                  enum:
+                    - order.created
+                    - order.approved
+                    - order.delivered
+                    - visit.completed
+                    - client.created
+                    - tada.submitted
+                sample_payload:
+                  type: object
+        required: true
+      responses:
+        "200":
+          description: Default Response
+servers:
+  - url: http://localhost:4000
+    description: Local Development Server
+  - url: https://api.salesforze.enollubricants.com
+    description: Production Enterprise Cluster
+tags:
+  - name: Authentication
+    description: User login, token verification, and API key management
+  - name: Users & Hierarchy
+    description: 5-Tier organizational structure and employee materialized paths
+  - name: Territories & Beats
+    description: Pakistan provincial districts and daily field sales beat routes
+  - name: Clients & Ledger
+    description: Retailers, workshops, geocoded locations, and statement of accounts
+  - name: Mechanics & Loyalty
+    description: Mechanic loyalty network, QR code scans, and mobile wallet rewards
+  - name: Product Catalog
+    description: Automotive lubricant SKUs, carton packaging, and trade schemes
+  - name: Orders & Line Items
+    description: Idempotent order placement, item line calculations, and credit hold
+  - name: Daily Attendance & Shifts
+    description: Shift start/end with photo selfies and odometer readings
+  - name: Field Shop Visits
+    description: Client visits, geofence distance verification, and payment recoveries
+  - name: Location Breadcrumbs & GPS
+    description: GPS location tracking stream and route playback LineString
+  - name: TADA Claims & Allowances
+    description: Travel allowance audit comparing odometer delta vs GPS distance
+  - name: Targets & KPIs
+    description: Sales volume/revenue targets and employee scorecard performance
+  - name: Sales Competitions & Gamification
+    description: Volume races, incentive rewards, and real-time leaderboards
+  - name: Offline Delta Sync
+    description: Differential synchronization for field mobile devices
+  - name: Bulk Data Exports
+    description: High-volume streaming CSV and JSON exports
+  - name: Outbound Webhooks Gateway
+    description: Event subscription management and HMAC-SHA256 signature dispatch
