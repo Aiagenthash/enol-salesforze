@@ -1,8 +1,41 @@
 package com.enol.salesforze.data.remote.models
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonPrimitive
+
+object FlexibleDoubleSerializer : KSerializer<Double> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("FlexibleDouble", PrimitiveKind.DOUBLE)
+
+    override fun deserialize(decoder: Decoder): Double {
+        return if (decoder is JsonDecoder) {
+            val element = decoder.decodeJsonElement()
+            try {
+                element.jsonPrimitive.content.toDouble()
+            } catch (e: Exception) {
+                0.0
+            }
+        } else {
+            try {
+                decoder.decodeDouble()
+            } catch (e: Exception) {
+                0.0
+            }
+        }
+    }
+
+    override fun serialize(encoder: Encoder, value: Double) {
+        encoder.encodeDouble(value)
+    }
+}
 
 // ============================================================================
 // GENERIC API & PAGINATION WRAPPERS
@@ -63,7 +96,9 @@ data class UserDto(
     @SerialName("bound_device_id") val boundDeviceId: String? = null,
     @SerialName("vehicle_type") val vehicleType: String = "MOTORCYCLE",
     @SerialName("vehicle_number") val vehicleNumber: String? = null,
+    @Serializable(with = FlexibleDoubleSerializer::class)
     @SerialName("fuel_rate_per_km") val fuelRatePerKm: Double = 0.0,
+    @Serializable(with = FlexibleDoubleSerializer::class)
     @SerialName("daily_allowance") val dailyAllowance: Double = 0.0,
     @SerialName("is_active") val isActive: Boolean = true,
     @SerialName("manager_name") val managerName: String? = null,
@@ -324,9 +359,12 @@ data class ProductDto(
     @SerialName("description") val description: String? = null,
     @SerialName("category") val category: String,
     @SerialName("viscosity_grade") val viscosityGrade: String,
+    @Serializable(with = FlexibleDoubleSerializer::class)
     @SerialName("pack_size_liters") val packSizeLiters: Double,
     @SerialName("units_per_carton") val unitsPerCarton: Int,
+    @Serializable(with = FlexibleDoubleSerializer::class)
     @SerialName("trade_price") val tradePrice: Double,
+    @Serializable(with = FlexibleDoubleSerializer::class)
     @SerialName("retail_price") val retailPrice: Double,
     @SerialName("active_schemes") val activeSchemes: List<ProductSchemeDto> = emptyList(),
     @SerialName("stock_quantity") val stockQuantity: Int = 0,
