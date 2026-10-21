@@ -7,6 +7,16 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val localProperties = java.util.Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    }
+}
+val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY")
+    ?: System.getenv("MAPS_API_KEY")
+    ?: "AIzaSyD6dRQNQoKfX39j2mh_xoun3TM0sYo9aow"
+
 android {
     namespace = "com.enol.salesforze"
     compileSdk = 34
@@ -24,7 +34,8 @@ android {
         }
 
         buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:4000/\"")
-        manifestPlaceholders["MAPS_API_KEY"] = "AIzaSy_ENOL_SALESFORZE_MAPS_KEY_DEMO"
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
 
     buildTypes {
