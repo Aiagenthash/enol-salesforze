@@ -474,13 +474,13 @@ fun UserCard(
                     Text("Change Rights", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
 
-                if (user.isActive) {
+                if (user.isActive && !user.role.equals("DIRECTOR", ignoreCase = true)) {
                     Spacer(modifier = Modifier.width(8.dp))
                     OutlinedButton(
                         onClick = onDeactivate,
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
                         modifier = Modifier.height(34.dp)
                     ) {
                         Text("Deactivate", fontSize = 12.sp)
