@@ -79,7 +79,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
+import com.enol.salesforze.ui.theme.SlateSteelLight
 import com.enol.salesforze.ui.theme.EnolNavy
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
+import com.enol.salesforze.ui.theme.SlateSteelLight
 import com.enol.salesforze.ui.theme.EnolNavyLight
 import com.enol.salesforze.ui.theme.ErrorCrimson
 import com.enol.salesforze.ui.theme.LubricantAmber
@@ -180,47 +192,14 @@ fun StartShiftScreen(
         return
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Start Field Day",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "Enol Attendance & Route Ignition",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LubricantAmber
-                        )
-                    }
-                },
-                navigationIcon = {
-                    if (onNavigateBack != null) {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = EnolNavy
-                )
-            )
-        }
-    ) { paddingValues ->
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
                 .padding(grid_4)
         ) {
@@ -366,8 +345,8 @@ fun StartShiftScreen(
                 enabled = canSubmit,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = LubricantAmber,
-                    contentColor = EnolNavy,
-                    disabledContainerColor = SlateSteel.copy(alpha = 0.2f),
+                    contentColor = BackgroundDark,
+                    disabledContainerColor = SlateSteelDark,
                     disabledContentColor = SlateSteelLight
                 ),
                 shape = RoundedCornerShape(12.dp),
@@ -377,7 +356,7 @@ fun StartShiftScreen(
             ) {
                 if (uiState.isSubmitting) {
                     CircularProgressIndicator(
-                        color = EnolNavy,
+                        color = BackgroundDark,
                         modifier = Modifier.size(24.dp),
                         strokeWidth = 2.5.dp
                     )
@@ -385,20 +364,22 @@ fun StartShiftScreen(
                     Text(
                         text = "Igniting Field Day...",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = BackgroundDark
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = "Start",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
+                        tint = BackgroundDark
                     )
                     Spacer(modifier = Modifier.width(grid_2))
                     Text(
-                        text = "IGNITE FIELD SHIFT",
+                        text = "START FIELD SHIFT",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
-                        letterSpacing = 1.sp
+                        color = BackgroundDark
                     )
                 }
             }
@@ -416,7 +397,7 @@ private fun StepProgressHeader(
     gpsDone: Boolean
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation_2),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth()
@@ -429,9 +410,9 @@ private fun StepProgressHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             StepPill(label = "1. Selfie", isCompleted = selfieDone)
-            Text(text = "•", color = SlateSteelLight, fontWeight = FontWeight.Bold)
+            Text(text = "•", color = SlateSteelDark, fontWeight = FontWeight.Bold)
             StepPill(label = "2. Odometer", isCompleted = odometerDone)
-            Text(text = "•", color = SlateSteelLight, fontWeight = FontWeight.Bold)
+            Text(text = "•", color = SlateSteelDark, fontWeight = FontWeight.Bold)
             StepPill(label = "3. GPS Fix", isCompleted = gpsDone)
         }
     }
@@ -447,7 +428,7 @@ private fun StepPill(
             modifier = Modifier
                 .size(20.dp)
                 .background(
-                    if (isCompleted) SuccessEmerald else SlateSteel.copy(alpha = 0.3f),
+                    if (isCompleted) LubricantAmber else SlateSteelDark,
                     CircleShape
                 ),
             contentAlignment = Alignment.Center
@@ -456,7 +437,7 @@ private fun StepPill(
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = BackgroundDark,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -466,7 +447,7 @@ private fun StepPill(
             text = label,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = if (isCompleted) FontWeight.Bold else FontWeight.Normal,
-            color = if (isCompleted) SuccessEmerald else SlateSteel
+            color = if (isCompleted) LubricantAmber else SlateSteelLight
         )
     }
 }
@@ -482,12 +463,12 @@ private fun VerificationActionCard(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = if (isCompleted) SuccessEmerald.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surface
+            containerColor = if (isCompleted) LubricantAmber.copy(alpha = 0.08f) else SurfaceDark
         ),
         shape = RoundedCornerShape(14.dp),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            if (isCompleted) SuccessEmerald.copy(alpha = 0.5f) else SlateSteel.copy(alpha = 0.2f)
+            if (isCompleted) LubricantAmber.copy(alpha = 0.5f) else SlateSteelDark
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -506,7 +487,7 @@ private fun VerificationActionCard(
                     modifier = Modifier
                         .size(42.dp)
                         .background(
-                            if (isCompleted) SuccessEmerald.copy(alpha = 0.2f) else EnolNavy.copy(alpha = 0.1f),
+                            if (isCompleted) LubricantAmber.copy(alpha = 0.2f) else SlateSteelDark,
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -514,7 +495,7 @@ private fun VerificationActionCard(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = if (isCompleted) SuccessEmerald else EnolNavy,
+                        tint = if (isCompleted) LubricantAmber else SlateSteelLight,
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -523,12 +504,13 @@ private fun VerificationActionCard(
                     Text(
                         text = title,
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = OnSurfaceDark
                     )
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (isCompleted) SuccessEmerald else SlateSteel,
+                        color = if (isCompleted) LubricantAmber else SlateSteelLight,
                         fontSize = 11.sp
                     )
                 }
@@ -537,7 +519,7 @@ private fun VerificationActionCard(
             OutlinedButton(
                 onClick = onClick,
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = if (isCompleted) SuccessEmerald else EnolNavy
+                    contentColor = if (isCompleted) LubricantAmber else SlateSteelLight
                 ),
                 shape = RoundedCornerShape(8.dp)
             ) {
@@ -562,12 +544,12 @@ private fun GpsStatusCard(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = if (isLocked) SuccessEmerald.copy(alpha = 0.08f) else WarningAmber.copy(alpha = 0.08f)
+            containerColor = if (isLocked) LubricantAmber.copy(alpha = 0.08f) else SurfaceDark
         ),
         shape = RoundedCornerShape(14.dp),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            if (isLocked) SuccessEmerald.copy(alpha = 0.5f) else WarningAmber.copy(alpha = 0.4f)
+            if (isLocked) LubricantAmber.copy(alpha = 0.5f) else SlateSteelDark
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -586,14 +568,14 @@ private fun GpsStatusCard(
                     modifier = Modifier
                         .size(42.dp)
                         .background(
-                            if (isLocked) SuccessEmerald.copy(alpha = 0.2f) else WarningAmber.copy(alpha = 0.2f),
+                            if (isLocked) LubricantAmber.copy(alpha = 0.2f) else SlateSteelDark,
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     if (isAcquiring) {
                         CircularProgressIndicator(
-                            color = WarningAmber,
+                            color = LubricantAmber,
                             modifier = Modifier.size(20.dp),
                             strokeWidth = 2.dp
                         )
@@ -601,7 +583,7 @@ private fun GpsStatusCard(
                         Icon(
                             imageVector = if (isLocked) Icons.Default.GpsFixed else Icons.Default.GpsNotFixed,
                             contentDescription = "GPS Status",
-                            tint = if (isLocked) SuccessEmerald else WarningAmber,
+                            tint = if (isLocked) LubricantAmber else SlateSteelLight,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -611,7 +593,8 @@ private fun GpsStatusCard(
                     Text(
                         text = if (isLocked) "GPS Lock Acquired" else if (isAcquiring) "Triangulating GPS..." else "GPS Lock Required",
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = OnSurfaceDark
                     )
                     Text(
                         text = if (isLocked && latitude != null && longitude != null) {
@@ -622,7 +605,7 @@ private fun GpsStatusCard(
                             "Press to acquire high-accuracy satellite fix"
                         },
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (isLocked) SuccessEmerald else SlateSteel,
+                        color = if (isLocked) LubricantAmber else SlateSteelLight,
                         fontSize = 11.sp
                     )
                 }
@@ -635,7 +618,7 @@ private fun GpsStatusCard(
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = "Refresh GPS",
-                    tint = if (isLocked) SuccessEmerald else WarningAmber
+                    tint = if (isLocked) LubricantAmber else SlateSteelLight
                 )
             }
         }

@@ -38,44 +38,13 @@ fun LeaderboardScreen(
     var showRulesDialog by remember { mutableStateOf(false) }
     val numberFormatter = NumberFormat.getNumberInstance(Locale.US)
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Sales Races & Leaderboards",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = OnSurfaceDark
-                        )
-                        Text(
-                            text = "National Sales Gamification & Trophies",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = SlateSteelLight
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = OnSurfaceDark)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { showRulesDialog = true }) {
-                        Icon(imageVector = Icons.Default.Info, contentDescription = "Rules", tint = LubricantAmber)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceDark)
-            )
-        },
-        containerColor = BackgroundDark,
+    Box(
         modifier = modifier
-    ) { paddingValues ->
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(grid_4),
             verticalArrangement = Arrangement.spacedBy(grid_4)
         ) {
@@ -214,7 +183,7 @@ fun LeaderboardScreen(
                                         text = "1st: Honda CD 70cc + PKR 50K | 2nd: PKR 75K | 3rd: PKR 35K",
                                         style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.Bold,
-                                        color = SuccessEmerald
+                                        color = OnSurfaceDark
                                     )
                                 }
                             }

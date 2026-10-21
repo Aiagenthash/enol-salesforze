@@ -3,6 +3,7 @@ package com.enol.salesforze.ui.auth
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -30,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.enol.salesforze.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
@@ -51,25 +51,22 @@ fun LoginScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .verticalScroll(scrollState)
                     .padding(horizontal = 24.dp, vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Header Logo
+                // Sleek Brand Emblem
                 Surface(
-                    shape = CircleShape,
+                    shape = RoundedCornerShape(12.dp),
                     color = LubricantAmber,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .border(3.dp, LubricantAmberLight.copy(alpha = 0.5f), CircleShape)
+                    modifier = Modifier.size(56.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = "E",
                             fontWeight = FontWeight.Black,
-                            fontSize = 42.sp,
+                            fontSize = 32.sp,
                             color = EnolNavyDark
                         )
                     }
@@ -79,25 +76,24 @@ fun LoginScreen(
 
                 Text(
                     text = "ENOL SALESFORZE",
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 1.sp,
                     color = OnSurfaceDark
                 )
 
                 Text(
-                    text = "Enterprise Lubricants & Field Force Automation",
+                    text = "Enterprise Distribution",
                     style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(top = 4.dp)
+                    color = SlateSteelLight
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Card Container
+                // Login Form Card
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = SurfaceDark),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(1.dp, SlateSteelDark, RoundedCornerShape(16.dp))
@@ -105,28 +101,14 @@ fun LoginScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(24.dp)
+                            .padding(20.dp)
                     ) {
-                        Text(
-                            text = "Sign In to Your Account",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = OnSurfaceDark
-                        )
-
-                        Text(
-                            text = "Enter your enterprise credentials or use quick role login",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = SlateSteelLight,
-                            modifier = Modifier.padding(bottom = 20.dp)
-                        )
-
-                        // Error message
+                        // Error message banner
                         if (uiState.errorMessage != null) {
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
-                                color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+                                color = ErrorCrimson.copy(alpha = 0.15f),
+                                border = BorderStroke(1.dp, ErrorCrimson),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(bottom = 16.dp)
@@ -138,14 +120,14 @@ fun LoginScreen(
                                     Icon(
                                         imageVector = Icons.Default.Warning,
                                         contentDescription = "Error",
-                                        tint = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp)
+                                        tint = ErrorCrimson,
+                                        modifier = Modifier.size(16.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = uiState.errorMessage ?: "",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.error
+                                        color = ErrorCrimson
                                     )
                                 }
                             }
@@ -157,7 +139,7 @@ fun LoginScreen(
                             onValueChange = { viewModel.onEmailChange(it) },
                             label = { Text("Work Email") },
                             leadingIcon = {
-                                Icon(Icons.Default.Email, contentDescription = "Email", tint = LubricantAmber)
+                                Icon(Icons.Default.Email, contentDescription = null, tint = SlateSteelLight)
                             },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(
@@ -178,7 +160,7 @@ fun LoginScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
 
                         // Password Field
                         OutlinedTextField(
@@ -186,13 +168,13 @@ fun LoginScreen(
                             onValueChange = { viewModel.onPasswordChange(it) },
                             label = { Text("Password") },
                             leadingIcon = {
-                                Icon(Icons.Default.Lock, contentDescription = "Password", tint = LubricantAmber)
+                                Icon(Icons.Default.Lock, contentDescription = null, tint = SlateSteelLight)
                             },
                             trailingIcon = {
                                 IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
                                     Icon(
                                         imageVector = if (uiState.isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                        contentDescription = "Toggle password visibility",
+                                        contentDescription = null,
                                         tint = SlateSteelLight
                                     )
                                 }
@@ -220,9 +202,9 @@ fun LoginScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                        // Login Button
+                        // Single Spot Color CTA
                         Button(
                             onClick = {
                                 focusManager.clearFocus()
@@ -233,102 +215,76 @@ fun LoginScreen(
                                 containerColor = LubricantAmber,
                                 contentColor = EnolNavyDark
                             ),
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp)
+                                .height(48.dp)
                         ) {
                             if (uiState.isLoading) {
                                 CircularProgressIndicator(
                                     color = EnolNavyDark,
-                                    modifier = Modifier.size(24.dp),
-                                    strokeWidth = 2.5.dp
+                                    modifier = Modifier.size(20.dp),
+                                    strokeWidth = 2.dp
                                 )
                             } else {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.Login, contentDescription = null, modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "SIGN IN",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp
-                                    )
-                                }
+                                Text(
+                                    text = "Sign In",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         HorizontalDivider(color = SlateSteelDark)
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Quick Role Login Pills
+                        // Quick Role Pills - Clean, compact monochrome chips
                         Text(
-                            text = "Quick Role Login (Pre-configured):",
+                            text = "Quick Demo Sign-In:",
                             style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.SemiBold,
                             color = SlateSteelLight
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                             OutlinedButton(
-                                onClick = {
-                                    viewModel.quickFill("director@enollubricants.com", "DIRECTOR")
-                                },
+                                onClick = { viewModel.quickFill("director@enollubricants.com", "DIRECTOR") },
                                 shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = LubricantAmber),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.5f)),
-                                modifier = Modifier.fillMaxWidth()
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = OnSurfaceDark),
+                                border = BorderStroke(1.dp, SlateSteelDark),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text("Executive Director / Admin", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                    Text("Full Rights", fontSize = 11.sp, color = SlateSteelLight)
-                                }
+                                Text("Director", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
 
                             OutlinedButton(
-                                onClick = {
-                                    viewModel.quickFill("asm.lahore@enollubricants.com", "ASM")
-                                },
+                                onClick = { viewModel.quickFill("asm.lahore@enollubricants.com", "ASM") },
                                 shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = EnolNavyLight),
-                                border = BorderStroke(1.dp, EnolNavyLight.copy(alpha = 0.5f)),
-                                modifier = Modifier.fillMaxWidth()
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = OnSurfaceDark),
+                                border = BorderStroke(1.dp, SlateSteelDark),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text("Area Sales Manager (Lahore)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                    Text("Approval Center", fontSize = 11.sp, color = SlateSteelLight)
-                                }
+                                Text("ASM", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
 
                             OutlinedButton(
-                                onClick = {
-                                    viewModel.quickFill("rep.hamza@enollubricants.com", "SALES_REP")
-                                },
+                                onClick = { viewModel.quickFill("rep.hamza@enollubricants.com", "SALES_REP") },
                                 shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = SuccessEmerald),
-                                border = BorderStroke(1.dp, SuccessEmerald.copy(alpha = 0.5f)),
-                                modifier = Modifier.fillMaxWidth()
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = OnSurfaceDark),
+                                border = BorderStroke(1.dp, SlateSteelDark),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text("Field Sales Rep (Hamza)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                    Text("Field Operations", fontSize = 11.sp, color = SlateSteelLight)
-                                }
+                                Text("Sales Rep", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -336,20 +292,20 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Cloud Status
+                // Single-spot subtle cloud status
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
+                            .size(6.dp)
                             .clip(CircleShape)
-                            .background(SuccessEmerald)
+                            .background(LubricantAmber)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Connected to Render Cloud & Supabase DB",
+                        text = "Cloud Connected",
                         style = MaterialTheme.typography.labelSmall,
                         color = SlateSteelLight
                     )

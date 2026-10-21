@@ -87,7 +87,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
 import com.enol.salesforze.ui.theme.EnolNavy
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
 import com.enol.salesforze.ui.theme.EnolNavyLight
 import com.enol.salesforze.ui.theme.ErrorCrimson
 import com.enol.salesforze.ui.theme.LubricantAmber
@@ -193,58 +203,11 @@ fun DistrictMapContent(
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Pakistan District GIS & Territory",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = if (uiState.renderingMode == MapRenderingMode.KPI_HEATMAP) {
-                                "MTD Volume KPI Heatmap • ${uiState.districts.size} Districts"
-                            } else {
-                                "Sales Force Territory Alignment • ${uiState.districts.size} Districts"
-                            },
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                navigationIcon = {
-                    if (onNavigateBack != null) {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
-                            )
-                        }
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onRefresh) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Reload Districts"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
             // Google Maps Surface
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
@@ -599,7 +562,6 @@ fun DistrictMapContent(
             }
         }
     }
-}
 
 /**
  * Small indicator pill used inside the interactive map legend.

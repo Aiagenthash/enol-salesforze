@@ -230,8 +230,8 @@ private fun CreditHoldsTabContent(
                                 OutlinedButton(
                                     onClick = { onReject(order.id) },
                                     shape = RoundedCornerShape(grid_2),
-                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = ErrorCrimson),
-                                    border = androidx.compose.foundation.BorderStroke(1.dp, ErrorCrimson),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = SlateSteelLight),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, SlateSteelDark),
                                     contentPadding = PaddingValues(horizontal = grid_3, vertical = grid_1)
                                 ) {
                                     Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -242,12 +242,12 @@ private fun CreditHoldsTabContent(
                                 Button(
                                     onClick = { onApprove(order.id) },
                                     shape = RoundedCornerShape(grid_2),
-                                    colors = ButtonDefaults.buttonColors(containerColor = SuccessEmerald),
+                                    colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = BackgroundDark),
                                     contentPadding = PaddingValues(horizontal = grid_3, vertical = grid_1)
                                 ) {
-                                    Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                                    Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp), tint = BackgroundDark)
                                     Spacer(modifier = Modifier.width(grid_1))
-                                    Text("Release", style = MaterialTheme.typography.labelMedium, color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text("Release", style = MaterialTheme.typography.labelMedium, color = BackgroundDark, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -281,7 +281,7 @@ private fun ClientEnrollmentsTabContent(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = SurfaceContainerDark),
                     shape = RoundedCornerShape(grid_2),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF38BDF8).copy(alpha = 0.5f))
+                    border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.4f))
                 ) {
                     Column(
                         modifier = Modifier
@@ -301,15 +301,15 @@ private fun ClientEnrollmentsTabContent(
                             )
                             Surface(
                                 shape = RoundedCornerShape(grid_1),
-                                color = Color(0xFF38BDF8).copy(alpha = 0.2f),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF38BDF8))
+                                color = LubricantAmber.copy(alpha = 0.12f),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.5f))
                             ) {
                                 Text(
                                     text = client.approvalStatus,
                                     modifier = Modifier.padding(horizontal = grid_2, vertical = 2.dp),
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF38BDF8)
+                                    color = LubricantAmber
                                 )
                             }
                         }
@@ -337,8 +337,8 @@ private fun ClientEnrollmentsTabContent(
                             OutlinedButton(
                                 onClick = { onReject(client.id) },
                                 shape = RoundedCornerShape(grid_2),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = ErrorCrimson),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, ErrorCrimson),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = SlateSteelLight),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, SlateSteelDark),
                                 contentPadding = PaddingValues(horizontal = grid_3, vertical = grid_1)
                             ) {
                                 Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -351,12 +351,12 @@ private fun ClientEnrollmentsTabContent(
                             Button(
                                 onClick = { onApprove(client.id) },
                                 shape = RoundedCornerShape(grid_2),
-                                colors = ButtonDefaults.buttonColors(containerColor = SuccessEmerald),
+                                colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = BackgroundDark),
                                 contentPadding = PaddingValues(horizontal = grid_3, vertical = grid_1)
                             ) {
-                                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp), tint = BackgroundDark)
                                 Spacer(modifier = Modifier.width(grid_1))
-                                Text("Approve", style = MaterialTheme.typography.labelMedium, color = Color.White, fontWeight = FontWeight.Bold)
+                                Text("Approve", style = MaterialTheme.typography.labelMedium, color = BackgroundDark, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -395,7 +395,7 @@ private fun TadaClaimsTabContent(
                     shape = RoundedCornerShape(grid_2),
                     border = androidx.compose.foundation.BorderStroke(
                         1.dp,
-                        if (isFlagged) ErrorCrimson else LubricantAmber.copy(alpha = 0.5f)
+                        if (isFlagged) LubricantAmber else SlateSteelDark
                     )
                 ) {
                     Column(
@@ -417,18 +417,15 @@ private fun TadaClaimsTabContent(
 
                             Surface(
                                 shape = RoundedCornerShape(grid_1),
-                                color = if (isFlagged) ErrorCrimson.copy(alpha = 0.2f) else WarningAmber.copy(alpha = 0.2f),
-                                border = androidx.compose.foundation.BorderStroke(
-                                    1.dp,
-                                    if (isFlagged) ErrorCrimson else WarningAmber
-                                )
+                                color = LubricantAmber.copy(alpha = 0.12f),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.5f))
                             ) {
                                 Text(
-                                    text = if (isFlagged) "AUDIT FLAGGED (>10%)" else "PENDING AUDIT",
+                                    text = if (isFlagged) "FLAGGED (>10%)" else "PENDING",
                                     modifier = Modifier.padding(horizontal = grid_2, vertical = 2.dp),
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isFlagged) ErrorCrimson else WarningAmber
+                                    color = LubricantAmber
                                 )
                             }
                         }
@@ -441,9 +438,9 @@ private fun TadaClaimsTabContent(
                             color = SlateSteelLight
                         )
                         Text(
-                            text = "Variance: ${"%.1f".format(claim.variancePercentage)}% | Daily Allowance",
+                            text = "Variance: ${"%.1f".format(claim.variancePercentage)}%",
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (isFlagged) ErrorCrimson else SlateSteelLight
+                            color = SlateSteelLight
                         )
 
                         Spacer(modifier = Modifier.height(grid_2))
@@ -467,8 +464,8 @@ private fun TadaClaimsTabContent(
                                 OutlinedButton(
                                     onClick = { onReject(claim.id) },
                                     shape = RoundedCornerShape(grid_2),
-                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = ErrorCrimson),
-                                    border = androidx.compose.foundation.BorderStroke(1.dp, ErrorCrimson),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = SlateSteelLight),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, SlateSteelDark),
                                     contentPadding = PaddingValues(horizontal = grid_3, vertical = grid_1)
                                 ) {
                                     Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -479,12 +476,12 @@ private fun TadaClaimsTabContent(
                                 Button(
                                     onClick = { onApprove(claim.id) },
                                     shape = RoundedCornerShape(grid_2),
-                                    colors = ButtonDefaults.buttonColors(containerColor = SuccessEmerald),
+                                    colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = BackgroundDark),
                                     contentPadding = PaddingValues(horizontal = grid_3, vertical = grid_1)
                                 ) {
-                                    Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                                    Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp), tint = BackgroundDark)
                                     Spacer(modifier = Modifier.width(grid_1))
-                                    Text("Approve", style = MaterialTheme.typography.labelMedium, color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text("Approve", style = MaterialTheme.typography.labelMedium, color = BackgroundDark, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }

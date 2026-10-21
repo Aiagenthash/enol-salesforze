@@ -10,61 +10,61 @@ import androidx.compose.ui.graphics.Color
  * ENOL SALESFORZE - INDUSTRIAL AUTOMOTIVE LUBRICANT DESIGN TOKENS
  * ========================================================================= */
 
-// --- Primary: Enol Navy Palette ---
-val EnolNavy = Color(0xFF0A192F)          // Deep Industrial Navy
-val EnolNavyDark = Color(0xFF050C17)      // Dark Midnight Steel
-val EnolNavyLight = Color(0xFF1E3A5F)     // Marine Slate Navy
-val EnolNavyMuted = Color(0xFF2C4C74)     // Secondary Navy Accent
+// --- Core Dark Palette (Clean Obsidian & Slate) ---
+val EnolNavy = Color(0xFF090D16)          // Pure Midnight Background
+val EnolNavyDark = Color(0xFF060910)      // Deepest Obsidian
+val EnolNavyLight = Color(0xFF161F32)     // Elevated Container
+val EnolNavyMuted = Color(0xFF1D283E)     // Subtle Border Accent
 
-// --- Secondary: Lubricant Amber / Industrial Gold ---
-val LubricantAmber = Color(0xFFF5A623)     // Premium Engine Oil Amber
-val LubricantAmberDark = Color(0xFFD97706) // Heavy Duty Gear Oil Amber
-val LubricantAmberLight = Color(0xFFFCD34D)// Synthetic Golden Lube
-val LubricantAmberMuted = Color(0xFF78350F)// Deep Engine Resin
+// --- Single Spot Color: Premium Lubricant Amber Gold ---
+val LubricantAmber = Color(0xFFF5A623)     // Single Spot Color (Primary Accent & CTAs)
+val LubricantAmberDark = Color(0xFFD97706) // Pressed State
+val LubricantAmberLight = Color(0xFFFCD34D)// Highlight Glow
+val LubricantAmberMuted = Color(0xFF452B00)// Subtle Dark Accent
 
-// --- Tertiary: Industrial Slate Steel Palette ---
-val SlateSteel = Color(0xFF4A5568)         // Workshop Slate Steel
-val SlateSteelLight = Color(0xFF94A3B8)    // Machinery Brushed Aluminum
-val SlateSteelDark = Color(0xFF2D3748)     // Foundry Cast Iron
-val SlateSteelMuted = Color(0xFF64748B)    // Tooling Grey
+// --- Neutral Monochrome Palette ---
+val SlateSteel = Color(0xFF64748B)         // Muted Caption
+val SlateSteelLight = Color(0xFF94A3B8)    // Clean Secondary Text
+val SlateSteelDark = Color(0xFF1F293D)     // Subtle Hairline Borders
+val SlateSteelMuted = Color(0xFF475569)    // Disabled States
 
 // --- Surface & Background Palettes ---
 // Light
-val BackgroundLight = Color(0xFFF8FAFC)        // Clean Workshop Daylight
-val SurfaceLight = Color(0xFFFFFFFF)           // Crisp White Sheet
-val SurfaceContainerLight = Color(0xFFF1F5F9)  // Neutral Container Grey
+val BackgroundLight = Color(0xFFF8FAFC)
+val SurfaceLight = Color(0xFFFFFFFF)
+val SurfaceContainerLight = Color(0xFFF1F5F9)
 val SurfaceContainerHighLight = Color(0xFFE2E8F0)
 val OnSurfaceLight = Color(0xFF0F172A)
 val OnBackgroundLight = Color(0xFF0F172A)
 
-// Dark
-val BackgroundDark = Color(0xFF0B1320)         // Dark Workshop Night
-val SurfaceDark = Color(0xFF0F1B2E)            // Dark Cabinet Surface
-val SurfaceContainerDark = Color(0xFF152238)   // Industrial Deep Dock
-val SurfaceContainerHighDark = Color(0xFF1E2D4A)
-val OnSurfaceDark = Color(0xFFF1F5F9)
-val OnBackgroundDark = Color(0xFFF1F5F9)
+// Dark (Modern Minimalist Graphite)
+val BackgroundDark = Color(0xFF090D16)
+val SurfaceDark = Color(0xFF111726)
+val SurfaceContainerDark = Color(0xFF161F32)
+val SurfaceContainerHighDark = Color(0xFF1D283E)
+val OnSurfaceDark = Color(0xFFF8FAFC)
+val OnBackgroundDark = Color(0xFFF8FAFC)
 
-// --- Operational Status Colors ---
-val SuccessEmerald = Color(0xFF2ECC71)
-val SuccessEmeraldContainer = Color(0xFFD4EDDA)
-val OnSuccessEmerald = Color(0xFFFFFFFF)
-val OnSuccessEmeraldContainer = Color(0xFF155724)
+// --- Operational Status Colors (Aligned with Single Spot Color) ---
+val SuccessEmerald = Color(0xFFF5A623)     // Aligned to Spot Color for unified aesthetic
+val SuccessEmeraldContainer = Color(0xFF261D0A)
+val OnSuccessEmerald = Color(0xFF060910)
+val OnSuccessEmeraldContainer = Color(0xFFFCD34D)
 
-val WarningAmber = Color(0xFFF39C12)
-val WarningAmberContainer = Color(0xFFFFF3CD)
-val OnWarningAmber = Color(0xFFFFFFFF)
-val OnWarningAmberContainer = Color(0xFF856404)
+val WarningAmber = Color(0xFFF5A623)       // Aligned to Spot Color
+val WarningAmberContainer = Color(0xFF261D0A)
+val OnWarningAmber = Color(0xFF060910)
+val OnWarningAmberContainer = Color(0xFFFCD34D)
 
-val ErrorCrimson = Color(0xFFE74C3C)
-val ErrorCrimsonContainer = Color(0xFFF8D7DA)
+val ErrorCrimson = Color(0xFFEF4444)       // Dedicated error red
+val ErrorCrimsonContainer = Color(0xFF2E1010)
 val OnErrorCrimson = Color(0xFFFFFFFF)
-val OnErrorCrimsonContainer = Color(0xFF721C24)
+val OnErrorCrimsonContainer = Color(0xFFFCA5A5)
 
-val InfoSky = Color(0xFF3498DB)
-val InfoSkyContainer = Color(0xFFD1ECF1)
-val OnInfoSky = Color(0xFFFFFFFF)
-val OnInfoSkyContainer = Color(0xFF0C5460)
+val InfoSky = Color(0xFF94A3B8)            // Neutral slate
+val InfoSkyContainer = Color(0xFF161F32)
+val OnInfoSky = Color(0xFFF8FAFC)
+val OnInfoSkyContainer = Color(0xFF94A3B8)
 
 // --- High-Contrast Outdoor Field Readability Colors ---
 // Tuned for direct blinding sunlight at petrol pumps and outdoor auto repair workshops
@@ -114,30 +114,30 @@ val EnolLightColorScheme = lightColorScheme(
 )
 
 val EnolDarkColorScheme = darkColorScheme(
-    primary = Color(0xFF90CAF9),
+    primary = LubricantAmber,
     onPrimary = EnolNavyDark,
-    primaryContainer = EnolNavyLight,
-    onPrimaryContainer = Color(0xFFD6E4FF),
+    primaryContainer = SurfaceContainerDark,
+    onPrimaryContainer = OnSurfaceDark,
     secondary = LubricantAmber,
-    onSecondary = Color(0xFF452B00),
-    secondaryContainer = LubricantAmberDark,
-    onSecondaryContainer = LubricantAmberLight,
+    onSecondary = EnolNavyDark,
+    secondaryContainer = SurfaceContainerHighDark,
+    onSecondaryContainer = OnSurfaceDark,
     tertiary = SlateSteelLight,
-    onTertiary = Color(0xFF1E293B),
-    tertiaryContainer = SlateSteel,
-    onTertiaryContainer = Color(0xFFF1F5F9),
+    onTertiary = EnolNavyDark,
+    tertiaryContainer = SurfaceContainerDark,
+    onTertiaryContainer = OnSurfaceDark,
     background = BackgroundDark,
-    onBackground = OnBackgroundDark,
+    onBackground = OnSurfaceDark,
     surface = SurfaceDark,
     onSurface = OnSurfaceDark,
     surfaceVariant = SurfaceContainerDark,
-    onSurfaceVariant = Color(0xFF94A3B8),
-    outline = Color(0xFF475569),
-    outlineVariant = Color(0xFF334155),
-    error = Color(0xFFF87171),
-    onError = Color(0xFF450A0A),
-    errorContainer = Color(0xFF7F1D1D),
-    onErrorContainer = Color(0xFFFECACA)
+    onSurfaceVariant = SlateSteelLight,
+    outline = SlateSteelDark,
+    outlineVariant = Color(0xFF161F32),
+    error = ErrorCrimson,
+    onError = Color.White,
+    errorContainer = ErrorCrimsonContainer,
+    onErrorContainer = Color(0xFFFCA5A5)
 )
 
 val EnolHighContrastLightColorScheme = lightColorScheme(

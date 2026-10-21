@@ -63,6 +63,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
 import com.enol.salesforze.ui.theme.EnolNavy
 import com.enol.salesforze.ui.theme.ErrorCrimson
 import com.enol.salesforze.ui.theme.LubricantAmber
@@ -108,47 +113,14 @@ fun EndShiftScreen(
         return
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = if (uiState.currentStep == ShiftStep.SHIFT_SUMMARY) "Shift Summary" else "End Field Day",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "Enol Shift Reconciliation",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LubricantAmber
-                        )
-                    }
-                },
-                navigationIcon = {
-                    if (onNavigateBack != null && uiState.currentStep != ShiftStep.SHIFT_SUMMARY) {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = EnolNavy
-                )
-            )
-        }
-    ) { paddingValues ->
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
                 .padding(grid_4)
         ) {
@@ -373,7 +345,7 @@ fun EndShiftScreen(
                 Text(
                     text = "Total Day Distance: +$deltaKm km traveled",
                     style = MaterialTheme.typography.bodySmall,
-                    color = SuccessEmerald,
+                    color = LubricantAmber,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = grid_2)
                 )
@@ -391,10 +363,10 @@ fun EndShiftScreen(
                 onClick = viewModel::submitEndShift,
                 enabled = canClose,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = ErrorCrimson,
-                    contentColor = Color.White,
-                    disabledContainerColor = SlateSteel.copy(alpha = 0.2f),
-                    disabledContentColor = SlateSteelLight
+                    containerColor = LubricantAmber,
+                    contentColor = BackgroundDark,
+                    disabledContainerColor = SurfaceDark,
+                    disabledContentColor = SlateSteelDark
                 ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
@@ -403,7 +375,7 @@ fun EndShiftScreen(
             ) {
                 if (uiState.isSubmitting) {
                     CircularProgressIndicator(
-                        color = Color.White,
+                        color = BackgroundDark,
                         modifier = Modifier.size(24.dp),
                         strokeWidth = 2.5.dp
                     )
@@ -442,7 +414,7 @@ private fun ShiftCompletedSummaryCard(
     onDone: () -> Unit
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation_2),
         modifier = Modifier.fillMaxWidth()
@@ -456,13 +428,13 @@ private fun ShiftCompletedSummaryCard(
             Box(
                 modifier = Modifier
                     .size(64.dp)
-                    .background(SuccessEmerald.copy(alpha = 0.15f), CircleShape),
+                    .background(LubricantAmber.copy(alpha = 0.15f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Success",
-                    tint = SuccessEmerald,
+                    tint = LubricantAmber,
                     modifier = Modifier.size(36.dp)
                 )
             }
@@ -473,12 +445,12 @@ private fun ShiftCompletedSummaryCard(
                 text = "Shift Concluded Successfully",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = EnolNavy
+                color = OnSurfaceDark
             )
             Text(
                 text = "GPS tracking stopped. Attendance record and routes queued for sync.",
                 style = MaterialTheme.typography.bodySmall,
-                color = SlateSteel,
+                color = SlateSteelDark,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = grid_1)
             )
@@ -490,12 +462,12 @@ private fun ShiftCompletedSummaryCard(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "Total Hours", style = MaterialTheme.typography.bodySmall, color = SlateSteel)
+                    Text(text = "Total Hours", style = MaterialTheme.typography.bodySmall, color = SlateSteelDark)
                     Text(
                         text = "%.2f hrs".format(totalHours),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = EnolNavy
+                        color = OnSurfaceDark
                     )
                 }
 
@@ -503,11 +475,11 @@ private fun ShiftCompletedSummaryCard(
                     modifier = Modifier
                         .width(1.dp)
                         .height(40.dp)
-                        .background(SlateSteel.copy(alpha = 0.2f))
+                        .background(SlateSteelDark.copy(alpha = 0.2f))
                 )
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "Distance Driven", style = MaterialTheme.typography.bodySmall, color = SlateSteel)
+                    Text(text = "Distance Driven", style = MaterialTheme.typography.bodySmall, color = SlateSteelDark)
                     Text(
                         text = "%.1f km".format(totalKm),
                         style = MaterialTheme.typography.titleLarge,
@@ -522,8 +494,8 @@ private fun ShiftCompletedSummaryCard(
             Button(
                 onClick = onDone,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = EnolNavy,
-                    contentColor = Color.White
+                    containerColor = LubricantAmber,
+                    contentColor = BackgroundDark
                 ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier

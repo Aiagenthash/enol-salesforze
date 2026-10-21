@@ -73,6 +73,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.enol.salesforze.data.local.entities.TadaClaimEntity
 import com.enol.salesforze.ui.attendance.CameraCaptureView
 import com.enol.salesforze.ui.attendance.CameraOverlayType
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
 import com.enol.salesforze.ui.theme.EnolNavy
 import com.enol.salesforze.ui.theme.ErrorCrimson
 import com.enol.salesforze.ui.theme.LubricantAmber
@@ -130,7 +135,7 @@ fun TadaClaimScreen(
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(grid_6)) {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceDark),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -141,7 +146,7 @@ fun TadaClaimScreen(
                         Icon(
                             imageVector = if (uiState.isDiscrepancyFlagged) Icons.Default.Warning else Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = if (uiState.isDiscrepancyFlagged) WarningAmber else SuccessEmerald,
+                            tint = LubricantAmber,
                             modifier = Modifier.size(54.dp)
                         )
                         Spacer(modifier = Modifier.height(grid_3))
@@ -149,7 +154,7 @@ fun TadaClaimScreen(
                             text = if (uiState.isDiscrepancyFlagged) "TADA Claim Flagged for Audit" else "TADA Claim Submitted",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = EnolNavy
+                            color = OnSurfaceDark
                         )
                         Spacer(modifier = Modifier.height(grid_2))
                         Text(
@@ -160,7 +165,7 @@ fun TadaClaimScreen(
                                 "Total Claim: PKR %,.0f. GPS verification verified (%.1f%% variance). Queued for reimbursement."
                                     .format(uiState.totalClaimAmount, uiState.variancePercentage),
                             style = MaterialTheme.typography.bodySmall,
-                            color = SlateSteel,
+                            color = SlateSteelLight,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(grid_6))
@@ -169,11 +174,14 @@ fun TadaClaimScreen(
                                 viewModel.resetForm()
                                 onClaimSubmitted()
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = EnolNavy),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = LubricantAmber,
+                                contentColor = BackgroundDark
+                            ),
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = "Return to Dashboard", color = Color.White, fontWeight = FontWeight.Bold)
+                            Text(text = "Return to Dashboard", color = BackgroundDark, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -181,45 +189,14 @@ fun TadaClaimScreen(
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "TADA Expense Claim",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "Odometer & GPS Reconciliation",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LubricantAmber
-                        )
-                    }
-                },
-                navigationIcon = {
-                    if (onNavigateBack != null) {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = EnolNavy)
-            )
-        }
-    ) { paddingValues ->
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
                 .padding(grid_4)
         ) {
@@ -245,7 +222,7 @@ fun TadaClaimScreen(
 
             // 1. Shift Telemetry Card
             Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                colors = CardDefaults.cardColors(containerColor = SurfaceDark),
                 shape = RoundedCornerShape(14.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = elevation_2),
                 modifier = Modifier.fillMaxWidth()
@@ -260,7 +237,7 @@ fun TadaClaimScreen(
                             text = "Shift Date: ${uiState.claimDate}",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = EnolNavy
+                            color = OnSurfaceDark
                         )
                         Surface(
                             shape = RoundedCornerShape(6.dp),
@@ -283,21 +260,22 @@ fun TadaClaimScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            Text(text = "Starting Odometer", style = MaterialTheme.typography.bodySmall, color = SlateSteel)
+                            Text(text = "Starting Odometer", style = MaterialTheme.typography.bodySmall, color = SlateSteelLight)
                             Text(
                                 text = "${uiState.startOdometer.toInt()} km",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = OnSurfaceDark
                             )
                         }
 
                         Column(horizontalAlignment = Alignment.End) {
-                            Text(text = "GPS Trace Distance", style = MaterialTheme.typography.bodySmall, color = SlateSteel)
+                            Text(text = "GPS Trace Distance", style = MaterialTheme.typography.bodySmall, color = SlateSteelLight)
                             Text(
                                 text = "%.1f km".format(uiState.gpsCalculatedKm),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = SuccessEmerald
+                                color = LubricantAmber
                             )
                         }
                     }
@@ -307,7 +285,7 @@ fun TadaClaimScreen(
             Spacer(modifier = Modifier.height(grid_4))
 
             // 2. Closing Odometer Input & Photo
-            Text(text = "CLOSING ODOMETER VERIFICATION", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = SlateSteel)
+            Text(text = "CLOSING ODOMETER VERIFICATION", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = SlateSteelLight)
             Spacer(modifier = Modifier.height(grid_1))
 
             OutlinedTextField(
@@ -319,19 +297,27 @@ fun TadaClaimScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = LubricantAmber,
+                    unfocusedBorderColor = SlateSteelDark,
+                    focusedLabelColor = LubricantAmber,
+                    unfocusedLabelColor = SlateSteelLight,
+                    focusedTextColor = OnSurfaceDark,
+                    unfocusedTextColor = OnSurfaceDark
+                )
             )
 
             Spacer(modifier = Modifier.height(grid_2))
 
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = if (uiState.watermarkedOdometerFile != null) SuccessEmerald.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surface
+                    containerColor = if (uiState.watermarkedOdometerFile != null) LubricantAmber.copy(alpha = 0.08f) else SurfaceDark
                 ),
                 shape = RoundedCornerShape(12.dp),
                 border = androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    if (uiState.watermarkedOdometerFile != null) SuccessEmerald.copy(alpha = 0.5f) else SlateSteel.copy(alpha = 0.2f)
+                    if (uiState.watermarkedOdometerFile != null) LubricantAmber.copy(alpha = 0.5f) else SlateSteelDark
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -347,7 +333,7 @@ fun TadaClaimScreen(
                             modifier = Modifier
                                 .size(40.dp)
                                 .background(
-                                    if (uiState.watermarkedOdometerFile != null) SuccessEmerald.copy(alpha = 0.2f) else EnolNavy.copy(alpha = 0.1f),
+                                    if (uiState.watermarkedOdometerFile != null) LubricantAmber.copy(alpha = 0.2f) else SlateSteelDark,
                                     CircleShape
                                 ),
                             contentAlignment = Alignment.Center
@@ -358,7 +344,7 @@ fun TadaClaimScreen(
                                 Icon(
                                     imageVector = Icons.Default.CameraAlt,
                                     contentDescription = null,
-                                    tint = if (uiState.watermarkedOdometerFile != null) SuccessEmerald else EnolNavy
+                                    tint = if (uiState.watermarkedOdometerFile != null) LubricantAmber else SlateSteelLight
                                 )
                             }
                         }
@@ -367,12 +353,13 @@ fun TadaClaimScreen(
                             Text(
                                 text = if (uiState.watermarkedOdometerFile != null) "Closing Odometer Attached" else "Rear Camera Odometer Photo *",
                                 style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = OnSurfaceDark
                             )
                             Text(
                                 text = if (uiState.watermarkedOdometerFile != null) "Watermarked WebP (<200KB)" else "Mandatory visual mileage proof",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = SlateSteel,
+                                color = SlateSteelLight,
                                 fontSize = 11.sp
                             )
                         }
@@ -380,7 +367,8 @@ fun TadaClaimScreen(
 
                     OutlinedButton(
                         onClick = { cameraMode = "ODOMETER" },
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = LubricantAmber)
                     ) {
                         Text(text = if (uiState.watermarkedOdometerFile != null) "Retake" else "Capture", fontSize = 12.sp)
                     }
@@ -420,19 +408,19 @@ fun TadaClaimScreen(
                     }
                 } else {
                     Card(
-                        colors = CardDefaults.cardColors(containerColor = SuccessEmerald.copy(alpha = 0.08f)),
+                        colors = CardDefaults.cardColors(containerColor = LubricantAmber.copy(alpha = 0.08f)),
                         shape = RoundedCornerShape(12.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, SuccessEmerald.copy(alpha = 0.4f)),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.4f)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(modifier = Modifier.padding(grid_3), verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = SuccessEmerald, modifier = Modifier.size(24.dp))
+                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = LubricantAmber, modifier = Modifier.size(24.dp))
                             Spacer(modifier = Modifier.width(grid_2))
                             Text(
                                 text = "GPS Telemetry Verified • Variance: %.1f%% (Within 10%% allowable threshold)".format(uiState.variancePercentage),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.SemiBold,
-                                color = SuccessEmerald
+                                color = LubricantAmber
                             )
                         }
                     }
@@ -442,11 +430,11 @@ fun TadaClaimScreen(
             Spacer(modifier = Modifier.height(grid_4))
 
             // 4. Daily Allowance & Expense Details
-            Text(text = "ALLOWANCE & EXPENSES BREAKDOWN", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = SlateSteel)
+            Text(text = "ALLOWANCE & EXPENSES BREAKDOWN", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = SlateSteelLight)
             Spacer(modifier = Modifier.height(grid_1))
 
             Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                colors = CardDefaults.cardColors(containerColor = SurfaceDark),
                 shape = RoundedCornerShape(14.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = elevation_2),
                 modifier = Modifier.fillMaxWidth()
@@ -461,12 +449,13 @@ fun TadaClaimScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.LocalGasStation, contentDescription = null, tint = LubricantAmber, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(grid_1))
-                            Text(text = "Fuel Allowance (%.1f km)".format(uiState.odometerDeltaKm), style = MaterialTheme.typography.bodySmall)
+                            Text(text = "Fuel Allowance (%.1f km)".format(uiState.odometerDeltaKm), style = MaterialTheme.typography.bodySmall, color = OnSurfaceDark)
                         }
                         Text(
                             text = "PKR %,.0f".format(uiState.fuelClaimAmount),
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = OnSurfaceDark
                         )
                     }
 
@@ -479,17 +468,18 @@ fun TadaClaimScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Hotel, contentDescription = null, tint = EnolNavy, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.Hotel, contentDescription = null, tint = LubricantAmber, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(grid_1))
                             Column {
                                 Text(
                                     text = if (uiState.isOutstationNightStay) "Outstation / Night Stay DA" else "Local Field Shift DA",
-                                    style = MaterialTheme.typography.bodySmall
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = OnSurfaceDark
                                 )
                                 Text(
                                     text = if (uiState.isOutstationNightStay) "PKR %,.0f rate (Hotel bill required)".format(uiState.outstationNightAllowance) else "PKR %,.0f local standard".format(uiState.localDailyAllowance),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = SlateSteel,
+                                    color = SlateSteelLight,
                                     fontSize = 10.sp
                                 )
                             }
@@ -498,7 +488,12 @@ fun TadaClaimScreen(
                         Switch(
                             checked = uiState.isOutstationNightStay,
                             onCheckedChange = viewModel::toggleOutstationNightStay,
-                            colors = SwitchDefaults.colors(checkedThumbColor = LubricantAmber, checkedTrackColor = EnolNavy)
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = LubricantAmber,
+                                checkedTrackColor = SurfaceContainerDark,
+                                uncheckedThumbColor = SlateSteelLight,
+                                uncheckedTrackColor = SurfaceDark
+                            )
                         )
                     }
 
@@ -508,6 +503,7 @@ fun TadaClaimScreen(
                             OutlinedButton(
                                 onClick = { cameraMode = "HOTEL" },
                                 shape = RoundedCornerShape(8.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = LubricantAmber),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(Icons.Default.CameraAlt, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -531,11 +527,19 @@ fun TadaClaimScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(10.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = LubricantAmber,
+                            unfocusedBorderColor = SlateSteelDark,
+                            focusedLabelColor = LubricantAmber,
+                            unfocusedLabelColor = SlateSteelLight,
+                            focusedTextColor = OnSurfaceDark,
+                            unfocusedTextColor = OnSurfaceDark
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(grid_3))
-                    HorizontalDivider(color = SlateSteel.copy(alpha = 0.15f))
+                    HorizontalDivider(color = SlateSteelDark)
                     Spacer(modifier = Modifier.height(grid_2))
 
                     // Total Claim Sum
@@ -548,7 +552,7 @@ fun TadaClaimScreen(
                             text = "TOTAL REIMBURSEMENT",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = EnolNavy
+                            color = OnSurfaceDark
                         )
                         Text(
                             text = "PKR %,.0f".format(uiState.totalClaimAmount),
@@ -572,8 +576,10 @@ fun TadaClaimScreen(
                 onClick = viewModel::submitTadaClaim,
                 enabled = canSubmit,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (uiState.isDiscrepancyFlagged) WarningAmber else LubricantAmber,
-                    contentColor = EnolNavy
+                    containerColor = LubricantAmber,
+                    contentColor = BackgroundDark,
+                    disabledContainerColor = SurfaceDark,
+                    disabledContentColor = SlateSteelDark
                 ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
@@ -581,7 +587,7 @@ fun TadaClaimScreen(
                     .height(52.dp)
             ) {
                 if (uiState.isSubmitting) {
-                    CircularProgressIndicator(color = EnolNavy, modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(color = BackgroundDark, modifier = Modifier.size(24.dp))
                 } else {
                     Text(
                         text = if (uiState.isDiscrepancyFlagged) "SUBMIT CLAIM (WITH AUDIT FLAG)" else "SUBMIT TADA EXPENSE CLAIM",
@@ -598,7 +604,7 @@ fun TadaClaimScreen(
                     text = "RECENT TADA SUBMISSIONS",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
-                    color = SlateSteel
+                    color = SlateSteelLight
                 )
                 Spacer(modifier = Modifier.height(grid_2))
 
@@ -614,9 +620,9 @@ fun TadaClaimScreen(
 @Composable
 private fun TadaClaimHistoryCard(claim: TadaClaimEntity) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
         shape = RoundedCornerShape(10.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, SlateSteel.copy(alpha = 0.15f)),
+        border = androidx.compose.foundation.BorderStroke(1.dp, SlateSteelDark),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -627,31 +633,24 @@ private fun TadaClaimHistoryCard(claim: TadaClaimEntity) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text(text = claim.claimDate, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                Text(text = claim.claimDate, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = OnSurfaceDark)
                 Text(
                     text = "${claim.odometerDeltaKm.toInt()} km  •  PKR %,.0f".format(claim.totalClaimAmount),
                     style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteel,
+                    color = SlateSteelLight,
                     fontSize = 11.sp
                 )
             }
 
-            val statusColor = when (claim.status) {
-                "APPROVED" -> SuccessEmerald
-                "FLAGGED" -> WarningAmber
-                "REJECTED" -> ErrorCrimson
-                else -> LubricantAmber
-            }
-
             Surface(
                 shape = RoundedCornerShape(6.dp),
-                color = statusColor.copy(alpha = 0.15f)
+                color = LubricantAmber.copy(alpha = 0.15f)
             ) {
                 Text(
                     text = claim.status,
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = statusColor,
+                    color = LubricantAmber,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                 )
             }

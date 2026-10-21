@@ -31,137 +31,89 @@ import com.enol.salesforze.data.remote.models.ProductDto
 import com.enol.salesforze.data.remote.models.UserDto
 import com.enol.salesforze.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminManagementScreen(
     viewModel: AdminManagementViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit,
+    onNavigateBack: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val tabTitles = listOf(
-        "Users & Rights (${uiState.users.size})",
-        "Products (${uiState.products.size})",
-        "Territories & Beats (${uiState.districts.size})"
-    )
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Admin Control Hub",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = OnSurfaceDark
-                        )
-                        Text(
-                            text = "Configure Users, Assign Rights & Territories",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = SlateSteelLight
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = OnSurfaceDark)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { viewModel.loadData() }) {
-                        Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh", tint = SlateSteelLight)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceDark)
-            )
-        },
-        floatingActionButton = {
-            when (uiState.selectedTab) {
-                0 -> {
-                    ExtendedFloatingActionButton(
-                        onClick = { viewModel.openAddUserDialog() },
-                        containerColor = LubricantAmber,
-                        contentColor = EnolNavyDark,
-                        icon = { Icon(Icons.Default.PersonAdd, contentDescription = null) },
-                        text = { Text("Add User", fontWeight = FontWeight.Bold) }
-                    )
-                }
-                1 -> {
-                    ExtendedFloatingActionButton(
-                        onClick = { viewModel.openAddProductDialog() },
-                        containerColor = LubricantAmber,
-                        contentColor = EnolNavyDark,
-                        icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                        text = { Text("Add Product", fontWeight = FontWeight.Bold) }
-                    )
-                }
-                2 -> {
-                    ExtendedFloatingActionButton(
-                        onClick = { viewModel.openCreateBeatDialog() },
-                        containerColor = LubricantAmber,
-                        contentColor = EnolNavyDark,
-                        icon = { Icon(Icons.Default.AddLocation, contentDescription = null) },
-                        text = { Text("Add Beat Route", fontWeight = FontWeight.Bold) }
-                    )
-                }
-            }
-        },
-        containerColor = BackgroundDark,
+    Box(
         modifier = modifier
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            // Tabs
-            ScrollableTabRow(
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Sleek 3-Tab Header (Single Spot Color)
+            TabRow(
                 selectedTabIndex = uiState.selectedTab,
                 containerColor = SurfaceDark,
                 contentColor = LubricantAmber,
-                divider = { HorizontalDivider(color = SlateSteelDark) },
-                edgePadding = 12.dp
+                divider = { HorizontalDivider(color = SlateSteelDark) }
             ) {
-                tabTitles.forEachIndexed { index, title ->
-                    Tab(
-                        selected = uiState.selectedTab == index,
-                        onClick = { viewModel.selectTab(index) },
-                        text = {
-                            Text(
-                                text = title,
-                                fontWeight = if (uiState.selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-                                color = if (uiState.selectedTab == index) LubricantAmber else SlateSteelLight
-                            )
-                        }
-                    )
-                }
+                Tab(
+                    selected = uiState.selectedTab == 0,
+                    onClick = { viewModel.selectTab(0) },
+                    text = {
+                        Text(
+                            text = "Users (${uiState.users.size})",
+                            fontSize = 13.sp,
+                            fontWeight = if (uiState.selectedTab == 0) FontWeight.Bold else FontWeight.Normal,
+                            color = if (uiState.selectedTab == 0) LubricantAmber else SlateSteelLight
+                        )
+                    }
+                )
+                Tab(
+                    selected = uiState.selectedTab == 1,
+                    onClick = { viewModel.selectTab(1) },
+                    text = {
+                        Text(
+                            text = "Products (${uiState.products.size})",
+                            fontSize = 13.sp,
+                            fontWeight = if (uiState.selectedTab == 1) FontWeight.Bold else FontWeight.Normal,
+                            color = if (uiState.selectedTab == 1) LubricantAmber else SlateSteelLight
+                        )
+                    }
+                )
+                Tab(
+                    selected = uiState.selectedTab == 2,
+                    onClick = { viewModel.selectTab(2) },
+                    text = {
+                        Text(
+                            text = "Territories (${uiState.districts.size})",
+                            fontSize = 13.sp,
+                            fontWeight = if (uiState.selectedTab == 2) FontWeight.Bold else FontWeight.Normal,
+                            color = if (uiState.selectedTab == 2) LubricantAmber else SlateSteelLight
+                        )
+                    }
+                )
             }
 
-            // Messages Banner
+            // Message Banner (Clean single line)
             if (uiState.successMessage != null) {
                 Surface(
-                    color = SuccessEmerald.copy(alpha = 0.2f),
-                    border = BorderStroke(1.dp, SuccessEmerald),
+                    color = SurfaceContainerDark,
+                    border = BorderStroke(1.dp, LubricantAmber),
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
                 ) {
                     Row(
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.CheckCircle, contentDescription = null, tint = SuccessEmerald)
+                        Icon(Icons.Default.CheckCircle, contentDescription = null, tint = LubricantAmber, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = uiState.successMessage ?: "",
-                            color = SuccessEmerald,
+                            color = OnSurfaceDark,
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.weight(1f)
                         )
-                        IconButton(onClick = { viewModel.clearMessages() }, modifier = Modifier.size(20.dp)) {
-                            Icon(Icons.Default.Close, contentDescription = "Dismiss", tint = SlateSteelLight)
+                        IconButton(onClick = { viewModel.clearMessages() }, modifier = Modifier.size(18.dp)) {
+                            Icon(Icons.Default.Close, contentDescription = "Dismiss", tint = SlateSteelLight, modifier = Modifier.size(14.dp))
                         }
                     }
                 }
@@ -169,49 +121,52 @@ fun AdminManagementScreen(
 
             if (uiState.errorMessage != null) {
                 Surface(
-                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+                    color = ErrorCrimsonContainer.copy(alpha = 0.3f),
+                    border = BorderStroke(1.dp, ErrorCrimson),
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
                 ) {
                     Row(
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+                        Icon(Icons.Default.Warning, contentDescription = null, tint = ErrorCrimson, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = uiState.errorMessage ?: "",
-                            color = MaterialTheme.colorScheme.error,
+                            color = ErrorCrimson,
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.weight(1f)
                         )
-                        IconButton(onClick = { viewModel.clearMessages() }, modifier = Modifier.size(20.dp)) {
-                            Icon(Icons.Default.Close, contentDescription = "Dismiss", tint = SlateSteelLight)
+                        IconButton(onClick = { viewModel.clearMessages() }, modifier = Modifier.size(18.dp)) {
+                            Icon(Icons.Default.Close, contentDescription = "Dismiss", tint = SlateSteelLight, modifier = Modifier.size(14.dp))
                         }
                     }
                 }
             }
 
-            // Search Bar
+            // Compact Search Bar
             OutlinedTextField(
                 value = uiState.searchQuery,
                 onValueChange = { viewModel.setSearchQuery(it) },
                 placeholder = {
                     Text(
                         when (uiState.selectedTab) {
-                            0 -> "Search users by name, email, or phone..."
+                            0 -> "Search users by name, email, phone..."
                             1 -> "Search products by SKU or name..."
-                            else -> "Search districts or beat routes..."
-                        }
+                            else -> "Search districts or routes..."
+                        },
+                        fontSize = 13.sp,
+                        color = SlateSteel
                     )
                 },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = SlateSteelLight) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = SlateSteelLight, modifier = Modifier.size(18.dp)) },
                 trailingIcon = {
                     if (uiState.searchQuery.isNotEmpty()) {
                         IconButton(onClick = { viewModel.setSearchQuery("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear", tint = SlateSteelLight)
+                            Icon(Icons.Default.Clear, contentDescription = "Clear", tint = SlateSteelLight, modifier = Modifier.size(16.dp))
                         }
                     }
                 },
@@ -222,16 +177,17 @@ fun AdminManagementScreen(
                     focusedTextColor = OnSurfaceDark,
                     unfocusedTextColor = OnSurfaceDark
                 ),
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 6.dp)
+                    .height(48.dp)
             )
 
             // Content per Tab
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = LubricantAmber)
+                    CircularProgressIndicator(color = LubricantAmber, modifier = Modifier.size(28.dp))
                 }
             } else {
                 when (uiState.selectedTab) {
@@ -256,6 +212,25 @@ fun AdminManagementScreen(
                     )
                 }
             }
+        }
+
+        // Floating Action Button (Spot Color, Single Bottom Right)
+        FloatingActionButton(
+            onClick = {
+                when (uiState.selectedTab) {
+                    0 -> viewModel.openAddUserDialog()
+                    1 -> viewModel.openAddProductDialog()
+                    2 -> viewModel.openCreateBeatDialog()
+                }
+            },
+            containerColor = LubricantAmber,
+            contentColor = EnolNavyDark,
+            shape = CircleShape,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Add")
         }
     }
 
@@ -353,7 +328,7 @@ fun AdminManagementScreen(
 }
 
 // ============================================================================
-// USERS TAB
+// USERS TAB - Clean Minimalist Cards
 // ============================================================================
 
 @Composable
@@ -376,24 +351,29 @@ fun UsersTabContent(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Filter Chips
+        // Filter Chips (Monochrome + Spot Color)
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             items(roles) { role ->
                 val selected = uiState.userRoleFilter == role
                 FilterChip(
                     selected = selected,
                     onClick = { onRoleFilterSelected(role) },
-                    label = { Text(role, fontSize = 12.sp) },
+                    label = { Text(role, fontSize = 11.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = LubricantAmber,
                         selectedLabelColor = EnolNavyDark,
                         containerColor = SurfaceDark,
                         labelColor = SlateSteelLight
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selected,
+                        borderColor = if (selected) LubricantAmber else SlateSteelDark
                     )
                 )
             }
@@ -406,19 +386,15 @@ fun UsersTabContent(
                     .padding(32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "No users found matching filter.",
-                    color = SlateSteelLight,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Text("No users found", color = SlateSteelLight, fontSize = 13.sp)
             }
         } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 88.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 80.dp)
             ) {
                 items(filteredUsers) { user ->
                     val managerName = remember(user.managerId, uiState.users) {
@@ -443,22 +419,14 @@ fun UserCard(
     onEdit: () -> Unit,
     onDeactivate: () -> Unit
 ) {
-    val roleColor = when (user.role.uppercase()) {
-        "DIRECTOR" -> LubricantAmber
-        "ADMIN" -> LubricantAmberLight
-        "ZSM" -> EnolNavyMuted
-        "ASM" -> EnolNavyLight
-        else -> SuccessEmerald
-    }
-
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = SurfaceDark),
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, SlateSteelDark, RoundedCornerShape(12.dp))
+            .border(1.dp, SlateSteelDark, RoundedCornerShape(10.dp))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(14.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -472,94 +440,74 @@ fun UserCard(
                         color = OnSurfaceDark
                     )
                     Text(
-                        text = user.email,
+                        text = "${user.email} • ${user.phone}",
                         style = MaterialTheme.typography.bodySmall,
                         color = SlateSteelLight
                     )
                 }
 
-                // Role Badge
+                // Minimalist Spot Color Role Pill
                 Surface(
-                    shape = RoundedCornerShape(6.dp),
-                    color = roleColor.copy(alpha = 0.2f),
-                    border = BorderStroke(1.dp, roleColor)
+                    shape = RoundedCornerShape(4.dp),
+                    color = Color.Transparent,
+                    border = BorderStroke(1.dp, LubricantAmber)
                 ) {
                     Text(
                         text = user.role,
-                        color = roleColor,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 11.sp,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        color = LubricantAmber,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Reports to: ${managerName ?: "Top Level"}",
+                    fontSize = 11.sp,
+                    color = SlateSteelLight
+                )
+                Text(
+                    text = if (user.isActive) "Active" else "Inactive",
+                    fontSize = 11.sp,
+                    color = if (user.isActive) OnSurfaceDark else SlateSteel
+                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Phone: ${user.phone}",
-                    fontSize = 12.sp,
-                    color = SlateSteelLight
-                )
-                Text(
-                    text = "Vehicle: ${user.vehicleType} (${user.vehicleNumber ?: "N/A"})",
-                    fontSize = 12.sp,
-                    color = SlateSteelLight
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Reporting Mgr: ${managerName ?: "Top Level"}",
-                    fontSize = 12.sp,
-                    color = if (managerName != null) LubricantAmber else SlateSteelLight
-                )
-                Text(
-                    text = if (user.isActive) "Status: Active" else "Status: Inactive",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (user.isActive) SuccessEmerald else MaterialTheme.colorScheme.error
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.End
             ) {
                 OutlinedButton(
                     onClick = onEdit,
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(6.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = LubricantAmber),
-                    border = BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.7f)),
-                    modifier = Modifier.height(34.dp)
+                    border = BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.6f)),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
+                    modifier = Modifier.height(28.dp)
                 ) {
-                    Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(14.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Change Rights", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("Edit Rights", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
 
                 if (user.isActive && !user.role.equals("DIRECTOR", ignoreCase = true)) {
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     OutlinedButton(
                         onClick = onDeactivate,
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
-                        modifier = Modifier.height(34.dp)
+                        shape = RoundedCornerShape(6.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = SlateSteelLight),
+                        border = BorderStroke(1.dp, SlateSteelDark),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
+                        modifier = Modifier.height(28.dp)
                     ) {
-                        Text("Deactivate", fontSize = 12.sp)
+                        Text("Deactivate", fontSize = 11.sp)
                     }
                 }
             }
@@ -568,7 +516,7 @@ fun UserCard(
 }
 
 // ============================================================================
-// PRODUCTS TAB
+// PRODUCTS TAB - Clean Minimalist Catalog
 // ============================================================================
 
 @Composable
@@ -578,15 +526,7 @@ fun ProductsTabContent(
     onEditProduct: (ProductDto) -> Unit,
     onDeactivateProduct: (String, String) -> Unit
 ) {
-    val categories = listOf(
-        "ALL",
-        "PASSENGER_CAR_MOTOR_OIL",
-        "HEAVY_DUTY_DIESEL",
-        "MOTORCYCLE_4T",
-        "GEAR_OIL",
-        "COOLANT",
-        "GREASE"
-    )
+    val categories = listOf("ALL", "PASSENGER_CAR_MOTOR_OIL", "HEAVY_DUTY_DIESEL", "MOTORCYCLE_4T", "GEAR_OIL", "COOLANT", "GREASE")
 
     val filteredProducts = uiState.products.filter { prod ->
         val matchesCat = if (uiState.productCategoryFilter == "ALL") true else prod.category.equals(uiState.productCategoryFilter, ignoreCase = true)
@@ -599,25 +539,29 @@ fun ProductsTabContent(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Filter Chips
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             items(categories) { cat ->
                 val selected = uiState.productCategoryFilter == cat
-                val displayLabel = cat.replace("_", " ")
+                val displayLabel = if (cat == "ALL") "ALL" else cat.replace("_", " ").take(12)
                 FilterChip(
                     selected = selected,
                     onClick = { onCategoryFilterSelected(cat) },
-                    label = { Text(displayLabel, fontSize = 11.sp) },
+                    label = { Text(displayLabel, fontSize = 11.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = LubricantAmber,
                         selectedLabelColor = EnolNavyDark,
                         containerColor = SurfaceDark,
                         labelColor = SlateSteelLight
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selected,
+                        borderColor = if (selected) LubricantAmber else SlateSteelDark
                     )
                 )
             }
@@ -630,19 +574,15 @@ fun ProductsTabContent(
                     .padding(32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "No products found matching filter.",
-                    color = SlateSteelLight,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Text("No products found", color = SlateSteelLight, fontSize = 13.sp)
             }
         } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 88.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 80.dp)
             ) {
                 items(filteredProducts) { product ->
                     ProductManagementCard(
@@ -663,13 +603,13 @@ fun ProductManagementCard(
     onDeactivate: () -> Unit
 ) {
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = SurfaceDark),
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, SlateSteelDark, RoundedCornerShape(12.dp))
+            .border(1.dp, SlateSteelDark, RoundedCornerShape(10.dp))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(14.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -683,66 +623,39 @@ fun ProductManagementCard(
                         color = OnSurfaceDark
                     )
                     Text(
-                        text = "SKU: ${product.sku} | Grade: ${product.viscosityGrade}",
+                        text = "SKU: ${product.sku} • Grade: ${product.viscosityGrade} • ${product.packSizeLiters}L",
                         style = MaterialTheme.typography.bodySmall,
-                        color = LubricantAmber
+                        color = SlateSteelLight
                     )
                 }
 
-                Surface(
-                    shape = RoundedCornerShape(6.dp),
-                    color = if (product.isActive) SuccessEmerald.copy(alpha = 0.2f) else MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
-                    border = BorderStroke(1.dp, if (product.isActive) SuccessEmerald else MaterialTheme.colorScheme.error)
-                ) {
-                    Text(
-                        text = if (product.isActive) "Active" else "Deactivated",
-                        color = if (product.isActive) SuccessEmerald else MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
-                }
+                Text(
+                    text = "PKR ${product.tradePrice.toInt()}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = LubricantAmber
+                )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Pack: ${product.packSizeLiters}L (${product.unitsPerCarton} units/ctn)",
-                    fontSize = 12.sp,
-                    color = SlateSteelLight
-                )
-                Text(
                     text = "Stock: ${product.stockQuantity} ctns",
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     color = SlateSteelLight
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Trade: PKR ${product.tradePrice.toInt()}",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = OnSurfaceDark
                 )
                 Text(
                     text = "Retail: PKR ${product.retailPrice.toInt()}",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = LubricantAmber
+                    fontSize = 11.sp,
+                    color = SlateSteelLight
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -750,26 +663,26 @@ fun ProductManagementCard(
             ) {
                 OutlinedButton(
                     onClick = onEdit,
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(6.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = LubricantAmber),
-                    border = BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.7f)),
-                    modifier = Modifier.height(34.dp)
+                    border = BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.6f)),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
+                    modifier = Modifier.height(28.dp)
                 ) {
-                    Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(14.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Edit Price / Stock", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("Edit Price / Stock", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
 
                 if (product.isActive) {
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     OutlinedButton(
                         onClick = onDeactivate,
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
-                        modifier = Modifier.height(34.dp)
+                        shape = RoundedCornerShape(6.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = SlateSteelLight),
+                        border = BorderStroke(1.dp, SlateSteelDark),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
+                        modifier = Modifier.height(28.dp)
                     ) {
-                        Text("Deactivate", fontSize = 12.sp)
+                        Text("Deactivate", fontSize = 11.sp)
                     }
                 }
             }
@@ -778,7 +691,7 @@ fun ProductManagementCard(
 }
 
 // ============================================================================
-// TERRITORIES & BEAT ROUTES TAB
+// TERRITORIES TAB - Clean Minimalist Routes
 // ============================================================================
 
 @Composable
@@ -789,56 +702,59 @@ fun TerritoriesTabContent(
     onAssignRep: (BeatDto) -> Unit,
     onCreateBeatForDistrict: (DistrictDto) -> Unit
 ) {
-    val districtOptions = listOf("ALL") + uiState.districts.map { it.id }
-
     val filteredDistricts = uiState.districts.filter { dist ->
         val matchesFilter = if (uiState.districtFilter == "ALL") true else dist.id == uiState.districtFilter
         val matchesSearch = if (uiState.searchQuery.isBlank()) true else {
             dist.name.contains(uiState.searchQuery, ignoreCase = true) ||
             dist.code.contains(uiState.searchQuery, ignoreCase = true) ||
-            dist.province.contains(uiState.searchQuery, ignoreCase = true) ||
             uiState.beats.any { b ->
-                b.districtId == dist.id && (
-                    b.name.contains(uiState.searchQuery, ignoreCase = true) ||
-                    b.code.contains(uiState.searchQuery, ignoreCase = true) ||
-                    (b.assignedRepName?.contains(uiState.searchQuery, ignoreCase = true) == true)
-                )
+                b.districtId == dist.id && b.name.contains(uiState.searchQuery, ignoreCase = true)
             }
         }
         matchesFilter && matchesSearch
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // District Filter Chips
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             item {
                 FilterChip(
                     selected = uiState.districtFilter == "ALL",
                     onClick = { onDistrictFilterSelected("ALL") },
-                    label = { Text("ALL DISTRICTS", fontSize = 11.sp) },
+                    label = { Text("ALL", fontSize = 11.sp, fontWeight = if (uiState.districtFilter == "ALL") FontWeight.Bold else FontWeight.Normal) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = LubricantAmber,
                         selectedLabelColor = EnolNavyDark,
                         containerColor = SurfaceDark,
                         labelColor = SlateSteelLight
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = uiState.districtFilter == "ALL",
+                        borderColor = if (uiState.districtFilter == "ALL") LubricantAmber else SlateSteelDark
                     )
                 )
             }
             items(uiState.districts) { d ->
+                val selected = uiState.districtFilter == d.id
                 FilterChip(
-                    selected = uiState.districtFilter == d.id,
+                    selected = selected,
                     onClick = { onDistrictFilterSelected(d.id) },
-                    label = { Text(d.name, fontSize = 11.sp) },
+                    label = { Text(d.name, fontSize = 11.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = LubricantAmber,
                         selectedLabelColor = EnolNavyDark,
                         containerColor = SurfaceDark,
                         labelColor = SlateSteelLight
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selected,
+                        borderColor = if (selected) LubricantAmber else SlateSteelDark
                     )
                 )
             }
@@ -851,19 +767,15 @@ fun TerritoriesTabContent(
                     .padding(32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "No territories found matching criteria.",
-                    color = SlateSteelLight,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Text("No territories found", color = SlateSteelLight, fontSize = 13.sp)
             }
         } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 88.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 80.dp)
             ) {
                 items(filteredDistricts) { district ->
                     val districtBeats = uiState.beats.filter { it.districtId == district.id }
@@ -889,14 +801,13 @@ fun DistrictCard(
     onCreateBeat: () -> Unit
 ) {
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = SurfaceDark),
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, SlateSteelDark, RoundedCornerShape(12.dp))
+            .border(1.dp, SlateSteelDark, RoundedCornerShape(10.dp))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Header
+        Column(modifier = Modifier.padding(14.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -904,217 +815,129 @@ fun DistrictCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = district.name,
+                        text = "${district.name} (${district.code})",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = OnSurfaceDark
                     )
                     Text(
-                        text = "Code: ${district.code} • ${district.province} • ${beats.size} Routes",
+                        text = "${district.province} • ${beats.size} Routes",
                         style = MaterialTheme.typography.bodySmall,
-                        color = LubricantAmber
+                        color = SlateSteelLight
                     )
                 }
 
-                Surface(
+                OutlinedButton(
+                    onClick = onAssignManagers,
                     shape = RoundedCornerShape(6.dp),
-                    color = if (district.isActive) SuccessEmerald.copy(alpha = 0.2f) else MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
-                    border = BorderStroke(1.dp, if (district.isActive) SuccessEmerald else MaterialTheme.colorScheme.error)
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = LubricantAmber),
+                    border = BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.6f)),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp),
+                    modifier = Modifier.height(28.dp)
                 ) {
-                    Text(
-                        text = if (district.isActive) "Active" else "Inactive",
-                        color = if (district.isActive) SuccessEmerald else MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
+                    Text("Assign Mgrs", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Minimalist Manager Summary
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "ZSM: ${district.zsmName ?: "Unassigned"}",
+                    fontSize = 11.sp,
+                    color = SlateSteelLight
+                )
+                Text(
+                    text = "ASM: ${district.asmName ?: "Unassigned"}",
+                    fontSize = 11.sp,
+                    color = SlateSteelLight
+                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Assigned Managers Section
-            Surface(
-                color = SurfaceContainerHighDark.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(10.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text("ZSM Manager:", fontSize = 11.sp, color = SlateSteelLight)
-                            Text(
-                                text = district.zsmName ?: "Unassigned",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (district.zsmName != null) OnSurfaceDark else MaterialTheme.colorScheme.error
-                            )
-                        }
-                        Column {
-                            Text("ASM Manager:", fontSize = 11.sp, color = SlateSteelLight)
-                            Text(
-                                text = district.asmName ?: "Unassigned",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (district.asmName != null) OnSurfaceDark else MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Button(
-                            onClick = onAssignManagers,
-                            shape = RoundedCornerShape(6.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark),
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                            modifier = Modifier.height(30.dp)
-                        ) {
-                            Icon(Icons.Default.ManageAccounts, contentDescription = null, modifier = Modifier.size(14.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Assign Managers", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Beats Header & Add Route
+            // Beat Routes Sub-list
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Beat Routes (${beats.size})",
-                    style = MaterialTheme.typography.titleSmall,
+                    text = "Routes",
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = OnSurfaceDark
                 )
 
-                TextButton(
-                    onClick = onCreateBeat,
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                    modifier = Modifier.height(28.dp)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null, tint = LubricantAmber, modifier = Modifier.size(14.dp))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text("+ Add Route", fontSize = 11.sp, color = LubricantAmber, fontWeight = FontWeight.Bold)
-                }
+                Text(
+                    text = "+ Add Route",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = LubricantAmber,
+                    modifier = Modifier.clickable { onCreateBeat() }
+                )
             }
 
             Spacer(modifier = Modifier.height(6.dp))
 
             if (beats.isEmpty()) {
                 Text(
-                    text = "No beat routes configured for this district yet.",
+                    text = "No routes yet",
                     style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    color = SlateSteel
                 )
             } else {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     beats.forEach { beat ->
-                        BeatItemRow(
-                            beat = beat,
-                            onAssignRep = { onAssignRep(beat) }
-                        )
+                        Surface(
+                            color = BackgroundDark,
+                            shape = RoundedCornerShape(6.dp),
+                            border = BorderStroke(1.dp, SlateSteelDark),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "${beat.name} (${beat.dayOfWeek.take(3)})",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp,
+                                        color = OnSurfaceDark
+                                    )
+                                    Text(
+                                        text = "Rep: ${beat.assignedRepName ?: "Unassigned"}",
+                                        fontSize = 11.sp,
+                                        color = SlateSteelLight
+                                    )
+                                }
+
+                                Text(
+                                    text = "Assign",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = LubricantAmber,
+                                    modifier = Modifier.clickable { onAssignRep(beat) }
+                                )
+                            }
+                        }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun BeatItemRow(
-    beat: BeatDto,
-    onAssignRep: () -> Unit
-) {
-    Surface(
-        color = BackgroundDark,
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, SlateSteelDark),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = beat.name,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = OnSurfaceDark
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Surface(
-                        shape = RoundedCornerShape(4.dp),
-                        color = LubricantAmber.copy(alpha = 0.15f)
-                    ) {
-                        Text(
-                            text = beat.dayOfWeek,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = LubricantAmber,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Assigned Rep: ",
-                        fontSize = 11.sp,
-                        color = SlateSteelLight
-                    )
-                    Text(
-                        text = beat.assignedRepName ?: "Unassigned",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (beat.assignedRepName != null) SuccessEmerald else MaterialTheme.colorScheme.error
-                    )
-                    Text(
-                        text = " • ${beat.totalClients} Shops",
-                        fontSize = 11.sp,
-                        color = SlateSteelLight
-                    )
-                }
-            }
-
-            OutlinedButton(
-                onClick = onAssignRep,
-                shape = RoundedCornerShape(6.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = LubricantAmber),
-                border = BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.6f)),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
-                modifier = Modifier.height(28.dp)
-            ) {
-                Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(12.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("Assign Rep", fontSize = 11.sp, fontWeight = FontWeight.Bold)
             }
         }
     }
 }
 
 // ============================================================================
-// DIALOGS: ADD USER, EDIT USER, ADD PRODUCT, EDIT PRODUCT
+// COMPACT DIALOGS (Single Spot Color)
 // ============================================================================
 
 @Composable
@@ -1147,8 +970,6 @@ fun AddUserDialog(
     var dailyAllowance by remember { mutableStateOf("500") }
 
     val roles = listOf("SALES_REP", "ASM", "ZSM", "DIRECTOR", "ADMIN")
-    val vehicleTypes = listOf("MOTORCYCLE", "CAR", "VAN", "OTHER")
-
     val eligibleManagers = remember(users) {
         users.filter { it.role in listOf("DIRECTOR", "ZSM", "ASM", "ADMIN") }
     }
@@ -1168,23 +989,20 @@ fun AddUserDialog(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Add New User & Assign Rights",
+                    text = "Add User",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = LubricantAmber
+                    color = OnSurfaceDark
                 )
-                Text(
-                    text = "Configure role, mobile access, manager and vehicle rates",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+
+                Spacer(modifier = Modifier.height(14.dp))
 
                 OutlinedTextField(
                     value = fullName,
                     onValueChange = { fullName = it },
                     label = { Text("Full Name") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -1193,8 +1011,9 @@ fun AddUserDialog(
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Work Email") },
+                    label = { Text("Email") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -1203,8 +1022,9 @@ fun AddUserDialog(
                 OutlinedTextField(
                     value = phone,
                     onValueChange = { phone = it },
-                    label = { Text("Mobile Phone (+92...)") },
+                    label = { Text("Phone (+92...)") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -1215,14 +1035,15 @@ fun AddUserDialog(
                     onValueChange = { password = it },
                     label = { Text("Default Password") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                Text("Assign Role / Access Level:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Text("Role:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items(roles) { r ->
@@ -1240,16 +1061,16 @@ fun AddUserDialog(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Reporting Manager (Hierarchy):", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Text("Reporting Manager:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     item {
                         FilterChip(
                             selected = selectedManagerId == null,
                             onClick = { selectedManagerId = null },
-                            label = { Text("None (Top Level)", fontSize = 11.sp) },
+                            label = { Text("None", fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -1269,56 +1090,7 @@ fun AddUserDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text("Vehicle Type:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    items(vehicleTypes) { v ->
-                        FilterChip(
-                            selected = vehicleType == v,
-                            onClick = { vehicleType = v },
-                            label = { Text(v, fontSize = 11.sp) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = LubricantAmber,
-                                selectedLabelColor = EnolNavyDark
-                            )
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    value = vehicleNumber,
-                    onValueChange = { vehicleNumber = it },
-                    label = { Text("Vehicle Registration No (e.g. LEA-2024)") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = fuelRate,
-                        onValueChange = { fuelRate = it },
-                        label = { Text("Fuel PKR/km") },
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = dailyAllowance,
-                        onValueChange = { dailyAllowance = it },
-                        label = { Text("Allowance PKR/day") },
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
@@ -1332,13 +1104,10 @@ fun AddUserDialog(
                             onConfirm(fullName, email, phone, password, selectedRole, selectedManagerId, vehicleType, vehicleNumber, fRate, allow)
                         },
                         enabled = fullName.isNotBlank() && email.isNotBlank() && phone.isNotBlank() && !isLoading,
-                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark)
+                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = EnolNavyDark)
-                        } else {
-                            Text("Grant Rights & Create", fontWeight = FontWeight.Bold)
-                        }
+                        Text("Save User", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -1368,9 +1137,6 @@ fun EditUserRightsDialog(
     var selectedManagerId by remember { mutableStateOf<String?>(user.managerId) }
     var fullName by remember { mutableStateOf(user.fullName) }
     var phone by remember { mutableStateOf(user.phone) }
-    var vehicleNumber by remember { mutableStateOf(user.vehicleNumber ?: "") }
-    var fuelRate by remember { mutableStateOf(user.fuelRatePerKm.toString()) }
-    var allowance by remember { mutableStateOf(user.dailyAllowance.toInt().toString()) }
     var isActive by remember { mutableStateOf(user.isActive) }
 
     val roles = listOf("SALES_REP", "ASM", "ZSM", "DIRECTOR", "ADMIN")
@@ -1396,18 +1162,14 @@ fun EditUserRightsDialog(
                     text = "Edit Rights: ${user.fullName}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = LubricantAmber
-                )
-                Text(
-                    text = user.email,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    color = OnSurfaceDark
                 )
 
-                Text("Assign Role / Hierarchy Level:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text("Role:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items(roles) { r ->
@@ -1425,16 +1187,16 @@ fun EditUserRightsDialog(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Reporting Manager:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Text("Reporting Manager:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     item {
                         FilterChip(
                             selected = selectedManagerId == null,
                             onClick = { selectedManagerId = null },
-                            label = { Text("None (Top Level)", fontSize = 11.sp) },
+                            label = { Text("None", fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -1461,6 +1223,7 @@ fun EditUserRightsDialog(
                     onValueChange = { fullName = it },
                     label = { Text("Full Name") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -1471,37 +1234,9 @@ fun EditUserRightsDialog(
                     onValueChange = { phone = it },
                     label = { Text("Phone") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    value = vehicleNumber,
-                    onValueChange = { vehicleNumber = it },
-                    label = { Text("Vehicle Plate No") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = fuelRate,
-                        onValueChange = { fuelRate = it },
-                        label = { Text("Fuel PKR/km") },
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = allowance,
-                        onValueChange = { allowance = it },
-                        label = { Text("Allowance PKR/day") },
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -1510,7 +1245,7 @@ fun EditUserRightsDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Account Active Status:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                    Text("Account Active", fontSize = 13.sp, color = OnSurfaceDark)
                     Switch(
                         checked = isActive,
                         onCheckedChange = { isActive = it },
@@ -1518,7 +1253,7 @@ fun EditUserRightsDialog(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
@@ -1527,18 +1262,13 @@ fun EditUserRightsDialog(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-                            val fRate = fuelRate.toDoubleOrNull()
-                            val allow = allowance.toDoubleOrNull()
-                            onConfirm(selectedRole, fullName, phone, selectedManagerId, null, vehicleNumber, fRate, allow, isActive)
+                            onConfirm(selectedRole, fullName, phone, selectedManagerId, null, null, null, null, isActive)
                         },
                         enabled = !isLoading,
-                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark)
+                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = EnolNavyDark)
-                        } else {
-                            Text("Save Rights", fontWeight = FontWeight.Bold)
-                        }
+                        Text("Save", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -1565,7 +1295,6 @@ fun AddProductDialog(
 ) {
     var sku by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("PASSENGER_CAR_MOTOR_OIL") }
     var viscosityGrade by remember { mutableStateOf("5W-30") }
     var packSizeLiters by remember { mutableStateOf("4.0") }
@@ -1573,15 +1302,6 @@ fun AddProductDialog(
     var tradePrice by remember { mutableStateOf("4500") }
     var retailPrice by remember { mutableStateOf("5200") }
     var stockQuantity by remember { mutableStateOf("500") }
-
-    val categories = listOf(
-        "PASSENGER_CAR_MOTOR_OIL",
-        "HEAVY_DUTY_DIESEL",
-        "MOTORCYCLE_4T",
-        "GEAR_OIL",
-        "COOLANT",
-        "GREASE"
-    )
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -1598,23 +1318,20 @@ fun AddProductDialog(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Add Lubricant SKU to Catalog",
+                    text = "Add Product",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = LubricantAmber
+                    color = OnSurfaceDark
                 )
-                Text(
-                    text = "Define SKU, grade, packing, trade & retail prices",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+
+                Spacer(modifier = Modifier.height(14.dp))
 
                 OutlinedTextField(
                     value = sku,
                     onValueChange = { sku = it },
-                    label = { Text("SKU Code (e.g. ENOL-PCMO-5W30-4L)") },
+                    label = { Text("SKU Code") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -1623,40 +1340,11 @@ fun AddProductDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Product Commercial Name") },
+                    label = { Text("Product Name") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Description & Performance Standards") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                Text("Product Category:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    items(categories) { cat ->
-                        FilterChip(
-                            selected = category == cat,
-                            onClick = { category = cat },
-                            label = { Text(cat.replace("_", " "), fontSize = 10.sp) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = LubricantAmber,
-                                selectedLabelColor = EnolNavyDark
-                            )
-                        )
-                    }
-                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -1664,34 +1352,17 @@ fun AddProductDialog(
                     OutlinedTextField(
                         value = viscosityGrade,
                         onValueChange = { viscosityGrade = it },
-                        label = { Text("Viscosity Grade") },
+                        label = { Text("Grade") },
                         singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedTextField(
                         value = packSizeLiters,
                         onValueChange = { packSizeLiters = it },
-                        label = { Text("Pack Size (L)") },
+                        label = { Text("Pack (L)") },
                         singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = unitsPerCarton,
-                        onValueChange = { unitsPerCarton = it },
-                        label = { Text("Units / Carton") },
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = stockQuantity,
-                        onValueChange = { stockQuantity = it },
-                        label = { Text("Initial Stock (Ctns)") },
-                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -1702,20 +1373,22 @@ fun AddProductDialog(
                     OutlinedTextField(
                         value = tradePrice,
                         onValueChange = { tradePrice = it },
-                        label = { Text("Trade Price (PKR)") },
+                        label = { Text("Trade PKR") },
                         singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedTextField(
                         value = retailPrice,
                         onValueChange = { retailPrice = it },
-                        label = { Text("Retail Price (PKR)") },
+                        label = { Text("Retail PKR") },
                         singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                         modifier = Modifier.weight(1f)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
@@ -1729,16 +1402,13 @@ fun AddProductDialog(
                             val tPrice = tradePrice.toDoubleOrNull() ?: 4500.0
                             val rPrice = retailPrice.toDoubleOrNull() ?: 5200.0
                             val stock = stockQuantity.toIntOrNull() ?: 500
-                            onConfirm(sku, name, description, category, viscosityGrade, pack, units, tPrice, rPrice, stock)
+                            onConfirm(sku, name, "", category, viscosityGrade, pack, units, tPrice, rPrice, stock)
                         },
                         enabled = sku.isNotBlank() && name.isNotBlank() && !isLoading,
-                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark)
+                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = EnolNavyDark)
-                        } else {
-                            Text("Add SKU to Catalog", fontWeight = FontWeight.Bold)
-                        }
+                        Text("Save", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -1780,23 +1450,20 @@ fun EditProductDialog(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Edit Product: ${product.sku}",
+                    text = "Edit: ${product.sku}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = LubricantAmber
+                    color = OnSurfaceDark
                 )
-                Text(
-                    text = "Grade: ${product.viscosityGrade} | Pack: ${product.packSizeLiters}L",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+
+                Spacer(modifier = Modifier.height(14.dp))
 
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Product Name") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -1806,15 +1473,17 @@ fun EditProductDialog(
                     OutlinedTextField(
                         value = tradePrice,
                         onValueChange = { tradePrice = it },
-                        label = { Text("Trade Price (PKR)") },
+                        label = { Text("Trade PKR") },
                         singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedTextField(
                         value = retailPrice,
                         onValueChange = { retailPrice = it },
-                        label = { Text("Retail Price (PKR)") },
+                        label = { Text("Retail PKR") },
                         singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -1824,27 +1493,13 @@ fun EditProductDialog(
                 OutlinedTextField(
                     value = stockQuantity,
                     onValueChange = { stockQuantity = it },
-                    label = { Text("Available Stock (Cartons)") },
+                    label = { Text("Stock (Cartons)") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Product Active in Catalog:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
-                    Switch(
-                        checked = isActive,
-                        onCheckedChange = { isActive = it },
-                        colors = SwitchDefaults.colors(checkedThumbColor = LubricantAmber, checkedTrackColor = LubricantAmber.copy(alpha = 0.5f))
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
@@ -1859,23 +1514,16 @@ fun EditProductDialog(
                             onConfirm(name, tPrice, rPrice, stock, isActive)
                         },
                         enabled = !isLoading,
-                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark)
+                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = EnolNavyDark)
-                        } else {
-                            Text("Save Changes", fontWeight = FontWeight.Bold)
-                        }
+                        Text("Save", fontWeight = FontWeight.Bold)
                     }
                 }
             }
         }
     }
 }
-
-// ============================================================================
-// TERRITORY DIALOGS: ASSIGN MANAGERS, ASSIGN REP, CREATE BEAT
-// ============================================================================
 
 @Composable
 fun AssignDistrictManagersDialog(
@@ -1910,28 +1558,24 @@ fun AssignDistrictManagersDialog(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Assign District Managers",
+                    text = "Assign Managers: ${district.name}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = LubricantAmber
-                )
-                Text(
-                    text = "District: ${district.name} (${district.code})",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    color = OnSurfaceDark
                 )
 
-                Text("Zonal Sales Manager (ZSM):", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text("ZSM Manager:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     item {
                         FilterChip(
                             selected = selectedZsmId == null,
                             onClick = { selectedZsmId = null },
-                            label = { Text("None (Unassigned)", fontSize = 11.sp) },
+                            label = { Text("None", fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -1942,7 +1586,7 @@ fun AssignDistrictManagersDialog(
                         FilterChip(
                             selected = selectedZsmId == zsm.id,
                             onClick = { selectedZsmId = zsm.id },
-                            label = { Text("${zsm.fullName} (${zsm.role})", fontSize = 11.sp) },
+                            label = { Text(zsm.fullName, fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -1951,18 +1595,18 @@ fun AssignDistrictManagersDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Area Sales Manager (ASM):", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Text("ASM Manager:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     item {
                         FilterChip(
                             selected = selectedAsmId == null,
                             onClick = { selectedAsmId = null },
-                            label = { Text("None (Unassigned)", fontSize = 11.sp) },
+                            label = { Text("None", fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -1973,7 +1617,7 @@ fun AssignDistrictManagersDialog(
                         FilterChip(
                             selected = selectedAsmId == asm.id,
                             onClick = { selectedAsmId = asm.id },
-                            label = { Text("${asm.fullName} (${asm.role})", fontSize = 11.sp) },
+                            label = { Text(asm.fullName, fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -1982,7 +1626,7 @@ fun AssignDistrictManagersDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
@@ -1992,13 +1636,10 @@ fun AssignDistrictManagersDialog(
                     Button(
                         onClick = { onConfirm(selectedZsmId, selectedAsmId) },
                         enabled = !isLoading,
-                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark)
+                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = EnolNavyDark)
-                        } else {
-                            Text("Save Assignments", fontWeight = FontWeight.Bold)
-                        }
+                        Text("Save", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -2017,7 +1658,7 @@ fun AssignBeatRepDialog(
     var selectedRepId by remember { mutableStateOf<String?>(beat.assignedRepId) }
     var selectedDay by remember { mutableStateOf(beat.dayOfWeek) }
 
-    val daysOfWeek = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
+    val daysOfWeek = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
     val repCandidates = remember(users) {
         users.filter { it.role in listOf("SALES_REP", "ASM") }
     }
@@ -2037,28 +1678,24 @@ fun AssignBeatRepDialog(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Assign Beat Route Rep",
+                    text = "Assign Rep: ${beat.name}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = LubricantAmber
-                )
-                Text(
-                    text = "Route: ${beat.name} (${beat.code})",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    color = OnSurfaceDark
                 )
 
-                Text("Assigned Sales Staff / Rep:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text("Sales Rep:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     item {
                         FilterChip(
                             selected = selectedRepId == null,
                             onClick = { selectedRepId = null },
-                            label = { Text("None (Unassigned)", fontSize = 11.sp) },
+                            label = { Text("None", fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -2069,7 +1706,7 @@ fun AssignBeatRepDialog(
                         FilterChip(
                             selected = selectedRepId == rep.id,
                             onClick = { selectedRepId = rep.id },
-                            label = { Text("${rep.fullName} (${rep.role})", fontSize = 11.sp) },
+                            label = { Text(rep.fullName, fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -2078,18 +1715,18 @@ fun AssignBeatRepDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Scheduled Day of Week:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Text("Day of Week:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items(daysOfWeek) { day ->
                         FilterChip(
                             selected = selectedDay.equals(day, ignoreCase = true),
                             onClick = { selectedDay = day },
-                            label = { Text(day, fontSize = 10.sp) },
+                            label = { Text(day.take(3), fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -2098,7 +1735,7 @@ fun AssignBeatRepDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
@@ -2108,13 +1745,10 @@ fun AssignBeatRepDialog(
                     Button(
                         onClick = { onConfirm(selectedRepId, selectedDay) },
                         enabled = !isLoading,
-                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark)
+                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = EnolNavyDark)
-                        } else {
-                            Text("Save Assignment", fontWeight = FontWeight.Bold)
-                        }
+                        Text("Save", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -2145,7 +1779,7 @@ fun CreateBeatDialog(
     var selectedDay by remember { mutableStateOf("MONDAY") }
     var selectedRepId by remember { mutableStateOf<String?>(null) }
 
-    val daysOfWeek = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
+    val daysOfWeek = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
     val repCandidates = remember(users) {
         users.filter { it.role in listOf("SALES_REP", "ASM") }
     }
@@ -2168,25 +1802,21 @@ fun CreateBeatDialog(
                     text = "Add Beat Route",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = LubricantAmber
-                )
-                Text(
-                    text = "Create new customer beat route and assign staff",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SlateSteelLight,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    color = OnSurfaceDark
                 )
 
-                Text("Select District:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text("District:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items(districts) { dist ->
                         FilterChip(
                             selected = selectedDistrictId == dist.id,
                             onClick = { selectedDistrictId = dist.id },
-                            label = { Text("${dist.name} (${dist.code})", fontSize = 11.sp) },
+                            label = { Text(dist.name, fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -2200,8 +1830,9 @@ fun CreateBeatDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Route Name (e.g. Badami Bagh Route B)") },
+                    label = { Text("Route Name") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -2210,23 +1841,24 @@ fun CreateBeatDialog(
                 OutlinedTextField(
                     value = code,
                     onValueChange = { code = it },
-                    label = { Text("Route Code (e.g. LHR-BB-02)") },
+                    label = { Text("Route Code (e.g. LHR-02)") },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = LubricantAmber, unfocusedBorderColor = SlateSteelDark),
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Visit Day of Week:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Text("Day:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items(daysOfWeek) { day ->
                         FilterChip(
                             selected = selectedDay == day,
                             onClick = { selectedDay = day },
-                            label = { Text(day, fontSize = 10.sp) },
+                            label = { Text(day.take(3), fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -2235,18 +1867,18 @@ fun CreateBeatDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Assign Sales Rep:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = OnSurfaceDark)
+                Text("Assigned Rep:", fontSize = 11.sp, color = SlateSteelLight)
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 6.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     item {
                         FilterChip(
                             selected = selectedRepId == null,
                             onClick = { selectedRepId = null },
-                            label = { Text("None (Assign Later)", fontSize = 11.sp) },
+                            label = { Text("None", fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -2257,7 +1889,7 @@ fun CreateBeatDialog(
                         FilterChip(
                             selected = selectedRepId == rep.id,
                             onClick = { selectedRepId = rep.id },
-                            label = { Text("${rep.fullName} (${rep.role})", fontSize = 11.sp) },
+                            label = { Text(rep.fullName, fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = LubricantAmber,
                                 selectedLabelColor = EnolNavyDark
@@ -2266,7 +1898,7 @@ fun CreateBeatDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
@@ -2276,13 +1908,10 @@ fun CreateBeatDialog(
                     Button(
                         onClick = { onConfirm(selectedDistrictId, name, code, selectedDay, selectedRepId) },
                         enabled = name.isNotBlank() && code.isNotBlank() && selectedDistrictId.isNotBlank() && !isLoading,
-                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark)
+                        colors = ButtonDefaults.buttonColors(containerColor = LubricantAmber, contentColor = EnolNavyDark),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = EnolNavyDark)
-                        } else {
-                            Text("Create Beat Route", fontWeight = FontWeight.Bold)
-                        }
+                        Text("Save Route", fontWeight = FontWeight.Bold)
                     }
                 }
             }

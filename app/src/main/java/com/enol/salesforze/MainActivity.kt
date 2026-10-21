@@ -64,6 +64,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Dashboard
@@ -99,7 +100,12 @@ import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Logout
-import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.shape.RoundedCornerShape
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -166,44 +172,96 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 } else {
+                    val isDirectorOrAdmin = userRole.equals("DIRECTOR", ignoreCase = true) || userRole.equals("ADMIN", ignoreCase = true)
+                    val isAsmOrZsm = userRole.equals("ASM", ignoreCase = true) || userRole.equals("ZSM", ignoreCase = true)
+
+                    val isRootTab = when (currentTab) {
+                        AppNavigationTab.ADMIN_MANAGEMENT,
+                        AppNavigationTab.DASHBOARD,
+                        AppNavigationTab.GIS_MAP,
+                        AppNavigationTab.ORDER_CART,
+                        AppNavigationTab.ADMIN_PORTAL -> true
+                        AppNavigationTab.VISIT_EXECUTION,
+                        AppNavigationTab.TADA_CLAIM -> !isDirectorOrAdmin && !isAsmOrZsm
+                        else -> false
+                    }
+
+                    val screenTitle = when (currentTab) {
+                        AppNavigationTab.ADMIN_MANAGEMENT -> "Admin Hub"
+                        AppNavigationTab.DASHBOARD -> "Dashboard"
+                        AppNavigationTab.GIS_MAP -> "Territory Coverage"
+                        AppNavigationTab.ORDER_CART -> "Catalog & Orders"
+                        AppNavigationTab.VISIT_EXECUTION -> "Visit Check-In"
+                        AppNavigationTab.CLIENT_ENROLL -> "Shop Onboarding"
+                        AppNavigationTab.MECHANIC_ENROLL -> "Mechanic Registration"
+                        AppNavigationTab.START_SHIFT -> "Start Shift"
+                        AppNavigationTab.END_SHIFT -> "End Shift"
+                        AppNavigationTab.TADA_CLAIM -> "Expense Claims"
+                        AppNavigationTab.LEADERBOARD -> "Sales Leaderboard"
+                        AppNavigationTab.ADMIN_PORTAL -> "API & System Portal"
+                    }
+
                     Scaffold(
                         topBar = {
                             TopAppBar(
                                 title = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Surface(
-                                            shape = CircleShape,
-                                            color = LubricantAmber,
-                                            modifier = Modifier.size(28.dp)
-                                        ) {
-                                            Box(contentAlignment = Alignment.Center) {
-                                                Text(
-                                                    text = "E",
-                                                    fontWeight = FontWeight.ExtraBold,
-                                                    color = EnolNavyDark,
-                                                    style = MaterialTheme.typography.titleSmall
-                                                )
+                                    Text(
+                                        text = screenTitle,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = OnSurfaceDark,
+                                        maxLines = 1
+                                    )
+                                },
+                                navigationIcon = {
+                                    if (!isRootTab) {
+                                        IconButton(
+                                            onClick = {
+                                                currentTab = if (isDirectorOrAdmin) AppNavigationTab.ADMIN_MANAGEMENT else AppNavigationTab.DASHBOARD
                                             }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                                contentDescription = "Back",
+                                                tint = OnSurfaceDark
+                                            )
                                         }
-
-                                        Spacer(modifier = Modifier.width(8.dp))
-
-                                        Column {
-                                            Text(
-                                                text = "ENOL SALESFORZE",
-                                                style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.White
-                                            )
-                                            Text(
-                                                text = "Role: ${userRole ?: "AUTHENTICATED"}",
-                                                style = MaterialTheme.typography.labelSmall,
-                                                color = LubricantAmber
-                                            )
+                                    } else {
+                                        Box(modifier = Modifier.padding(start = 14.dp, end = 6.dp)) {
+                                            Surface(
+                                                shape = RoundedCornerShape(6.dp),
+                                                color = LubricantAmber,
+                                                modifier = Modifier.size(26.dp)
+                                            ) {
+                                                Box(contentAlignment = Alignment.Center) {
+                                                    Text(
+                                                        text = "E",
+                                                        fontWeight = FontWeight.Black,
+                                                        color = BackgroundDark,
+                                                        fontSize = 14.sp
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 },
                                 actions = {
+                                    Surface(
+                                        shape = RoundedCornerShape(4.dp),
+                                        color = LubricantAmber.copy(alpha = 0.12f),
+                                        border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.5f)),
+                                        modifier = Modifier.padding(end = 4.dp)
+                                    ) {
+                                        Text(
+                                            text = (userRole ?: "AUTH").uppercase(),
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = LubricantAmber,
+                                            letterSpacing = 0.5.sp
+                                        )
+                                    }
+
                                     IconButton(
                                         onClick = {
                                             coroutineScope.launch {
@@ -214,206 +272,133 @@ class MainActivity : ComponentActivity() {
                                         Icon(
                                             imageVector = Icons.Default.Logout,
                                             contentDescription = "Log Out",
-                                            tint = Color.White
+                                            tint = SlateSteelLight
                                         )
                                     }
                                 },
-                                colors = TopAppBarDefaults.topAppBarColors(containerColor = EnolNavy)
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = SurfaceDark,
+                                    titleContentColor = OnSurfaceDark
+                                )
                             )
                         },
                         bottomBar = {
-                            val isDirectorOrAdmin = userRole.equals("DIRECTOR", ignoreCase = true) || userRole.equals("ADMIN", ignoreCase = true)
-                            val isAsmOrZsm = userRole.equals("ASM", ignoreCase = true) || userRole.equals("ZSM", ignoreCase = true)
+                            if (isRootTab) {
+                                NavigationBar(
+                                    containerColor = SurfaceDark,
+                                    contentColor = OnSurfaceDark,
+                                    tonalElevation = 0.dp
+                                ) {
+                                    val itemColors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = LubricantAmber,
+                                        selectedTextColor = LubricantAmber,
+                                        indicatorColor = LubricantAmber.copy(alpha = 0.15f),
+                                        unselectedIconColor = SlateSteelLight,
+                                        unselectedTextColor = SlateSteelLight
+                                    )
 
-                            NavigationBar(
-                                containerColor = EnolNavy,
-                                contentColor = Color.White
-                            ) {
-                                if (isDirectorOrAdmin) {
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.ADMIN_MANAGEMENT,
-                                        onClick = { currentTab = AppNavigationTab.ADMIN_MANAGEMENT },
-                                        icon = { Icon(Icons.Default.ManageAccounts, contentDescription = "Admin Hub") },
-                                        label = { Text("Admin Hub", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                    if (isDirectorOrAdmin) {
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.ADMIN_MANAGEMENT,
+                                            onClick = { currentTab = AppNavigationTab.ADMIN_MANAGEMENT },
+                                            icon = { Icon(Icons.Default.ManageAccounts, contentDescription = "Admin Hub") },
+                                            label = { Text("Admin Hub", fontSize = 10.sp, fontWeight = if (currentTab == AppNavigationTab.ADMIN_MANAGEMENT) FontWeight.Bold else FontWeight.Normal) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.DASHBOARD,
-                                        onClick = { currentTab = AppNavigationTab.DASHBOARD },
-                                        icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
-                                        label = { Text("Dashboard", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.DASHBOARD,
+                                            onClick = { currentTab = AppNavigationTab.DASHBOARD },
+                                            icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
+                                            label = { Text("Dashboard", fontSize = 10.sp, fontWeight = if (currentTab == AppNavigationTab.DASHBOARD) FontWeight.Bold else FontWeight.Normal) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.GIS_MAP,
-                                        onClick = { currentTab = AppNavigationTab.GIS_MAP },
-                                        icon = { Icon(Icons.Default.Map, contentDescription = "GIS Map") },
-                                        label = { Text("GIS Map", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.GIS_MAP,
+                                            onClick = { currentTab = AppNavigationTab.GIS_MAP },
+                                            icon = { Icon(Icons.Default.Map, contentDescription = "Territories") },
+                                            label = { Text("Territories", fontSize = 10.sp, fontWeight = if (currentTab == AppNavigationTab.GIS_MAP) FontWeight.Bold else FontWeight.Normal) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.ORDER_CART,
-                                        onClick = { currentTab = AppNavigationTab.ORDER_CART },
-                                        icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Orders") },
-                                        label = { Text("Orders", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.ORDER_CART,
+                                            onClick = { currentTab = AppNavigationTab.ORDER_CART },
+                                            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Orders") },
+                                            label = { Text("Orders", fontSize = 10.sp, fontWeight = if (currentTab == AppNavigationTab.ORDER_CART) FontWeight.Bold else FontWeight.Normal) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.ADMIN_PORTAL,
-                                        onClick = { currentTab = AppNavigationTab.ADMIN_PORTAL },
-                                        icon = { Icon(Icons.Default.Key, contentDescription = "API Keys") },
-                                        label = { Text("API Keys", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.ADMIN_PORTAL,
+                                            onClick = { currentTab = AppNavigationTab.ADMIN_PORTAL },
+                                            icon = { Icon(Icons.Default.Key, contentDescription = "API Keys") },
+                                            label = { Text("API Keys", fontSize = 10.sp, fontWeight = if (currentTab == AppNavigationTab.ADMIN_PORTAL) FontWeight.Bold else FontWeight.Normal) },
+                                            colors = itemColors
                                         )
-                                    )
-                                } else if (isAsmOrZsm) {
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.DASHBOARD,
-                                        onClick = { currentTab = AppNavigationTab.DASHBOARD },
-                                        icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
-                                        label = { Text("Dashboard", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                    } else if (isAsmOrZsm) {
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.DASHBOARD,
+                                            onClick = { currentTab = AppNavigationTab.DASHBOARD },
+                                            icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
+                                            label = { Text("Dashboard", fontSize = 10.sp, fontWeight = if (currentTab == AppNavigationTab.DASHBOARD) FontWeight.Bold else FontWeight.Normal) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.GIS_MAP,
-                                        onClick = { currentTab = AppNavigationTab.GIS_MAP },
-                                        icon = { Icon(Icons.Default.Map, contentDescription = "Districts") },
-                                        label = { Text("Districts", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.GIS_MAP,
+                                            onClick = { currentTab = AppNavigationTab.GIS_MAP },
+                                            icon = { Icon(Icons.Default.Map, contentDescription = "Districts") },
+                                            label = { Text("Districts", fontSize = 10.sp) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.LEADERBOARD,
-                                        onClick = { currentTab = AppNavigationTab.LEADERBOARD },
-                                        icon = { Icon(Icons.Default.EmojiEvents, contentDescription = "Races") },
-                                        label = { Text("Races", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.LEADERBOARD,
+                                            onClick = { currentTab = AppNavigationTab.LEADERBOARD },
+                                            icon = { Icon(Icons.Default.EmojiEvents, contentDescription = "Races") },
+                                            label = { Text("Races", fontSize = 10.sp) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.ORDER_CART,
-                                        onClick = { currentTab = AppNavigationTab.ORDER_CART },
-                                        icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Catalog") },
-                                        label = { Text("Catalog", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.ORDER_CART,
+                                            onClick = { currentTab = AppNavigationTab.ORDER_CART },
+                                            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Catalog") },
+                                            label = { Text("Catalog", fontSize = 10.sp) },
+                                            colors = itemColors
                                         )
-                                    )
-                                } else {
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.DASHBOARD,
-                                        onClick = { currentTab = AppNavigationTab.DASHBOARD },
-                                        icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
-                                        label = { Text("Dashboard", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                    } else {
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.DASHBOARD,
+                                            onClick = { currentTab = AppNavigationTab.DASHBOARD },
+                                            icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
+                                            label = { Text("Dashboard", fontSize = 10.sp, fontWeight = if (currentTab == AppNavigationTab.DASHBOARD) FontWeight.Bold else FontWeight.Normal) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.VISIT_EXECUTION,
-                                        onClick = { currentTab = AppNavigationTab.VISIT_EXECUTION },
-                                        icon = { Icon(Icons.Default.Navigation, contentDescription = "Check-In") },
-                                        label = { Text("Check-In", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.VISIT_EXECUTION,
+                                            onClick = { currentTab = AppNavigationTab.VISIT_EXECUTION },
+                                            icon = { Icon(Icons.Default.Navigation, contentDescription = "Check-In") },
+                                            label = { Text("Check-In", fontSize = 10.sp) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.ORDER_CART,
-                                        onClick = { currentTab = AppNavigationTab.ORDER_CART },
-                                        icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Orders") },
-                                        label = { Text("Orders", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.ORDER_CART,
+                                            onClick = { currentTab = AppNavigationTab.ORDER_CART },
+                                            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Orders") },
+                                            label = { Text("Orders", fontSize = 10.sp) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.TADA_CLAIM,
-                                        onClick = { currentTab = AppNavigationTab.TADA_CLAIM },
-                                        icon = { Icon(Icons.Default.ReceiptLong, contentDescription = "TADA") },
-                                        label = { Text("Expense", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.TADA_CLAIM,
+                                            onClick = { currentTab = AppNavigationTab.TADA_CLAIM },
+                                            icon = { Icon(Icons.Default.ReceiptLong, contentDescription = "TADA") },
+                                            label = { Text("Expense", fontSize = 10.sp) },
+                                            colors = itemColors
                                         )
-                                    )
-                                    NavigationBarItem(
-                                        selected = currentTab == AppNavigationTab.GIS_MAP,
-                                        onClick = { currentTab = AppNavigationTab.GIS_MAP },
-                                        icon = { Icon(Icons.Default.Map, contentDescription = "Route") },
-                                        label = { Text("Route", fontSize = 10.sp) },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = EnolNavy,
-                                            selectedTextColor = LubricantAmber,
-                                            indicatorColor = LubricantAmber,
-                                            unselectedIconColor = SlateSteelLight,
-                                            unselectedTextColor = SlateSteelLight
+                                        NavigationBarItem(
+                                            selected = currentTab == AppNavigationTab.GIS_MAP,
+                                            onClick = { currentTab = AppNavigationTab.GIS_MAP },
+                                            icon = { Icon(Icons.Default.Map, contentDescription = "Route") },
+                                            label = { Text("Route", fontSize = 10.sp) },
+                                            colors = itemColors
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }

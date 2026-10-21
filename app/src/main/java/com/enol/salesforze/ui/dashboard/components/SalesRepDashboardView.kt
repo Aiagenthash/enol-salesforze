@@ -109,13 +109,13 @@ fun SalesRepDashboardView(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(grid_2),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = SuccessEmerald
+                                contentColor = LubricantAmber
                             ),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, SuccessEmerald)
+                            border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber)
                         ) {
                             Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(grid_1))
-                            Text("Start Shift", style = MaterialTheme.typography.labelMedium)
+                            Text("Start Shift", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
                         }
 
                         OutlinedButton(
@@ -123,9 +123,9 @@ fun SalesRepDashboardView(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(grid_2),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = ErrorCrimson
+                                contentColor = SlateSteelLight
                             ),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, ErrorCrimson)
+                            border = androidx.compose.foundation.BorderStroke(1.dp, SlateSteelDark)
                         ) {
                             Icon(Icons.Default.Stop, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(grid_1))
@@ -173,7 +173,7 @@ fun SalesRepDashboardView(
                             text = "${(uiState.beatProgressPct * 100).toInt()}% Done",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
-                            color = if (uiState.beatProgressPct >= 0.8f) SuccessEmerald else LubricantAmber
+                            color = LubricantAmber
                         )
                     }
 
@@ -183,9 +183,9 @@ fun SalesRepDashboardView(
                         progress = { uiState.beatProgressPct },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp)),
-                        color = if (uiState.beatProgressPct >= 0.8f) SuccessEmerald else LubricantAmber,
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp)),
+                        color = LubricantAmber,
                         trackColor = SlateSteelDark
                     )
 
@@ -196,13 +196,13 @@ fun SalesRepDashboardView(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Visits Completed: ${uiState.todayVisitsCompleted} / ${uiState.todayVisitsPlanned}",
+                            text = "Visits: ${uiState.todayVisitsCompleted} / ${uiState.todayVisitsPlanned}",
                             style = MaterialTheme.typography.bodySmall,
                             color = SlateSteelLight
                         )
                         val remaining = (uiState.todayVisitsPlanned - uiState.todayVisitsCompleted).coerceAtLeast(0)
                         Text(
-                            text = "$remaining Visits Remaining",
+                            text = "$remaining Remaining",
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.SemiBold,
                             color = OnSurfaceDark
@@ -232,7 +232,7 @@ fun SalesRepDashboardView(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Monthly Performance Gauges (MTD)",
+                            text = "Monthly Targets (MTD)",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = OnSurfaceDark
@@ -240,14 +240,14 @@ fun SalesRepDashboardView(
                         Icon(
                             imageVector = Icons.Default.TrendingUp,
                             contentDescription = null,
-                            tint = SuccessEmerald,
+                            tint = LubricantAmber,
                             modifier = Modifier.size(18.dp)
                         )
                     }
 
                     // Gauge 1: Volume (Liters)
                     KpiProgressRow(
-                        title = "Volume Target",
+                        title = "Volume",
                         achievedText = "${currencyFormatter.format(uiState.achievedVolumeLiters.toInt())} L",
                         targetText = "${currencyFormatter.format(uiState.targetVolumeLiters.toInt())} L",
                         progress = uiState.volumeProgressPct,
@@ -256,31 +256,31 @@ fun SalesRepDashboardView(
 
                     // Gauge 2: Revenue (PKR)
                     KpiProgressRow(
-                        title = "Revenue Target",
+                        title = "Revenue",
                         achievedText = "PKR ${currencyFormatter.format(uiState.achievedRevenuePkr.toInt())}",
                         targetText = "PKR ${currencyFormatter.format(uiState.targetRevenuePkr.toInt())}",
                         progress = uiState.revenueProgressPct,
-                        progressColor = SuccessEmerald
+                        progressColor = LubricantAmber
                     )
 
                     // Gauge 3: Visit Target
                     val visitProgress = if (uiState.targetVisits > 0) (uiState.achievedVisits.toFloat() / uiState.targetVisits).coerceIn(0f, 1f) else 0f
                     KpiProgressRow(
-                        title = "Monthly Visits",
+                        title = "Visits",
                         achievedText = "${uiState.achievedVisits}",
                         targetText = "${uiState.targetVisits}",
                         progress = visitProgress,
-                        progressColor = Color(0xFF38BDF8)
+                        progressColor = LubricantAmber
                     )
 
                     // Gauge 4: New Client Onboardings
                     val clientProgress = if (uiState.targetNewClients > 0) (uiState.achievedNewClients.toFloat() / uiState.targetNewClients).coerceIn(0f, 1f) else 0f
                     KpiProgressRow(
-                        title = "New Dealer Enrollments",
+                        title = "New Dealers",
                         achievedText = "${uiState.achievedNewClients}",
                         targetText = "${uiState.targetNewClients}",
                         progress = clientProgress,
-                        progressColor = Color(0xFFA855F7)
+                        progressColor = LubricantAmber
                     )
                 }
             }
@@ -325,7 +325,7 @@ fun SalesRepDashboardView(
                             Spacer(modifier = Modifier.width(grid_2))
                             Column {
                                 Text(
-                                    text = "Active Sales Race",
+                                    text = "Sales Competition",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = OnSurfaceDark
@@ -339,16 +339,16 @@ fun SalesRepDashboardView(
                         }
 
                         Surface(
-                            shape = RoundedCornerShape(grid_2),
-                            color = LubricantAmber.copy(alpha = 0.2f),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber)
+                            shape = RoundedCornerShape(grid_1),
+                            color = LubricantAmber,
+                            modifier = Modifier.padding(start = grid_2)
                         ) {
                             Text(
                                 text = "RANK #3",
-                                modifier = Modifier.padding(horizontal = grid_2, vertical = grid_1),
+                                modifier = Modifier.padding(horizontal = grid_2, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = LubricantAmber
+                                fontWeight = FontWeight.Bold,
+                                color = BackgroundDark
                             )
                         }
                     }
@@ -364,8 +364,8 @@ fun SalesRepDashboardView(
                             Text(text = "12,450 pts", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = OnSurfaceDark)
                         }
                         Column(horizontalAlignment = Alignment.End) {
-                            Text(text = "Grand Prize Pool", style = MaterialTheme.typography.labelSmall, color = SlateSteelLight)
-                            Text(text = "Honda 125cc + PKR 50K", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = SuccessEmerald)
+                            Text(text = "Prize Pool", style = MaterialTheme.typography.labelSmall, color = SlateSteelLight)
+                            Text(text = "Honda 125cc + PKR 50K", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = OnSurfaceDark)
                         }
                     }
 
@@ -377,7 +377,7 @@ fun SalesRepDashboardView(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "View Full Leaderboard",
+                            text = "Leaderboard",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = LubricantAmber
@@ -410,7 +410,7 @@ fun SalesRepDashboardView(
             ) {
                 QuickActionCard(
                     title = "Book Order",
-                    subtitle = "Multi-SKU Cart",
+                    subtitle = "Catalog & Cart",
                     icon = Icons.Default.ShoppingCart,
                     iconColor = LubricantAmber,
                     onClick = onNavigateToOrderCart,
@@ -420,7 +420,7 @@ fun SalesRepDashboardView(
                     title = "Check In",
                     subtitle = "Geofenced Visit",
                     icon = Icons.Default.LocationOn,
-                    iconColor = SuccessEmerald,
+                    iconColor = LubricantAmber,
                     onClick = onNavigateToVisitExecution,
                     modifier = Modifier.weight(1f)
                 )
@@ -434,17 +434,17 @@ fun SalesRepDashboardView(
             ) {
                 QuickActionCard(
                     title = "New Dealer",
-                    subtitle = "Live Photo Lock",
+                    subtitle = "Shop Onboarding",
                     icon = Icons.Default.Storefront,
-                    iconColor = Color(0xFF38BDF8),
+                    iconColor = LubricantAmber,
                     onClick = onNavigateToClientEnroll,
                     modifier = Modifier.weight(1f)
                 )
                 QuickActionCard(
                     title = "New Mechanic",
-                    subtitle = "Cash Wallet Onboard",
+                    subtitle = "Loyalty Onboarding",
                     icon = Icons.Default.Build,
-                    iconColor = Color(0xFFA855F7),
+                    iconColor = LubricantAmber,
                     onClick = onNavigateToMechanicEnroll,
                     modifier = Modifier.weight(1f)
                 )
@@ -457,18 +457,18 @@ fun SalesRepDashboardView(
                 horizontalArrangement = Arrangement.spacedBy(grid_3)
             ) {
                 QuickActionCard(
-                    title = "District GIS",
-                    subtitle = "Heatmap & Bounds",
+                    title = "Territory Map",
+                    subtitle = "District Routes",
                     icon = Icons.Default.Map,
-                    iconColor = Color(0xFFE2E8F0),
+                    iconColor = LubricantAmber,
                     onClick = onNavigateToGisMap,
                     modifier = Modifier.weight(1f)
                 )
                 QuickActionCard(
-                    title = "TADA Expense",
-                    subtitle = "Odometer Verification",
+                    title = "Expense Claim",
+                    subtitle = "Daily TADA",
                     icon = Icons.Default.ReceiptLong,
-                    iconColor = WarningAmber,
+                    iconColor = LubricantAmber,
                     onClick = onNavigateToTada,
                     modifier = Modifier.weight(1f)
                 )
@@ -602,12 +602,7 @@ private fun QuickActionCard(
 @Composable
 private fun TadaClaimSummaryCard(claim: TadaClaimEntity) {
     val currencyFormatter = NumberFormat.getNumberInstance(Locale.US)
-    val statusColor = when (claim.status.uppercase()) {
-        "APPROVED" -> SuccessEmerald
-        "FLAGGED" -> ErrorCrimson
-        "REJECTED" -> ErrorCrimson
-        else -> WarningAmber
-    }
+    val statusColor = if (claim.status.equals("APPROVED", ignoreCase = true)) LubricantAmber else SlateSteelLight
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -644,8 +639,8 @@ private fun TadaClaimSummaryCard(claim: TadaClaimEntity) {
                 )
                 Surface(
                     shape = RoundedCornerShape(grid_1),
-                    color = statusColor.copy(alpha = 0.2f),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, statusColor)
+                    color = statusColor.copy(alpha = 0.12f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, statusColor.copy(alpha = 0.5f))
                 ) {
                     Text(
                         text = claim.status,

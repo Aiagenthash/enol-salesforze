@@ -71,6 +71,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.enol.salesforze.ui.attendance.CameraCaptureView
 import com.enol.salesforze.ui.attendance.CameraOverlayType
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
+import com.enol.salesforze.ui.theme.SlateSteelLight
 import com.enol.salesforze.ui.theme.EnolNavy
 import com.enol.salesforze.ui.theme.ErrorCrimson
 import com.enol.salesforze.ui.theme.LubricantAmber
@@ -169,45 +175,14 @@ fun MechanicEnrollmentScreen(
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Mechanic Enrollment",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "Enol Ustad Loyalty Program",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LubricantAmber
-                        )
-                    }
-                },
-                navigationIcon = {
-                    if (onNavigateBack != null) {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = EnolNavy)
-            )
-        }
-    ) { paddingValues ->
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
                 .padding(grid_4)
         ) {
@@ -579,7 +554,7 @@ fun MechanicEnrollmentScreen(
                 enabled = canSubmit,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = LubricantAmber,
-                    contentColor = EnolNavy
+                    contentColor = BackgroundDark
                 ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
@@ -587,11 +562,11 @@ fun MechanicEnrollmentScreen(
                     .height(52.dp)
             ) {
                 if (state.isSubmitting) {
-                    CircularProgressIndicator(color = EnolNavy, modifier = Modifier.size(22.dp))
+                    CircularProgressIndicator(color = BackgroundDark, modifier = Modifier.size(22.dp))
                     Spacer(modifier = Modifier.width(grid_2))
-                    Text(text = "Registering Mechanic...", fontWeight = FontWeight.Bold)
+                    Text(text = "Registering Mechanic...", fontWeight = FontWeight.Bold, color = BackgroundDark)
                 } else {
-                    Text(text = "REGISTER MECHANIC & QUEUE SYNC", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(text = "REGISTER MECHANIC & QUEUE SYNC", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = BackgroundDark)
                 }
             }
         }

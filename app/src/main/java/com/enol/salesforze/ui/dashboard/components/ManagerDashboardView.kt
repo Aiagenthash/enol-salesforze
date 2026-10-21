@@ -69,27 +69,27 @@ fun ManagerDashboardView(
                     ) {
                         Column {
                             Text(
-                                text = "Field Force Command Center",
+                                text = uiState.currentUser?.fullName ?: "Executive Dashboard",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = OnSurfaceDark
                             )
-                            Spacer(modifier = Modifier.height(grid_0_5))
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "${uiState.currentUser?.fullName ?: "Manager"} | Level: ${uiState.userRole.name}",
+                                text = "Hierarchy Scope: ${uiState.selectedHierarchyFilter}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = SlateSteelLight
                             )
                         }
 
                         Surface(
-                            shape = RoundedCornerShape(grid_2),
-                            color = EnolNavyMuted.copy(alpha = 0.5f),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber)
+                            shape = RoundedCornerShape(grid_1),
+                            color = LubricantAmber.copy(alpha = 0.12f),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.5f))
                         ) {
                             Text(
                                 text = uiState.userRole.name,
-                                modifier = Modifier.padding(horizontal = grid_2, vertical = grid_1),
+                                modifier = Modifier.padding(horizontal = grid_2, vertical = grid_0_5),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = LubricantAmber
@@ -98,14 +98,6 @@ fun ManagerDashboardView(
                     }
 
                     Spacer(modifier = Modifier.height(grid_3))
-
-                    // Hierarchical Scope Selector
-                    Text(
-                        text = "Organizational Hierarchy Scope",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = SlateSteelLight
-                    )
-                    Spacer(modifier = Modifier.height(grid_1))
 
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(grid_2),
@@ -123,10 +115,10 @@ fun ManagerDashboardView(
                             ) {
                                 Text(
                                     text = level,
-                                    modifier = Modifier.padding(horizontal = grid_3, vertical = grid_1_5),
+                                    modifier = Modifier.padding(horizontal = grid_3, vertical = grid_1),
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) EnolNavyDark else OnSurfaceDark
+                                    color = if (isSelected) BackgroundDark else OnSurfaceDark
                                 )
                             }
                         }
@@ -148,31 +140,12 @@ fun ManagerDashboardView(
                         .fillMaxWidth()
                         .padding(grid_4)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Surface(
-                                shape = CircleShape,
-                                color = SuccessEmerald,
-                                modifier = Modifier.size(10.dp)
-                            ) {}
-                            Spacer(modifier = Modifier.width(grid_2))
-                            Text(
-                                text = "Live Team Field Status",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = OnSurfaceDark
-                            )
-                        }
-                        Text(
-                            text = "Real-Time Telemetry",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = SlateSteelLight
-                        )
-                    }
+                    Text(
+                        text = "Team Field Deployment",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = OnSurfaceDark
+                    )
 
                     Spacer(modifier = Modifier.height(grid_3))
 
@@ -183,14 +156,14 @@ fun ManagerDashboardView(
                         TeamTickerCard(
                             label = "On Field",
                             count = uiState.teamTicker.onFieldCount,
-                            badgeColor = SuccessEmerald,
+                            badgeColor = LubricantAmber,
                             icon = Icons.Default.DirectionsWalk,
                             modifier = Modifier.weight(1f)
                         )
                         TeamTickerCard(
                             label = "Not Started",
                             count = uiState.teamTicker.notStartedCount,
-                            badgeColor = WarningAmber,
+                            badgeColor = SlateSteelLight,
                             icon = Icons.Default.Schedule,
                             modifier = Modifier.weight(1f)
                         )
@@ -203,9 +176,9 @@ fun ManagerDashboardView(
                         horizontalArrangement = Arrangement.spacedBy(grid_2)
                     ) {
                         TeamTickerCard(
-                            label = "Mock GPS Alert",
+                            label = "GPS Flagged",
                             count = uiState.teamTicker.mockGpsFlaggedCount,
-                            badgeColor = ErrorCrimson,
+                            badgeColor = LubricantAmber,
                             icon = Icons.Default.Warning,
                             modifier = Modifier.weight(1f)
                         )
@@ -231,7 +204,7 @@ fun ManagerDashboardView(
                 shape = RoundedCornerShape(grid_3),
                 border = androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    if (uiState.totalPendingApprovals > 0) WarningAmber else SlateSteelDark
+                    if (uiState.totalPendingApprovals > 0) LubricantAmber else SlateSteelDark
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = elevation_2)
             ) {
@@ -248,15 +221,15 @@ fun ManagerDashboardView(
                     ) {
                         Surface(
                             shape = CircleShape,
-                            color = if (uiState.totalPendingApprovals > 0) WarningAmber.copy(alpha = 0.2f) else SlateSteelDark,
-                            modifier = Modifier.size(44.dp)
+                            color = LubricantAmber.copy(alpha = 0.15f),
+                            modifier = Modifier.size(40.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.Checklist,
                                     contentDescription = null,
-                                    tint = if (uiState.totalPendingApprovals > 0) WarningAmber else SlateSteelLight,
-                                    modifier = Modifier.size(24.dp)
+                                    tint = LubricantAmber,
+                                    modifier = Modifier.size(22.dp)
                                 )
                             }
                         }
@@ -265,32 +238,34 @@ fun ManagerDashboardView(
 
                         Column {
                             Text(
-                                text = "Manager Approval Center",
+                                text = "Pending Approvals",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = OnSurfaceDark
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "${uiState.pendingCreditHoldOrders.size} Credit Holds • ${uiState.pendingEnrollmentClients.size} Dealers • ${uiState.pendingTadaClaims.size} TADA",
+                                text = "${uiState.pendingCreditHoldOrders.size} Orders • ${uiState.pendingEnrollmentClients.size} Dealers • ${uiState.pendingTadaClaims.size} Claims",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = SlateSteelLight
                             )
                         }
                     }
 
-                    Surface(
-                        shape = RoundedCornerShape(grid_3),
-                        color = if (uiState.totalPendingApprovals > 0) ErrorCrimson else SlateSteelMuted,
-                        modifier = Modifier.padding(start = grid_2)
-                    ) {
-                        Text(
-                            text = "${uiState.totalPendingApprovals} Pending",
-                            modifier = Modifier.padding(horizontal = grid_2_5, vertical = grid_1),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color.White
-                        )
+                    if (uiState.totalPendingApprovals > 0) {
+                        Surface(
+                            shape = RoundedCornerShape(grid_1),
+                            color = LubricantAmber,
+                            modifier = Modifier.padding(start = grid_2)
+                        ) {
+                            Text(
+                                text = "${uiState.totalPendingApprovals} Action Required",
+                                modifier = Modifier.padding(horizontal = grid_2, vertical = grid_1),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = BackgroundDark
+                            )
+                        }
                     }
                 }
             }
@@ -304,7 +279,7 @@ fun ManagerDashboardView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Territory & District Status (${uiState.selectedHierarchyFilter})",
+                    text = "Districts (${uiState.selectedHierarchyFilter})",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = OnSurfaceDark
@@ -312,7 +287,7 @@ fun ManagerDashboardView(
                 TextButton(onClick = onNavigateToGisMap) {
                     Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.size(16.dp), tint = LubricantAmber)
                     Spacer(modifier = Modifier.width(grid_1))
-                    Text("View GIS Map", color = LubricantAmber, fontWeight = FontWeight.Bold)
+                    Text("View Map", color = LubricantAmber, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -331,7 +306,7 @@ fun ManagerDashboardView(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Loading territory polygons and sales force distribution...",
+                            text = "No territory districts configured.",
                             style = MaterialTheme.typography.bodySmall,
                             color = SlateSteelLight
                         )
@@ -347,7 +322,7 @@ fun ManagerDashboardView(
         // --- 5. Executive Governance Shortcuts ---
         item {
             Text(
-                text = "Executive Governance",
+                text = "System Governance",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = OnSurfaceDark,
@@ -359,8 +334,8 @@ fun ManagerDashboardView(
                 horizontalArrangement = Arrangement.spacedBy(grid_3)
             ) {
                 ManagerActionCard(
-                    title = "Sales Leaderboards",
-                    subtitle = "Races & Gamification",
+                    title = "Leaderboards",
+                    subtitle = "Sales Rankings",
                     icon = Icons.Default.EmojiEvents,
                     iconColor = LubricantAmber,
                     onClick = onNavigateToLeaderboard,
@@ -372,7 +347,7 @@ fun ManagerDashboardView(
                         title = "API Governance",
                         subtitle = "Keys & Webhooks",
                         icon = Icons.Default.Key,
-                        iconColor = Color(0xFF38BDF8),
+                        iconColor = LubricantAmber,
                         onClick = onNavigateToAdminPortal,
                         modifier = Modifier.weight(1f)
                     )
@@ -465,15 +440,15 @@ private fun DistrictSummaryCard(
 
             Surface(
                 shape = RoundedCornerShape(grid_1_5),
-                color = LubricantAmber.copy(alpha = 0.15f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.5f))
+                color = LubricantAmber.copy(alpha = 0.12f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.4f))
             ) {
                 Text(
-                    text = if (district.assignedAsmId != null) "Assigned" else "Vacant Beat",
+                    text = if (district.assignedAsmId != null) "Assigned" else "Vacant",
                     modifier = Modifier.padding(horizontal = grid_2, vertical = grid_0_5),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = if (district.assignedAsmId != null) SuccessEmerald else WarningAmber
+                    color = if (district.assignedAsmId != null) LubricantAmber else SlateSteelLight
                 )
             }
         }

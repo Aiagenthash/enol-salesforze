@@ -50,82 +50,47 @@ fun AdminApiPortalScreen(
         "Delivery Logs (${uiState.webhookLogs.size})"
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Admin API Governance",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = OnSurfaceDark
-                        )
-                        Text(
-                            text = "B2B Keys, HMAC Webhooks & Outbound Gateways",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = SlateSteelLight
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = OnSurfaceDark)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { viewModel.loadGovernanceData() }) {
-                        Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh", tint = SlateSteelLight)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceDark)
-            )
-        },
-        containerColor = BackgroundDark,
+    Column(
         modifier = modifier
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
+        // Tab Row
+        TabRow(
+            selectedTabIndex = selectedTab,
+            containerColor = SurfaceDark,
+            contentColor = LubricantAmber,
+            divider = {
+                HorizontalDivider(color = SlateSteelDark)
+            }
         ) {
-            // Tab Row
-            TabRow(
-                selectedTabIndex = selectedTab,
-                containerColor = SurfaceDark,
-                contentColor = LubricantAmber,
-                divider = {
-                    HorizontalDivider(color = SlateSteelDark)
-                }
-            ) {
-                tabTitles.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-                                color = if (selectedTab == index) LubricantAmber else SlateSteelLight
-                            )
-                        }
-                    )
-                }
+            tabTitles.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTab == index,
+                    onClick = { selectedTab = index },
+                    text = {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
+                            color = if (selectedTab == index) LubricantAmber else SlateSteelLight
+                        )
+                    }
+                )
             }
+        }
 
-            // Tab Content
-            when (selectedTab) {
-                0 -> ApiKeysTabContent(
-                    keys = uiState.apiKeys,
-                    onOpenCreateDialog = { showGenerateKeyDialog = true }
-                )
-                1 -> WebhooksTabContent(
-                    webhooks = uiState.webhookSubscriptions,
-                    onOpenCreateDialog = { showRegisterWebhookDialog = true }
-                )
-                2 -> WebhookLogsTabContent(logs = uiState.webhookLogs)
-            }
+        // Tab Content
+        when (selectedTab) {
+            0 -> ApiKeysTabContent(
+                keys = uiState.apiKeys,
+                onOpenCreateDialog = { showGenerateKeyDialog = true }
+            )
+            1 -> WebhooksTabContent(
+                webhooks = uiState.webhookSubscriptions,
+                onOpenCreateDialog = { showRegisterWebhookDialog = true }
+            )
+            2 -> WebhookLogsTabContent(logs = uiState.webhookLogs)
         }
     }
 

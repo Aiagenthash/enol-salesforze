@@ -75,7 +75,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.enol.salesforze.data.local.entities.ProductEntity
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
 import com.enol.salesforze.ui.theme.EnolNavy
+import com.enol.salesforze.ui.theme.BackgroundDark
+import com.enol.salesforze.ui.theme.SurfaceDark
+import com.enol.salesforze.ui.theme.SurfaceContainerDark
+import com.enol.salesforze.ui.theme.OnSurfaceDark
+import com.enol.salesforze.ui.theme.SlateSteelDark
 import com.enol.salesforze.ui.theme.EnolNavyLight
 import com.enol.salesforze.ui.theme.ErrorCrimson
 import com.enol.salesforze.ui.theme.LubricantAmber
@@ -115,72 +125,59 @@ fun OrderCartScreen(
         )
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = uiState.client?.businessName ?: "Order Booking Cart",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        uiState.client?.let { client ->
-                            Text(
-                                text = "Credit Limit: PKR %,.0f  |  Bal: PKR %,.0f".format(client.creditLimit, client.outstandingBalance),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = LubricantAmber,
-                                fontSize = 11.sp
-                            )
-                        }
-                    }
-                },
-                navigationIcon = {
-                    if (onNavigateBack != null) {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = EnolNavy)
-            )
-        },
-        bottomBar = {
-            OrderBottomBar(
-                uiState = uiState,
-                isExpanded = isCartExpanded,
-                onToggleExpand = { isCartExpanded = !isCartExpanded },
-                onPaymentTermsChanged = viewModel::setPaymentTerms,
-                onSubmitOrder = viewModel::submitOrder
-            )
-        }
-    ) { paddingValues ->
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+            modifier = Modifier.fillMaxSize()
         ) {
+            // Customer credit info card (if present)
+            uiState.client?.let { client ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = grid_4, vertical = grid_2),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.4f))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = grid_3, vertical = grid_2),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = client.businessName,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = OnSurfaceDark
+                        )
+                        Text(
+                            text = "Limit: PKR %,.0f".format(client.creditLimit),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = LubricantAmber
+                        )
+                    }
+                }
+            }
+
             // 1. Search Bar
             OutlinedTextField(
                 value = uiState.searchQuery,
                 onValueChange = viewModel::setSearchQuery,
-                placeholder = { Text("Search product name, SKU or grade...") },
+                placeholder = { Text("Search catalog SKU, name or grade...", color = SlateSteelLight) },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = SlateSteel)
+                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = SlateSteelLight)
                 },
                 trailingIcon = {
                     if (uiState.searchQuery.isNotBlank()) {
                         IconButton(onClick = { viewModel.setSearchQuery("") }) {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = "Clear", tint = SlateSteel)
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "Clear", tint = SlateSteelLight)
                         }
                     }
                 },
@@ -188,10 +185,14 @@ fun OrderCartScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = grid_4, vertical = grid_2),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(10.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = LubricantAmber,
-                    unfocusedBorderColor = SlateSteel.copy(alpha = 0.3f)
+                    unfocusedBorderColor = SlateSteelDark,
+                    focusedTextColor = OnSurfaceDark,
+                    unfocusedTextColor = OnSurfaceDark,
+                    focusedContainerColor = SurfaceDark,
+                    unfocusedContainerColor = SurfaceDark
                 )
             )
 
@@ -219,7 +220,14 @@ fun OrderCartScreen(
                         },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = LubricantAmber,
-                            selectedLabelColor = EnolNavy
+                            selectedLabelColor = BackgroundDark,
+                            containerColor = SurfaceDark,
+                            labelColor = SlateSteelLight
+                        ),
+                        border = FilterChipDefaults.filterChipBorder(
+                            enabled = true,
+                            selected = isSelected,
+                            borderColor = if (isSelected) LubricantAmber else SlateSteelDark
                         )
                     )
                 }
@@ -228,8 +236,9 @@ fun OrderCartScreen(
             // Error banner if any
             uiState.errorMessage?.let { error ->
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = ErrorCrimson.copy(alpha = 0.12f)),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceDark),
                     shape = RoundedCornerShape(10.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = grid_4, vertical = grid_1)
@@ -238,9 +247,9 @@ fun OrderCartScreen(
                         modifier = Modifier.padding(grid_3),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(imageVector = Icons.Default.Error, contentDescription = null, tint = ErrorCrimson)
+                        Icon(imageVector = Icons.Default.Error, contentDescription = null, tint = LubricantAmber)
                         Spacer(modifier = Modifier.width(grid_2))
-                        Text(text = error, style = MaterialTheme.typography.bodySmall, color = ErrorCrimson)
+                        Text(text = error, style = MaterialTheme.typography.bodySmall, color = OnSurfaceDark)
                     }
                 }
             }
@@ -264,9 +273,20 @@ fun OrderCartScreen(
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(100.dp)) // Padding to prevent bottom sheet overlap
+                    Spacer(modifier = Modifier.height(130.dp)) // Padding to prevent bottom sheet overlap
                 }
             }
+        }
+
+        // Docked Bottom Bar
+        Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+            OrderBottomBar(
+                uiState = uiState,
+                isExpanded = isCartExpanded,
+                onToggleExpand = { isCartExpanded = !isCartExpanded },
+                onPaymentTermsChanged = viewModel::setPaymentTerms,
+                onSubmitOrder = viewModel::submitOrder
+            )
         }
     }
 }
@@ -283,11 +303,11 @@ private fun ProductCartCard(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = if (cartons > 0) LubricantAmber.copy(alpha = 0.05f) else MaterialTheme.colorScheme.surface
+            containerColor = SurfaceDark
         ),
         border = androidx.compose.foundation.BorderStroke(
             width = if (cartons > 0) 1.5.dp else 1.dp,
-            color = if (cartons > 0) LubricantAmber else SlateSteel.copy(alpha = 0.2f)
+            color = if (cartons > 0) LubricantAmber else SlateSteelDark
         ),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.fillMaxWidth()
@@ -303,25 +323,26 @@ private fun ProductCartCard(
                         text = product.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = EnolNavy
+                        color = OnSurfaceDark
                     )
                     Text(
                         text = "SKU: ${product.sku} • Grade: ${product.viscosityGrade} • ${product.packSizeLiters}L (${product.unitsPerCarton} units/ctn)",
                         style = MaterialTheme.typography.bodySmall,
-                        color = SlateSteel,
+                        color = SlateSteelLight,
                         fontSize = 11.sp
                     )
                 }
 
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = EnolNavy.copy(alpha = 0.08f)
+                    color = LubricantAmber.copy(alpha = 0.12f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.4f))
                 ) {
                     Text(
                         text = product.category,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = EnolNavy,
+                        color = LubricantAmber,
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                     )
                 }
@@ -361,14 +382,14 @@ private fun ProductCartCard(
                         modifier = Modifier
                             .size(36.dp)
                             .background(
-                                if (cartons > 0) LubricantAmber.copy(alpha = 0.2f) else SlateSteel.copy(alpha = 0.1f),
+                                if (cartons > 0) LubricantAmber.copy(alpha = 0.15f) else SurfaceContainerDark,
                                 CircleShape
                             )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Remove,
                             contentDescription = "Minus",
-                            tint = if (cartons > 0) EnolNavy else SlateSteelLight,
+                            tint = if (cartons > 0) LubricantAmber else SlateSteelDark,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -377,15 +398,15 @@ private fun ProductCartCard(
                         modifier = Modifier
                             .width(44.dp)
                             .height(34.dp)
-                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(6.dp))
-                            .border(1.dp, if (cartons > 0) LubricantAmber else SlateSteel.copy(alpha = 0.3f), RoundedCornerShape(6.dp)),
+                            .background(SurfaceDark, RoundedCornerShape(6.dp))
+                            .border(1.dp, if (cartons > 0) LubricantAmber else SlateSteelDark, RoundedCornerShape(6.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = cartons.toString(),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = if (cartons > 0) LubricantAmber else SlateSteel
+                            color = if (cartons > 0) LubricantAmber else SlateSteelLight
                         )
                     }
 
@@ -398,7 +419,7 @@ private fun ProductCartCard(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Plus",
-                            tint = EnolNavy,
+                            tint = BackgroundDark,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -420,8 +441,9 @@ private fun OrderBottomBar(
     onSubmitOrder: () -> Unit
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, SlateSteelDark),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation_4),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -446,12 +468,12 @@ private fun OrderBottomBar(
                             text = "Net Payable: PKR %,.0f".format(uiState.netAmount),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = EnolNavy
+                            color = OnSurfaceDark
                         )
                         Text(
                             text = "${uiState.totalCartons.toInt()} Cartons  •  %.1f Liters".format(uiState.totalLiters),
                             style = MaterialTheme.typography.bodySmall,
-                            color = SlateSteel,
+                            color = SlateSteelLight,
                             fontSize = 11.sp
                         )
                     }
@@ -460,7 +482,8 @@ private fun OrderBottomBar(
                 IconButton(onClick = onToggleExpand) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Default.ExpandMore else Icons.Default.ExpandLess,
-                        contentDescription = "Expand"
+                        contentDescription = "Expand",
+                        tint = SlateSteelLight
                     )
                 }
             }
@@ -472,22 +495,22 @@ private fun OrderBottomBar(
                 exit = fadeOut() + shrinkVertically()
             ) {
                 Column(modifier = Modifier.padding(top = grid_3)) {
-                    HorizontalDivider(color = SlateSteel.copy(alpha = 0.15f))
+                    HorizontalDivider(color = SlateSteelDark)
                     Spacer(modifier = Modifier.height(grid_2))
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(text = "Gross Total", style = MaterialTheme.typography.bodySmall, color = SlateSteel)
-                        Text(text = "PKR %,.0f".format(uiState.grossAmount), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold)
+                        Text(text = "Gross Total", style = MaterialTheme.typography.bodySmall, color = SlateSteelLight)
+                        Text(text = "PKR %,.0f".format(uiState.grossAmount), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = OnSurfaceDark)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(text = "Promotional Discounts / Rebates", style = MaterialTheme.typography.bodySmall, color = SuccessEmerald)
-                        Text(text = "- PKR %,.0f".format(uiState.discountAmount), style = MaterialTheme.typography.bodySmall, color = SuccessEmerald, fontWeight = FontWeight.Bold)
+                        Text(text = "Discounts / Schemes", style = MaterialTheme.typography.bodySmall, color = SlateSteelLight)
+                        Text(text = "- PKR %,.0f".format(uiState.discountAmount), style = MaterialTheme.typography.bodySmall, color = LubricantAmber, fontWeight = FontWeight.Bold)
                     }
 
                     Spacer(modifier = Modifier.height(grid_3))
 
                     // Payment Terms Selector
-                    Text(text = "Payment Terms", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                    Text(text = "Payment Terms", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = OnSurfaceDark)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -502,7 +525,8 @@ private fun OrderBottomBar(
                             val isSelected = uiState.paymentTerms == termsKey
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
-                                color = if (isSelected) EnolNavy else SlateSteel.copy(alpha = 0.1f),
+                                color = if (isSelected) LubricantAmber else SurfaceContainerDark,
+                                border = if (isSelected) null else androidx.compose.foundation.BorderStroke(1.dp, SlateSteelDark),
                                 modifier = Modifier
                                     .weight(1f)
                                     .clickable { onPaymentTermsChanged(termsKey) }
@@ -511,7 +535,7 @@ private fun OrderBottomBar(
                                     text = label,
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) Color.White else SlateSteel,
+                                    color = if (isSelected) BackgroundDark else OnSurfaceDark,
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                                     modifier = Modifier.padding(vertical = grid_2)
                                 )
@@ -526,53 +550,31 @@ private fun OrderBottomBar(
             // 3. CREDIT LIMIT GUARDRAIL BANNER
             if (uiState.exceedsCreditLimit) {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = ErrorCrimson.copy(alpha = 0.12f)),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceDark),
                     shape = RoundedCornerShape(10.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, ErrorCrimson.copy(alpha = 0.4f)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
                         modifier = Modifier.padding(grid_2),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(imageVector = Icons.Default.Warning, contentDescription = null, tint = ErrorCrimson, modifier = Modifier.size(22.dp))
+                        Icon(imageVector = Icons.Default.Warning, contentDescription = null, tint = LubricantAmber, modifier = Modifier.size(22.dp))
                         Spacer(modifier = Modifier.width(grid_2))
                         Column {
                             Text(
-                                text = "CREDIT LIMIT EXCEEDED",
+                                text = "EXCEEDS CREDIT LIMIT",
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = ErrorCrimson
+                                color = LubricantAmber
                             )
                             Text(
-                                text = "Exposure: PKR %,.0f (Limit: %,.0f) • Exceeds by PKR %,.0f. Will require ASM Approval."
-                                    .format(uiState.effectiveExposure, uiState.client?.creditLimit ?: 0.0, uiState.creditVariancePkr),
+                                text = "Order requires ASM approval prior to release.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = ErrorCrimson,
-                                fontSize = 10.sp
+                                color = SlateSteelLight,
+                                fontSize = 11.sp
                             )
                         }
-                    }
-                }
-            } else {
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = SuccessEmerald.copy(alpha = 0.08f)),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = grid_3, vertical = grid_1),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = SuccessEmerald, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(grid_1))
-                        val remainingCredit = ((uiState.client?.creditLimit ?: 0.0) - uiState.effectiveExposure).coerceAtLeast(0.0)
-                        Text(
-                            text = "Credit OK • PKR %,.0f headroom available".format(remainingCredit),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = SuccessEmerald,
-                            fontSize = 11.sp
-                        )
                     }
                 }
             }
@@ -585,23 +587,26 @@ private fun OrderBottomBar(
                 onClick = onSubmitOrder,
                 enabled = canSubmit,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (uiState.exceedsCreditLimit) WarningAmber else LubricantAmber,
-                    contentColor = EnolNavy
+                    containerColor = LubricantAmber,
+                    contentColor = BackgroundDark,
+                    disabledContainerColor = SurfaceContainerDark,
+                    disabledContentColor = SlateSteelDark
                 ),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .height(50.dp)
             ) {
                 if (uiState.isSubmitting) {
-                    CircularProgressIndicator(color = EnolNavy, modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(color = BackgroundDark, modifier = Modifier.size(22.dp))
                     Spacer(modifier = Modifier.width(grid_2))
-                    Text(text = "Booking Order...", fontWeight = FontWeight.Bold)
+                    Text(text = "Booking Order...", fontWeight = FontWeight.Bold, color = BackgroundDark)
                 } else {
                     Text(
-                        text = if (uiState.exceedsCreditLimit) "BOOK ORDER (REQUIRES ASM APPROVAL)" else "CONFIRM & BOOK ORDER",
+                        text = if (uiState.exceedsCreditLimit) "Book Order (Requires Approval)" else "Confirm & Book Order",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        color = if (canSubmit) BackgroundDark else SlateSteelDark
                     )
                 }
             }
