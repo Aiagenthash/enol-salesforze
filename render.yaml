@@ -5,8 +5,8 @@ services:
     plan: free
     region: oregon
     rootDir: backend-api
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: node dist/index.js
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -16,7 +16,7 @@ services:
       - key: HOST
         value: 0.0.0.0
       - key: DATABASE_URL
-        sync: false
+        value: postgresql://postgres:RTb_S_S%2FD9x*H-a@db.bnoojubcruhhncscyosd.supabase.co:5432/postgres
       - key: DB_SSL
         value: "true"
       - key: JWT_SECRET
