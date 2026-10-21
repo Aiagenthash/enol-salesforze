@@ -33,7 +33,7 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:4000/\"")
+        buildConfigField("String", "BASE_URL", "\"https://enol-salesforze-api.onrender.com/\"")
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
