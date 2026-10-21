@@ -86,6 +86,40 @@ data class SubordinatesResponse(
     @SerialName("subordinates") val subordinates: List<UserDto> = emptyList()
 )
 
+@Serializable
+data class CreateUserRequest(
+    @SerialName("email") val email: String,
+    @SerialName("password") val password: String,
+    @SerialName("full_name") val fullName: String,
+    @SerialName("phone") val phone: String,
+    @SerialName("role") val role: String,
+    @SerialName("manager_id") val managerId: String? = null,
+    @SerialName("vehicle_type") val vehicleType: String = "MOTORCYCLE",
+    @SerialName("vehicle_number") val vehicleNumber: String? = null,
+    @SerialName("fuel_rate_per_km") val fuelRatePerKm: Double = 7.50,
+    @SerialName("daily_allowance") val dailyAllowance: Double = 500.00
+)
+
+@Serializable
+data class UpdateUserRequest(
+    @SerialName("full_name") val fullName: String? = null,
+    @SerialName("phone") val phone: String? = null,
+    @SerialName("manager_id") val managerId: String? = null,
+    @SerialName("role") val role: String? = null,
+    @SerialName("vehicle_type") val vehicleType: String? = null,
+    @SerialName("vehicle_number") val vehicleNumber: String? = null,
+    @SerialName("fuel_rate_per_km") val fuelRatePerKm: Double? = null,
+    @SerialName("daily_allowance") val dailyAllowance: Double? = null,
+    @SerialName("is_active") val isActive: Boolean? = null
+)
+
+@Serializable
+data class SimpleActionResponse(
+    @SerialName("success") val success: Boolean = true,
+    @SerialName("message") val message: String? = null,
+    @SerialName("error") val error: String? = null
+)
+
 // ============================================================================
 // TERRITORIES: DISTRICTS & BEATS
 // ============================================================================
@@ -274,6 +308,30 @@ data class ProductDto(
     @SerialName("is_active") val isActive: Boolean = true,
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null
+)
+
+@Serializable
+data class CreateProductRequest(
+    @SerialName("sku") val sku: String,
+    @SerialName("name") val name: String,
+    @SerialName("description") val description: String? = null,
+    @SerialName("category") val category: String,
+    @SerialName("viscosity_grade") val viscosityGrade: String,
+    @SerialName("pack_size_liters") val packSizeLiters: Double,
+    @SerialName("units_per_carton") val unitsPerCarton: Int = 1,
+    @SerialName("trade_price") val tradePrice: Double,
+    @SerialName("retail_price") val retailPrice: Double,
+    @SerialName("stock_quantity") val stockQuantity: Int = 1000
+)
+
+@Serializable
+data class UpdateProductRequest(
+    @SerialName("name") val name: String? = null,
+    @SerialName("description") val description: String? = null,
+    @SerialName("trade_price") val tradePrice: Double? = null,
+    @SerialName("retail_price") val retailPrice: Double? = null,
+    @SerialName("stock_quantity") val stockQuantity: Int? = null,
+    @SerialName("is_active") val isActive: Boolean? = null
 )
 
 // ============================================================================

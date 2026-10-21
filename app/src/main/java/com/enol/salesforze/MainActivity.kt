@@ -84,8 +84,11 @@ import com.enol.salesforze.ui.visit.VisitExecutionScreen
 import com.enol.salesforze.ui.dashboard.DashboardScreen
 import com.enol.salesforze.ui.leaderboard.LeaderboardScreen
 import com.enol.salesforze.ui.admin.AdminApiPortalScreen
+import com.enol.salesforze.ui.admin.AdminManagementScreen
+import com.enol.salesforze.ui.auth.LoginScreen
 import com.enol.salesforze.ui.tada.TadaClaimScreen
 import com.enol.salesforze.ui.theme.EnolNavy
+import com.enol.salesforze.ui.theme.EnolNavyDark
 import com.enol.salesforze.ui.theme.LubricantAmber
 import com.enol.salesforze.ui.theme.SlateSteel
 import com.enol.salesforze.ui.theme.SlateSteelLight
@@ -94,10 +97,19 @@ import com.enol.salesforze.ui.theme.statusColors
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.ManageAccounts
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+import com.enol.salesforze.data.remote.session.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
 
 enum class AppNavigationTab(val title: String) {
+    ADMIN_MANAGEMENT("Admin Hub"),
     DASHBOARD("Dashboard"),
     GIS_MAP("GIS Map"),
     ORDER_CART("Order Cart"),
@@ -113,144 +125,355 @@ enum class AppNavigationTab(val title: String) {
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var sessionManager: SessionManager
+
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val coroutineScope = rememberCoroutineScope()
+            val token by sessionManager.tokenFlow.collectAsState(initial = sessionManager.getCachedAuthToken())
+            val userRole by sessionManager.userRoleFlow.collectAsState(initial = null)
+
             var darkTheme by remember { mutableStateOf(false) }
             var highContrastMode by remember { mutableStateOf(false) }
             var currentTab by remember { mutableStateOf(AppNavigationTab.DASHBOARD) }
+
+            // Route appropriately based on role
+            LaunchedEffect(userRole) {
+                if (userRole.equals("DIRECTOR", ignoreCase = true) || userRole.equals("ADMIN", ignoreCase = true)) {
+                    currentTab = AppNavigationTab.ADMIN_MANAGEMENT
+                } else {
+                    currentTab = AppNavigationTab.DASHBOARD
+                }
+            }
 
             EnolSalesforzeTheme(
                 darkTheme = darkTheme,
                 highContrast = highContrastMode
             ) {
-                Scaffold(
-                    bottomBar = {
-                        NavigationBar(
-                            containerColor = EnolNavy,
-                            contentColor = Color.White
-                        ) {
-                            NavigationBarItem(
-                                selected = currentTab == AppNavigationTab.DASHBOARD,
-                                onClick = { currentTab = AppNavigationTab.DASHBOARD },
-                                icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
-                                label = { Text(AppNavigationTab.DASHBOARD.title, fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = EnolNavy,
-                                    selectedTextColor = LubricantAmber,
-                                    indicatorColor = LubricantAmber,
-                                    unselectedIconColor = SlateSteelLight,
-                                    unselectedTextColor = SlateSteelLight
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = currentTab == AppNavigationTab.GIS_MAP,
-                                onClick = { currentTab = AppNavigationTab.GIS_MAP },
-                                icon = { Icon(Icons.Default.Map, contentDescription = "GIS Map") },
-                                label = { Text(AppNavigationTab.GIS_MAP.title, fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = EnolNavy,
-                                    selectedTextColor = LubricantAmber,
-                                    indicatorColor = LubricantAmber,
-                                    unselectedIconColor = SlateSteelLight,
-                                    unselectedTextColor = SlateSteelLight
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = currentTab == AppNavigationTab.ORDER_CART,
-                                onClick = { currentTab = AppNavigationTab.ORDER_CART },
-                                icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Order Cart") },
-                                label = { Text(AppNavigationTab.ORDER_CART.title, fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = EnolNavy,
-                                    selectedTextColor = LubricantAmber,
-                                    indicatorColor = LubricantAmber,
-                                    unselectedIconColor = SlateSteelLight,
-                                    unselectedTextColor = SlateSteelLight
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = currentTab == AppNavigationTab.TADA_CLAIM,
-                                onClick = { currentTab = AppNavigationTab.TADA_CLAIM },
-                                icon = { Icon(Icons.Default.ReceiptLong, contentDescription = "TADA") },
-                                label = { Text(AppNavigationTab.TADA_CLAIM.title, fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = EnolNavy,
-                                    selectedTextColor = LubricantAmber,
-                                    indicatorColor = LubricantAmber,
-                                    unselectedIconColor = SlateSteelLight,
-                                    unselectedTextColor = SlateSteelLight
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = currentTab == AppNavigationTab.LEADERBOARD,
-                                onClick = { currentTab = AppNavigationTab.LEADERBOARD },
-                                icon = { Icon(Icons.Default.EmojiEvents, contentDescription = "Sales Races") },
-                                label = { Text(AppNavigationTab.LEADERBOARD.title, fontSize = 11.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = EnolNavy,
-                                    selectedTextColor = LubricantAmber,
-                                    indicatorColor = LubricantAmber,
-                                    unselectedIconColor = SlateSteelLight,
-                                    unselectedTextColor = SlateSteelLight
-                                )
-                            )
+                if (token.isNullOrBlank()) {
+                    LoginScreen(
+                        onLoginSuccess = { role ->
+                            if (role.equals("DIRECTOR", ignoreCase = true) || role.equals("ADMIN", ignoreCase = true)) {
+                                currentTab = AppNavigationTab.ADMIN_MANAGEMENT
+                            } else {
+                                currentTab = AppNavigationTab.DASHBOARD
+                            }
                         }
-                    }
-                ) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
-                        when (currentTab) {
-                            AppNavigationTab.DASHBOARD -> DashboardScreen(
-                                onNavigateToOrderCart = { currentTab = AppNavigationTab.ORDER_CART },
-                                onNavigateToVisitExecution = { currentTab = AppNavigationTab.VISIT_EXECUTION },
-                                onNavigateToClientEnroll = { currentTab = AppNavigationTab.CLIENT_ENROLL },
-                                onNavigateToMechanicEnroll = { currentTab = AppNavigationTab.MECHANIC_ENROLL },
-                                onNavigateToGisMap = { currentTab = AppNavigationTab.GIS_MAP },
-                                onNavigateToTada = { currentTab = AppNavigationTab.TADA_CLAIM },
-                                onNavigateToLeaderboard = { currentTab = AppNavigationTab.LEADERBOARD },
-                                onNavigateToAdminPortal = { currentTab = AppNavigationTab.ADMIN_PORTAL },
-                                onNavigateToStartShift = { currentTab = AppNavigationTab.START_SHIFT },
-                                onNavigateToEndShift = { currentTab = AppNavigationTab.END_SHIFT }
+                    )
+                } else {
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                title = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Surface(
+                                            shape = CircleShape,
+                                            color = LubricantAmber,
+                                            modifier = Modifier.size(28.dp)
+                                        ) {
+                                            Box(contentAlignment = Alignment.Center) {
+                                                Text(
+                                                    text = "E",
+                                                    fontWeight = FontWeight.ExtraBold,
+                                                    color = EnolNavyDark,
+                                                    style = MaterialTheme.typography.titleSmall
+                                                )
+                                            }
+                                        }
+
+                                        Spacer(modifier = Modifier.width(8.dp))
+
+                                        Column {
+                                            Text(
+                                                text = "ENOL SALESFORZE",
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+                                            Text(
+                                                text = "Role: ${userRole ?: "AUTHENTICATED"}",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = LubricantAmber
+                                            )
+                                        }
+                                    }
+                                },
+                                actions = {
+                                    IconButton(
+                                        onClick = {
+                                            coroutineScope.launch {
+                                                sessionManager.clearSession()
+                                            }
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Logout,
+                                            contentDescription = "Log Out",
+                                            tint = Color.White
+                                        )
+                                    }
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(containerColor = EnolNavy)
                             )
-                            AppNavigationTab.ORDER_CART -> OrderCartScreen(
-                                onOrderPlaced = { currentTab = AppNavigationTab.DASHBOARD },
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.VISIT_EXECUTION -> VisitExecutionScreen(
-                                onNavigateToOrderCart = { currentTab = AppNavigationTab.ORDER_CART },
-                                onVisitCompleted = { currentTab = AppNavigationTab.DASHBOARD },
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.CLIENT_ENROLL -> ClientEnrollmentScreen(
-                                onClientEnrolled = { currentTab = AppNavigationTab.DASHBOARD },
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.MECHANIC_ENROLL -> MechanicEnrollmentScreen(
-                                onMechanicEnrolled = { currentTab = AppNavigationTab.DASHBOARD },
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.GIS_MAP -> DistrictMapScreen(
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.START_SHIFT -> StartShiftScreen(
-                                onShiftStarted = { currentTab = AppNavigationTab.DASHBOARD },
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.END_SHIFT -> EndShiftScreen(
-                                onShiftEnded = { currentTab = AppNavigationTab.DASHBOARD },
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.TADA_CLAIM -> TadaClaimScreen(
-                                onClaimSubmitted = { currentTab = AppNavigationTab.DASHBOARD },
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.LEADERBOARD -> LeaderboardScreen(
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
-                            AppNavigationTab.ADMIN_PORTAL -> AdminApiPortalScreen(
-                                onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
-                            )
+                        },
+                        bottomBar = {
+                            val isDirectorOrAdmin = userRole.equals("DIRECTOR", ignoreCase = true) || userRole.equals("ADMIN", ignoreCase = true)
+                            val isAsmOrZsm = userRole.equals("ASM", ignoreCase = true) || userRole.equals("ZSM", ignoreCase = true)
+
+                            NavigationBar(
+                                containerColor = EnolNavy,
+                                contentColor = Color.White
+                            ) {
+                                if (isDirectorOrAdmin) {
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.ADMIN_MANAGEMENT,
+                                        onClick = { currentTab = AppNavigationTab.ADMIN_MANAGEMENT },
+                                        icon = { Icon(Icons.Default.ManageAccounts, contentDescription = "Admin Hub") },
+                                        label = { Text("Admin Hub", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.DASHBOARD,
+                                        onClick = { currentTab = AppNavigationTab.DASHBOARD },
+                                        icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
+                                        label = { Text("Dashboard", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.GIS_MAP,
+                                        onClick = { currentTab = AppNavigationTab.GIS_MAP },
+                                        icon = { Icon(Icons.Default.Map, contentDescription = "GIS Map") },
+                                        label = { Text("GIS Map", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.ORDER_CART,
+                                        onClick = { currentTab = AppNavigationTab.ORDER_CART },
+                                        icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Orders") },
+                                        label = { Text("Orders", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.ADMIN_PORTAL,
+                                        onClick = { currentTab = AppNavigationTab.ADMIN_PORTAL },
+                                        icon = { Icon(Icons.Default.Key, contentDescription = "API Keys") },
+                                        label = { Text("API Keys", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                } else if (isAsmOrZsm) {
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.DASHBOARD,
+                                        onClick = { currentTab = AppNavigationTab.DASHBOARD },
+                                        icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
+                                        label = { Text("Dashboard", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.GIS_MAP,
+                                        onClick = { currentTab = AppNavigationTab.GIS_MAP },
+                                        icon = { Icon(Icons.Default.Map, contentDescription = "Districts") },
+                                        label = { Text("Districts", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.LEADERBOARD,
+                                        onClick = { currentTab = AppNavigationTab.LEADERBOARD },
+                                        icon = { Icon(Icons.Default.EmojiEvents, contentDescription = "Races") },
+                                        label = { Text("Races", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.ORDER_CART,
+                                        onClick = { currentTab = AppNavigationTab.ORDER_CART },
+                                        icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Catalog") },
+                                        label = { Text("Catalog", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                } else {
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.DASHBOARD,
+                                        onClick = { currentTab = AppNavigationTab.DASHBOARD },
+                                        icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
+                                        label = { Text("Dashboard", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.VISIT_EXECUTION,
+                                        onClick = { currentTab = AppNavigationTab.VISIT_EXECUTION },
+                                        icon = { Icon(Icons.Default.Navigation, contentDescription = "Check-In") },
+                                        label = { Text("Check-In", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.ORDER_CART,
+                                        onClick = { currentTab = AppNavigationTab.ORDER_CART },
+                                        icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Orders") },
+                                        label = { Text("Orders", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.TADA_CLAIM,
+                                        onClick = { currentTab = AppNavigationTab.TADA_CLAIM },
+                                        icon = { Icon(Icons.Default.ReceiptLong, contentDescription = "TADA") },
+                                        label = { Text("Expense", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentTab == AppNavigationTab.GIS_MAP,
+                                        onClick = { currentTab = AppNavigationTab.GIS_MAP },
+                                        icon = { Icon(Icons.Default.Map, contentDescription = "Route") },
+                                        label = { Text("Route", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = EnolNavy,
+                                            selectedTextColor = LubricantAmber,
+                                            indicatorColor = LubricantAmber,
+                                            unselectedIconColor = SlateSteelLight,
+                                            unselectedTextColor = SlateSteelLight
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    ) { innerPadding ->
+                        Box(modifier = Modifier.padding(innerPadding)) {
+                            when (currentTab) {
+                                AppNavigationTab.ADMIN_MANAGEMENT -> AdminManagementScreen(
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.DASHBOARD -> DashboardScreen(
+                                    onNavigateToOrderCart = { currentTab = AppNavigationTab.ORDER_CART },
+                                    onNavigateToVisitExecution = { currentTab = AppNavigationTab.VISIT_EXECUTION },
+                                    onNavigateToClientEnroll = { currentTab = AppNavigationTab.CLIENT_ENROLL },
+                                    onNavigateToMechanicEnroll = { currentTab = AppNavigationTab.MECHANIC_ENROLL },
+                                    onNavigateToGisMap = { currentTab = AppNavigationTab.GIS_MAP },
+                                    onNavigateToTada = { currentTab = AppNavigationTab.TADA_CLAIM },
+                                    onNavigateToLeaderboard = { currentTab = AppNavigationTab.LEADERBOARD },
+                                    onNavigateToAdminPortal = { currentTab = AppNavigationTab.ADMIN_PORTAL },
+                                    onNavigateToStartShift = { currentTab = AppNavigationTab.START_SHIFT },
+                                    onNavigateToEndShift = { currentTab = AppNavigationTab.END_SHIFT }
+                                )
+                                AppNavigationTab.ORDER_CART -> OrderCartScreen(
+                                    onOrderPlaced = { currentTab = AppNavigationTab.DASHBOARD },
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.VISIT_EXECUTION -> VisitExecutionScreen(
+                                    onNavigateToOrderCart = { currentTab = AppNavigationTab.ORDER_CART },
+                                    onVisitCompleted = { currentTab = AppNavigationTab.DASHBOARD },
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.CLIENT_ENROLL -> ClientEnrollmentScreen(
+                                    onClientEnrolled = { currentTab = AppNavigationTab.DASHBOARD },
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.MECHANIC_ENROLL -> MechanicEnrollmentScreen(
+                                    onMechanicEnrolled = { currentTab = AppNavigationTab.DASHBOARD },
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.GIS_MAP -> DistrictMapScreen(
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.START_SHIFT -> StartShiftScreen(
+                                    onShiftStarted = { currentTab = AppNavigationTab.DASHBOARD },
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.END_SHIFT -> EndShiftScreen(
+                                    onShiftEnded = { currentTab = AppNavigationTab.DASHBOARD },
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.TADA_CLAIM -> TadaClaimScreen(
+                                    onClaimSubmitted = { currentTab = AppNavigationTab.DASHBOARD },
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.LEADERBOARD -> LeaderboardScreen(
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                                AppNavigationTab.ADMIN_PORTAL -> AdminApiPortalScreen(
+                                    onNavigateBack = { currentTab = AppNavigationTab.DASHBOARD }
+                                )
+                            }
                         }
                     }
                 }
@@ -649,12 +872,12 @@ fun FieldOperationalStatusRow(
                 Spacer(modifier = Modifier.width(spacing.grid2))
                 Column {
                     Text(
-                        text = "ONLINE • POSTGIS SYNCED",
+                        text = "ONLINE â€¢ POSTGIS SYNCED",
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = statusColors.success
                     )
                     Text(
-                        text = "Route #04 • Badami Bagh North",
+                        text = "Route #04 â€¢ Badami Bagh North",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )

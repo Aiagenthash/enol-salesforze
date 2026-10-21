@@ -36,17 +36,23 @@ import com.enol.salesforze.data.remote.models.SubmitTadaClaimRequest
 import com.enol.salesforze.data.remote.models.ApiKeyDto
 import com.enol.salesforze.data.remote.models.CreateApiKeyRequest
 import com.enol.salesforze.data.remote.models.CreateApiKeyResponse
-import com.enol.salesforze.data.remote.models.WebhookSubscriptionDto
 import com.enol.salesforze.data.remote.models.CreateWebhookSubscriptionRequest
-import com.enol.salesforze.data.remote.models.WebhookDeliveryLogDto
+import com.enol.salesforze.data.remote.models.CreateProductRequest
+import com.enol.salesforze.data.remote.models.CreateUserRequest
+import com.enol.salesforze.data.remote.models.SimpleActionResponse
 import com.enol.salesforze.data.remote.models.SubordinatesResponse
 import com.enol.salesforze.data.remote.models.TadaClaimDto
 import com.enol.salesforze.data.remote.models.TargetKpiDto
 import com.enol.salesforze.data.remote.models.UpdateOrderStatusRequest
+import com.enol.salesforze.data.remote.models.UpdateProductRequest
+import com.enol.salesforze.data.remote.models.UpdateUserRequest
 import com.enol.salesforze.data.remote.models.UserDto
 import com.enol.salesforze.data.remote.models.UserProfileResponse
 import com.enol.salesforze.data.remote.models.VisitDto
+import com.enol.salesforze.data.remote.models.WebhookDeliveryLogDto
+import com.enol.salesforze.data.remote.models.WebhookSubscriptionDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -96,6 +102,22 @@ interface EnterpriseFieldApi {
     suspend fun getSubordinates(
         @Path("id") id: String
     ): SubordinatesResponse
+
+    @POST("api/v1/users")
+    suspend fun createUser(
+        @Body request: CreateUserRequest
+    ): ApiResponse<UserDto>
+
+    @PUT("api/v1/users/{id}")
+    suspend fun updateUser(
+        @Path("id") id: String,
+        @Body request: UpdateUserRequest
+    ): ApiResponse<UserDto>
+
+    @DELETE("api/v1/users/{id}")
+    suspend fun deleteUser(
+        @Path("id") id: String
+    ): SimpleActionResponse
 
     // ========================================================================
     // TERRITORIES & BEATS
@@ -202,6 +224,22 @@ interface EnterpriseFieldApi {
     suspend fun getProductById(
         @Path("id") id: String
     ): ApiResponse<ProductDto>
+
+    @POST("api/v1/products")
+    suspend fun createProduct(
+        @Body request: CreateProductRequest
+    ): ApiResponse<ProductDto>
+
+    @PUT("api/v1/products/{id}")
+    suspend fun updateProduct(
+        @Path("id") id: String,
+        @Body request: UpdateProductRequest
+    ): ApiResponse<ProductDto>
+
+    @DELETE("api/v1/products/{id}")
+    suspend fun deleteProduct(
+        @Path("id") id: String
+    ): SimpleActionResponse
 
     // ========================================================================
     // ORDERS & LINE ITEMS
