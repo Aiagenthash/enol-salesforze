@@ -11,7 +11,7 @@
 -- Sales Rep:   44444444-4444-4444-4444-444444444444
 -- Admin:       55555555-5555-5555-5555-555555555555
 
--- Default password hash for all seed users is 'Password123!' (bcrypt $2a$10$w3aQx6uV5HhJ4y7V1A1iVOWs6aGfSjYgK4FpB9dYk8iEw7k2O2uC2)
+-- Default password hash for all seed users is 'Password123!' (bcrypt $2a$10$srwrBv1tWvmyV02BCC0ywuOKzuAduiPkdShyUwAfq6Hcc1ib9c4fq)
 -- ----------------------------------------------------------------------------
 -- 1. SEED 5-TIER ORGANIZATIONAL USERS
 -- ----------------------------------------------------------------------------
@@ -23,7 +23,7 @@ INSERT INTO users (
 (
     '11111111-1111-1111-1111-111111111111',
     'director@enollubricants.com',
-    '$2a$10$w3aQx6uV5HhJ4y7V1A1iVOWs6aGfSjYgK4FpB9dYk8iEw7k2O2uC2',
+    '$2a$10$srwrBv1tWvmyV02BCC0ywuOKzuAduiPkdShyUwAfq6Hcc1ib9c4fq',
     'Tariq Mehmood',
     '+923001000001',
     'DIRECTOR',
@@ -39,7 +39,7 @@ INSERT INTO users (
 (
     '22222222-2222-2222-2222-222222222222',
     'zsm.punjab@enollubricants.com',
-    '$2a$10$w3aQx6uV5HhJ4y7V1A1iVOWs6aGfSjYgK4FpB9dYk8iEw7k2O2uC2',
+    '$2a$10$srwrBv1tWvmyV02BCC0ywuOKzuAduiPkdShyUwAfq6Hcc1ib9c4fq',
     'Imran Khan Niazi',
     '+923001000002',
     'ZSM',
@@ -55,7 +55,7 @@ INSERT INTO users (
 (
     '33333333-3333-3333-3333-333333333333',
     'asm.lahore@enollubricants.com',
-    '$2a$10$w3aQx6uV5HhJ4y7V1A1iVOWs6aGfSjYgK4FpB9dYk8iEw7k2O2uC2',
+    '$2a$10$srwrBv1tWvmyV02BCC0ywuOKzuAduiPkdShyUwAfq6Hcc1ib9c4fq',
     'Kamran Akram',
     '+923001000003',
     'ASM',
@@ -71,7 +71,7 @@ INSERT INTO users (
 (
     '44444444-4444-4444-4444-444444444444',
     'rep.hamza@enollubricants.com',
-    '$2a$10$w3aQx6uV5HhJ4y7V1A1iVOWs6aGfSjYgK4FpB9dYk8iEw7k2O2uC2',
+    '$2a$10$srwrBv1tWvmyV02BCC0ywuOKzuAduiPkdShyUwAfq6Hcc1ib9c4fq',
     'Hamza Farooq',
     '+923001000004',
     'SALES_REP',
@@ -87,7 +87,7 @@ INSERT INTO users (
 (
     '55555555-5555-5555-5555-555555555555',
     'admin@enollubricants.com',
-    '$2a$10$w3aQx6uV5HhJ4y7V1A1iVOWs6aGfSjYgK4FpB9dYk8iEw7k2O2uC2',
+    '$2a$10$srwrBv1tWvmyV02BCC0ywuOKzuAduiPkdShyUwAfq6Hcc1ib9c4fq',
     'System Administrator',
     '+923001000005',
     'ADMIN',
