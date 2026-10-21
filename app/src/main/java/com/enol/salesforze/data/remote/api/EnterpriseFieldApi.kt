@@ -55,7 +55,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
- * Enterprise Retrofit2 API interface matching all Phase 1 /api/v1/* backend endpoints.
+ * Enterprise Retrofit2 API interface matching all Phase 1 /api/v1 endpoints.
  */
 interface EnterpriseFieldApi {
 

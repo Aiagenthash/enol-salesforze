@@ -22,7 +22,7 @@ class GeneralSyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val pendingItems = database.pendingSyncQueueDao().getAllPendingOnce()
+        val pendingItems = database.pendingSyncQueueDao().getPendingItemsOnce()
         if (pendingItems.isEmpty()) {
             return Result.success()
         }
@@ -84,7 +84,7 @@ class GeneralSyncWorker @AssistedInject constructor(
                         val res = api.batchUploadBreadcrumbs(req)
                         isSuccess = res.success
                         if (isSuccess) {
-                            database.breadcrumbDao().markAsSynced(item.entityId)
+                            database.breadcrumbDao().markAsSynced(listOf(item.entityId))
                         }
                     }
                     else -> {
@@ -93,18 +93,21 @@ class GeneralSyncWorker @AssistedInject constructor(
                     }
                 }
 
+                val now = System.currentTimeMillis().toString()
                 if (isSuccess) {
-                    database.pendingSyncQueueDao().deleteById(item.id)
+                    database.pendingSyncQueueDao().deleteSyncItemById(item.id)
                 } else {
                     anyFailed = true
-                    database.pendingSyncQueueDao().incrementAttempt(item.id, "Server returned error response")
+                    database.pendingSyncQueueDao().incrementAttemptCount(item.id, now, "Server returned error response")
                 }
             } catch (e: IOException) {
                 anyFailed = true
-                database.pendingSyncQueueDao().incrementAttempt(item.id, "Network error: ${e.message}")
+                val now = System.currentTimeMillis().toString()
+                database.pendingSyncQueueDao().incrementAttemptCount(item.id, now, "Network error: ${e.message}")
             } catch (e: Exception) {
                 anyFailed = true
-                database.pendingSyncQueueDao().incrementAttempt(item.id, "General sync error: ${e.message}")
+                val now = System.currentTimeMillis().toString()
+                database.pendingSyncQueueDao().incrementAttemptCount(item.id, now, "General sync error: ${e.message}")
             }
         }
 

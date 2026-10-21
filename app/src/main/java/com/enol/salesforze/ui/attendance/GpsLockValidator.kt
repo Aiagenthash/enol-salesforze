@@ -10,8 +10,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.coroutines.resume
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -100,3 +101,10 @@ class GpsLockValidator @Inject constructor(
         return Result.success(location)
     }
 }
+
+private suspend fun <T> com.google.android.gms.tasks.Task<T>.await(): T =
+    suspendCancellableCoroutine { cont ->
+        addOnSuccessListener { cont.resume(it) }
+        addOnFailureListener { cont.resumeWith(Result.failure(it)) }
+        addOnCanceledListener { cont.cancel() }
+    }

@@ -16,6 +16,7 @@ val grid_0_5: Dp = 2.dp
 val grid_1: Dp = 4.dp
 val grid_1_5: Dp = 6.dp
 val grid_2: Dp = 8.dp
+val grid_2_5: Dp = 10.dp
 val grid_3: Dp = 12.dp
 val grid_4: Dp = 16.dp
 val grid_5: Dp = 20.dp

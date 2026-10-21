@@ -47,28 +47,34 @@ class OrderSyncWorker @AssistedInject constructor(
                         database.orderDao().updateOrderStatus(
                             orderId = queueItem.entityId,
                             status = serverOrder.status,
-                            updatedAt = serverOrder.updatedAt
+                            updatedAt = serverOrder.updatedAt ?: ""
                         )
                         // Remove successfully synced item from queue
-                        database.pendingSyncQueueDao().deleteById(queueItem.id)
+                        database.pendingSyncQueueDao().deleteSyncItemById(queueItem.id)
                     }
                 } else {
                     anyFailed = true
-                    database.pendingSyncQueueDao().incrementAttempt(
+                    val now = System.currentTimeMillis().toString()
+                    database.pendingSyncQueueDao().incrementAttemptCount(
                         id = queueItem.id,
+                        lastAttemptAt = now,
                         errorMessage = response.error ?: "Order submission returned unsuccessful response"
                     )
                 }
             } catch (e: IOException) {
                 anyFailed = true
-                database.pendingSyncQueueDao().incrementAttempt(
+                val now = System.currentTimeMillis().toString()
+                database.pendingSyncQueueDao().incrementAttemptCount(
                     id = queueItem.id,
+                    lastAttemptAt = now,
                     errorMessage = "Network error: ${e.message}"
                 )
             } catch (e: Exception) {
                 anyFailed = true
-                database.pendingSyncQueueDao().incrementAttempt(
+                val now = System.currentTimeMillis().toString()
+                database.pendingSyncQueueDao().incrementAttemptCount(
                     id = queueItem.id,
+                    lastAttemptAt = now,
                     errorMessage = "Serialization/Processing error: ${e.message}"
                 )
             }

@@ -103,6 +103,7 @@ import com.enol.salesforze.ui.theme.grid_1_5
 import com.enol.salesforze.ui.theme.grid_2
 import com.enol.salesforze.ui.theme.grid_3
 import com.enol.salesforze.ui.theme.grid_4
+import com.enol.salesforze.ui.theme.grid_5
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -1027,7 +1028,7 @@ private fun MetricCard(
     Card(
         shape = RoundedCornerShape(grid_2),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLight
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier

@@ -46,7 +46,7 @@ class DeltaSyncWorker @AssistedInject constructor(
                             fuelRatePerKm = dto.fuelRatePerKm ?: 7.50,
                             dailyAllowance = dto.dailyAllowance ?: 500.00,
                             isActive = dto.isActive,
-                            updatedAt = dto.updatedAt
+                            updatedAt = dto.updatedAt ?: ""
                         )
                     }
                     database.userDao().insertUsers(userEntities)
@@ -64,7 +64,7 @@ class DeltaSyncWorker @AssistedInject constructor(
                             assignedZsmId = dto.assignedZsmId,
                             assignedAsmId = dto.assignedAsmId,
                             isActive = dto.isActive,
-                            updatedAt = dto.updatedAt
+                            updatedAt = dto.updatedAt ?: ""
                         )
                     }
                     database.districtDao().insertDistricts(districtEntities)
@@ -81,7 +81,7 @@ class DeltaSyncWorker @AssistedInject constructor(
                             dayOfWeek = dto.dayOfWeek,
                             assignedRepId = dto.assignedRepId,
                             isActive = dto.isActive,
-                            updatedAt = dto.updatedAt
+                            updatedAt = dto.updatedAt ?: ""
                         )
                     }
                     database.beatDao().insertBeats(beatEntities)
@@ -105,7 +105,7 @@ class DeltaSyncWorker @AssistedInject constructor(
                             outstandingBalance = dto.outstandingBalance,
                             creditHold = dto.creditHold,
                             approvalStatus = dto.approvalStatus,
-                            updatedAt = dto.updatedAt
+                            updatedAt = dto.updatedAt ?: ""
                         )
                     }
                     database.clientDao().insertClients(clientEntities)
@@ -114,19 +114,6 @@ class DeltaSyncWorker @AssistedInject constructor(
                 // 5. Sync Products
                 delta.products?.let { products ->
                     val productEntities = products.map { dto ->
-                        val schemes = dto.activeSchemes?.map { schemeDto ->
-                            com.enol.salesforze.data.local.entities.ProductScheme(
-                                type = schemeDto.type,
-                                buyCartons = schemeDto.buyCartons,
-                                freeCartons = schemeDto.freeCartons,
-                                freeUnits = schemeDto.freeUnits,
-                                minCartons = schemeDto.minCartons,
-                                discountPct = schemeDto.discountPct,
-                                perCartonPkr = schemeDto.perCartonPkr,
-                                description = schemeDto.description
-                            )
-                        } ?: emptyList()
-
                         ProductEntity(
                             id = dto.id,
                             sku = dto.sku,
@@ -138,10 +125,10 @@ class DeltaSyncWorker @AssistedInject constructor(
                             unitsPerCarton = dto.unitsPerCarton,
                             tradePrice = dto.tradePrice,
                             retailPrice = dto.retailPrice,
-                            activeSchemes = schemes,
+                            activeSchemesJson = dto.activeSchemes?.toString() ?: "[]",
                             stockQuantity = dto.stockQuantity,
                             isActive = dto.isActive,
-                            updatedAt = dto.updatedAt
+                            updatedAt = dto.updatedAt ?: ""
                         )
                     }
                     database.productDao().insertProducts(productEntities)
@@ -167,8 +154,8 @@ class DeltaSyncWorker @AssistedInject constructor(
                             externalOmsReference = orderDto.externalOmsReference,
                             idempotencyKey = orderDto.idempotencyKey,
                             notes = orderDto.notes,
-                            createdAt = orderDto.createdAt,
-                            updatedAt = orderDto.updatedAt
+                            createdAt = orderDto.createdAt ?: "",
+                            updatedAt = orderDto.updatedAt ?: ""
                         )
                         database.orderDao().insertOrder(orderEntity)
 
@@ -209,7 +196,7 @@ class DeltaSyncWorker @AssistedInject constructor(
                             pointsBalance = dto.pointsBalance,
                             totalScans = dto.totalScans,
                             isVerified = dto.isVerified,
-                            updatedAt = dto.updatedAt
+                            updatedAt = dto.updatedAt ?: ""
                         )
                     }
                     database.mechanicDao().insertMechanics(mechanicEntities)
@@ -220,7 +207,7 @@ class DeltaSyncWorker @AssistedInject constructor(
                     val kpiEntities = kpis.map { dto ->
                         TargetKpiEntity(
                             id = dto.id,
-                            userId = dto.userId,
+                            userId = dto.userId ?: "",
                             periodType = dto.periodType,
                             periodStart = dto.periodStart,
                             periodEnd = dto.periodEnd,
@@ -233,7 +220,7 @@ class DeltaSyncWorker @AssistedInject constructor(
                             targetNewClients = dto.targetNewClients,
                             achievedNewClients = dto.achievedNewClients,
                             calculatedKpiScore = dto.calculatedKpiScore,
-                            updatedAt = dto.updatedAt
+                            updatedAt = dto.updatedAt ?: ""
                         )
                     }
                     database.targetKpiDao().insertTargetKpis(kpiEntities)
@@ -249,9 +236,9 @@ class DeltaSyncWorker @AssistedInject constructor(
                             startDate = dto.startDate,
                             endDate = dto.endDate,
                             targetMetric = dto.targetMetric,
-                            rewardDetails = dto.rewardDetails?.toString() ?: "{}",
+                            rewardDetailsJson = dto.rewardDetails?.toString() ?: "{}",
                             isActive = dto.isActive,
-                            updatedAt = dto.updatedAt
+                            updatedAt = dto.updatedAt ?: ""
                         )
                     }
                     database.competitionDao().insertCompetitions(compEntities)

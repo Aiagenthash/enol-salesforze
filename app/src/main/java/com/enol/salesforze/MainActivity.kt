@@ -1,5 +1,7 @@
 package com.enol.salesforze
 
+import com.enol.salesforze.ui.theme.EnolSalesforzeTheme
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

@@ -70,6 +70,7 @@ import com.enol.salesforze.ui.theme.SlateSteel
 import com.enol.salesforze.ui.theme.SlateSteelLight
 import com.enol.salesforze.ui.theme.SuccessEmerald
 import com.enol.salesforze.ui.theme.elevation_2
+import com.enol.salesforze.ui.theme.grid_1
 import com.enol.salesforze.ui.theme.grid_2
 import com.enol.salesforze.ui.theme.grid_3
 import com.enol.salesforze.ui.theme.grid_4

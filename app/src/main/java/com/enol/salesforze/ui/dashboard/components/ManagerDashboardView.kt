@@ -469,11 +469,11 @@ private fun DistrictSummaryCard(
                 border = androidx.compose.foundation.BorderStroke(1.dp, LubricantAmber.copy(alpha = 0.5f))
             ) {
                 Text(
-                    text = if (district.assignedRepId != null) "Assigned" else "Vacant Beat",
+                    text = if (district.assignedAsmId != null) "Assigned" else "Vacant Beat",
                     modifier = Modifier.padding(horizontal = grid_2, vertical = grid_0_5),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = if (district.assignedRepId != null) SuccessEmerald else WarningAmber
+                    color = if (district.assignedAsmId != null) SuccessEmerald else WarningAmber
                 )
             }
         }

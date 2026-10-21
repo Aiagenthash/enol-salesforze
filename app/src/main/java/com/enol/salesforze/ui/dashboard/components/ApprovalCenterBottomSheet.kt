@@ -219,7 +219,7 @@ private fun CreditHoldsTabContent(
                             Column {
                                 Text(text = "Order Total", style = MaterialTheme.typography.labelSmall, color = SlateSteelLight)
                                 Text(
-                                    text = "PKR ${currencyFormatter.format(order.netAmountPkr.toInt())}",
+                                    text = "PKR ${currencyFormatter.format(order.netAmount.toInt())}",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = LubricantAmber
@@ -305,7 +305,7 @@ private fun ClientEnrollmentsTabContent(
                                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF38BDF8))
                             ) {
                                 Text(
-                                    text = client.channelType,
+                                    text = client.approvalStatus,
                                     modifier = Modifier.padding(horizontal = grid_2, vertical = 2.dp),
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
@@ -317,12 +317,12 @@ private fun ClientEnrollmentsTabContent(
                         Spacer(modifier = Modifier.height(grid_1))
 
                         Text(
-                            text = "Proprietor: ${client.ownerName} • Phone: ${client.contactPhone}",
+                            text = "Proprietor: ${client.ownerName} • Phone: ${client.phone}",
                             style = MaterialTheme.typography.bodySmall,
                             color = SlateSteelLight
                         )
                         Text(
-                            text = "CNIC: ${client.cnic ?: "Unspecified"} • City: ${client.city ?: "Karachi"}",
+                            text = "CNIC: ${client.cnic ?: "Unspecified"} • Address: ${client.address}",
                             style = MaterialTheme.typography.bodySmall,
                             color = SlateSteelLight
                         )
@@ -387,7 +387,7 @@ private fun TadaClaimsTabContent(
             contentPadding = PaddingValues(bottom = grid_6)
         ) {
             items(claims) { claim ->
-                val isFlagged = claim.discrepancyFlag || claim.claimStatus == "FLAGGED"
+                val isFlagged = claim.variancePercentage > 10.0 || claim.status == "FLAGGED"
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -436,12 +436,12 @@ private fun TadaClaimsTabContent(
                         Spacer(modifier = Modifier.height(grid_1))
 
                         Text(
-                            text = "Odometer: ${"%.1f".format(claim.odoDistanceKm)} km vs GPS: ${"%.1f".format(claim.gpsCalculatedKm)} km",
+                            text = "Odometer: ${"%.1f".format(claim.odometerDeltaKm)} km vs GPS: ${"%.1f".format(claim.gpsDistanceKm)} km",
                             style = MaterialTheme.typography.bodySmall,
                             color = SlateSteelLight
                         )
                         Text(
-                            text = "Variance: ${"%.1f".format(claim.variancePct)}% | ${claim.stayType} Allowance",
+                            text = "Variance: ${"%.1f".format(claim.variancePercentage)}% | Daily Allowance",
                             style = MaterialTheme.typography.bodySmall,
                             color = if (isFlagged) ErrorCrimson else SlateSteelLight
                         )
@@ -456,7 +456,7 @@ private fun TadaClaimsTabContent(
                             Column {
                                 Text(text = "Claim Total", style = MaterialTheme.typography.labelSmall, color = SlateSteelLight)
                                 Text(
-                                    text = "PKR ${currencyFormatter.format(claim.totalClaimPkr.toInt())}",
+                                    text = "PKR ${currencyFormatter.format(claim.totalClaimAmount.toInt())}",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = LubricantAmber

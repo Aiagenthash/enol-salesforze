@@ -33,6 +33,9 @@ interface PendingSyncQueueDao {
     @Query("SELECT * FROM pending_sync_queue WHERE entity_type = :entityType ORDER BY created_at ASC")
     fun getPendingItemsByEntityType(entityType: String): Flow<List<PendingSyncQueueEntity>>
 
+    @Query("SELECT * FROM pending_sync_queue WHERE entity_type = :entityType ORDER BY created_at ASC")
+    suspend fun getPendingByEntityTypeOnce(entityType: String): List<PendingSyncQueueEntity>
+
     @Query("SELECT * FROM pending_sync_queue WHERE idempotency_key = :key LIMIT 1")
     suspend fun getPendingItemByIdempotencyKey(key: String): PendingSyncQueueEntity?
 

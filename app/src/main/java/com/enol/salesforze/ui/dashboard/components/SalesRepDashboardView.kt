@@ -602,7 +602,7 @@ private fun QuickActionCard(
 @Composable
 private fun TadaClaimSummaryCard(claim: TadaClaimEntity) {
     val currencyFormatter = NumberFormat.getNumberInstance(Locale.US)
-    val statusColor = when (claim.claimStatus.uppercase()) {
+    val statusColor = when (claim.status.uppercase()) {
         "APPROVED" -> SuccessEmerald
         "FLAGGED" -> ErrorCrimson
         "REJECTED" -> ErrorCrimson
@@ -629,7 +629,7 @@ private fun TadaClaimSummaryCard(claim: TadaClaimEntity) {
                     color = OnSurfaceDark
                 )
                 Text(
-                    text = "Verified: ${"%.1f".format(claim.verifiedKm)} km | ${claim.stayType}",
+                    text = "Distance: ${"%.1f".format(claim.odometerDeltaKm)} km | Daily",
                     style = MaterialTheme.typography.labelSmall,
                     color = SlateSteelLight
                 )
@@ -637,7 +637,7 @@ private fun TadaClaimSummaryCard(claim: TadaClaimEntity) {
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "PKR ${currencyFormatter.format(claim.totalClaimPkr.toInt())}",
+                    text = "PKR ${currencyFormatter.format(claim.totalClaimAmount.toInt())}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = OnSurfaceDark
@@ -648,7 +648,7 @@ private fun TadaClaimSummaryCard(claim: TadaClaimEntity) {
                     border = androidx.compose.foundation.BorderStroke(1.dp, statusColor)
                 ) {
                     Text(
-                        text = claim.claimStatus,
+                        text = claim.status,
                         modifier = Modifier.padding(horizontal = grid_1_5, vertical = 2.dp),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
