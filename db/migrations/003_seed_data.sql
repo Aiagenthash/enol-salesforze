@@ -279,7 +279,7 @@ INSERT INTO mechanics (
     wallet_account_number, qr_code_id, points_balance, total_scans, is_verified, registered_by
 ) VALUES
 (
-    'm1111111-mmmm-mmmm-mmmm-mmmmmmmmmmmm',
+    '66666666-6666-6666-6666-666666666661',
     'c1111111-cccc-cccc-cccc-cccccccccccc',
     'Ustad Asghar Ali',
     '+923005544331',
@@ -294,7 +294,7 @@ INSERT INTO mechanics (
     '44444444-4444-4444-4444-444444444444'
 ),
 (
-    'm2222222-mmmm-mmmm-mmmm-mmmmmmmmmmmm',
+    '66666666-6666-6666-6666-666666666662',
     'c2222222-cccc-cccc-cccc-cccccccccccc',
     'Master Bashir Diesel Works',
     '+923129988772',
@@ -319,7 +319,7 @@ INSERT INTO products (
     active_schemes, stock_quantity, is_active
 ) VALUES
 (
-    'p1111111-pppp-pppp-pppp-pppppppppppp',
+    '77777777-7777-7777-7777-777777777771',
     'ENOL-SYN-5W30-4L',
     'ENOL Apex Fully Synthetic 5W-30 (4L)',
     'Premium synthetic engine oil with advanced additive chemistry for gasoline and modern hybrid engines.',
@@ -334,7 +334,7 @@ INSERT INTO products (
     TRUE
 ),
 (
-    'p2222222-pppp-pppp-pppp-pppppppppppp',
+    '77777777-7777-7777-7777-777777777772',
     'ENOL-PCMO-20W50-4L',
     'ENOL Super Force 20W-50 API SL/CF (4L)',
     'High-viscosity multi-grade engine oil designed for high ambient temperatures and heavy-duty urban stop-and-go driving.',
@@ -349,7 +349,7 @@ INSERT INTO products (
     TRUE
 ),
 (
-    'p3333333-pppp-pppp-pppp-pppppppppppp',
+    '77777777-7777-7777-7777-777777777773',
     'ENOL-4T-20W50-0.7L',
     'ENOL Rider 4T 20W-50 JASO MA2 (0.7L)',
     'Dedicated 4-stroke motorcycle engine oil providing wet clutch protection and smooth gear shift performance.',
@@ -364,7 +364,7 @@ INSERT INTO products (
     TRUE
 ),
 (
-    'p4444444-pppp-pppp-pppp-pppppppppppp',
+    '77777777-7777-7777-7777-777777777774',
     'ENOL-HDO-15W40-10L',
     'ENOL Titan Diesel Fleet CI-4 (10L Bucket)',
     'Heavy-duty diesel engine oil for turbocharged commercial trucks, tractors, and generator applications.',
@@ -379,7 +379,7 @@ INSERT INTO products (
     TRUE
 ),
 (
-    'p5555555-pppp-pppp-pppp-pppppppppppp',
+    '77777777-7777-7777-7777-777777777775',
     'ENOL-GEAR-85W140-4L',
     'ENOL TransGear EP 85W-140 GL-5 (4L)',
     'Extreme pressure hypoid gear and differential oil for heavy load automotive transmissions.',
@@ -404,7 +404,7 @@ INSERT INTO orders (
     payment_terms, credit_hold_flag, status, external_oms_reference, idempotency_key, notes
 ) VALUES
 (
-    'o1111111-oooo-oooo-oooo-oooooooooooo',
+    '88888888-8888-8888-8888-888888888881',
     'ORD-20261020-0001',
     'c1111111-cccc-cccc-cccc-cccccccccccc',
     '44444444-4444-4444-4444-444444444444',
@@ -428,9 +428,9 @@ INSERT INTO order_items (
     total_liters, unit_price, line_total, scheme_discount, net_line_total
 ) VALUES
 (
-    'oi111111-oooo-oooo-oooo-oooooooooooo',
-    'o1111111-oooo-oooo-oooo-oooooooooooo',
-    'p1111111-pppp-pppp-pppp-pppppppppppp',
+    '88888888-8888-8888-8888-8888888888a1',
+    '88888888-8888-8888-8888-888888888881',
+    '77777777-7777-7777-7777-777777777771',
     2.00,
     8,
     4.00,
@@ -441,9 +441,9 @@ INSERT INTO order_items (
     28400.00
 ),
 (
-    'oi222222-oooo-oooo-oooo-oooooooooooo',
-    'o1111111-oooo-oooo-oooo-oooooooooooo',
-    'p3333333-pppp-pppp-pppp-pppppppppppp',
+    '88888888-8888-8888-8888-8888888888a2',
+    '88888888-8888-8888-8888-888888888881',
+    '77777777-7777-7777-7777-777777777773',
     2.00,
     48,
     0.70,
@@ -496,7 +496,7 @@ INSERT INTO visits (
     outcome, notes, recovery_slip_number, recovery_amount, order_id
 ) VALUES
 (
-    'v1111111-vvvv-vvvv-vvvv-vvvvvvvvvvvv',
+    '99999999-9999-9999-9999-999999999991',
     'd1111111-dddd-dddd-dddd-dddddddddddd',
     'c1111111-cccc-cccc-cccc-cccccccccccc',
     '44444444-4444-4444-4444-444444444444',
@@ -513,7 +513,7 @@ INSERT INTO visits (
     'Client ordered 4 cartons. Promoted Apex 5W30 scheme.',
     NULL,
     0.00,
-    'o1111111-oooo-oooo-oooo-oooooooooooo'
+    '88888888-8888-8888-8888-888888888881'
 )
 ON CONFLICT (id) DO NOTHING;
 
@@ -570,7 +570,7 @@ INSERT INTO tada_claims (
     toll_parking_amount, total_claim_amount, status
 ) VALUES
 (
-    't1111111-tttt-tttt-tttt-tttttttttttt',
+    'baaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
     'd1111111-dddd-dddd-dddd-dddddddddddd',
     '44444444-4444-4444-4444-444444444444',
     '2026-10-20',
@@ -599,7 +599,7 @@ INSERT INTO targets_kpis (
     target_new_clients, achieved_new_clients, calculated_kpi_score
 ) VALUES
 (
-    'k1111111-kkkk-kkkk-kkkk-kkkkkkkkkkkk',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1',
     '44444444-4444-4444-4444-444444444444',
     'MONTHLY',
     '2026-10-01',
@@ -623,7 +623,7 @@ INSERT INTO competitions (
     id, title, description, start_date, end_date, target_metric, reward_details, is_active
 ) VALUES
 (
-    'cp111111-cccc-cccc-cccc-cccccccccccc',
+    'caaaaaaa-cccc-cccc-cccc-ccccccccccc1',
     'Q4 2026 Lubricant Champion Trophy',
     'National volume race across all territories in Pakistan. Highest liters booked wins cash prize and luxury tour.',
     '2026-10-01',
@@ -633,7 +633,7 @@ INSERT INTO competitions (
     TRUE
 ),
 (
-    'cp222222-cccc-cccc-cccc-cccccccccccc',
+    'caaaaaaa-cccc-cccc-cccc-ccccccccccc2',
     'October Synthetic Rush',
     'Highest percentage share of Apex Synthetic 5W-30 sales in total volume.',
     '2026-10-01',
@@ -648,7 +648,7 @@ INSERT INTO competition_scores (
     competition_id, user_id, current_metric_value, current_rank, points
 ) VALUES
 (
-    'cp111111-cccc-cccc-cccc-cccccccccccc',
+    'caaaaaaa-cccc-cccc-cccc-ccccccccccc1',
     '44444444-4444-4444-4444-444444444444',
     2480.00,
     3,
@@ -680,7 +680,7 @@ INSERT INTO webhook_subscriptions (
     id, name, target_url, secret, events, is_active, headers
 ) VALUES
 (
-    'w1111111-wwww-wwww-wwww-wwwwwwwwwwww',
+    'daaaaaaa-dddd-dddd-dddd-ddddddddddd1',
     'Central SAP ERP Webhook Gateway',
     'https://erp-gateway.enollubricants.com/api/v1/integrations/enol-salesforze',
     'whsec_7f9a2b4c8d1e3f5a0b2c4d6e8f0a1b3c5d7e9f1a3b5c7d9e',
