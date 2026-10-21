@@ -158,6 +158,31 @@ data class BeatDto(
     @SerialName("updated_at") val updatedAt: String? = null
 )
 
+@Serializable
+data class UpdateDistrictRequest(
+    @SerialName("name") val name: String? = null,
+    @SerialName("assigned_zsm_id") val assignedZsmId: String? = null,
+    @SerialName("assigned_asm_id") val assignedAsmId: String? = null,
+    @SerialName("is_active") val isActive: Boolean? = null
+)
+
+@Serializable
+data class CreateBeatRequest(
+    @SerialName("district_id") val districtId: String,
+    @SerialName("name") val name: String,
+    @SerialName("code") val code: String,
+    @SerialName("day_of_week") val dayOfWeek: String,
+    @SerialName("assigned_rep_id") val assignedRepId: String? = null
+)
+
+@Serializable
+data class UpdateBeatRequest(
+    @SerialName("name") val name: String? = null,
+    @SerialName("day_of_week") val dayOfWeek: String? = null,
+    @SerialName("assigned_rep_id") val assignedRepId: String? = null,
+    @SerialName("is_active") val isActive: Boolean? = null
+)
+
 // ============================================================================
 // CLIENTS & LEDGER
 // ============================================================================

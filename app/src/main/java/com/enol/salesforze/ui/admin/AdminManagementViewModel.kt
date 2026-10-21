@@ -6,9 +6,14 @@ import com.enol.salesforze.data.local.AppDatabase
 import com.enol.salesforze.data.local.entities.ProductEntity
 import com.enol.salesforze.data.local.entities.UserEntity
 import com.enol.salesforze.data.remote.api.EnterpriseFieldApi
+import com.enol.salesforze.data.remote.models.BeatDto
+import com.enol.salesforze.data.remote.models.CreateBeatRequest
 import com.enol.salesforze.data.remote.models.CreateProductRequest
 import com.enol.salesforze.data.remote.models.CreateUserRequest
+import com.enol.salesforze.data.remote.models.DistrictDto
 import com.enol.salesforze.data.remote.models.ProductDto
+import com.enol.salesforze.data.remote.models.UpdateBeatRequest
+import com.enol.salesforze.data.remote.models.UpdateDistrictRequest
 import com.enol.salesforze.data.remote.models.UpdateProductRequest
 import com.enol.salesforze.data.remote.models.UpdateUserRequest
 import com.enol.salesforze.data.remote.models.UserDto
@@ -22,11 +27,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class AdminManagementUiState(
-    val selectedTab: Int = 0, // 0: Users & Rights, 1: Products & Pricing
+    val selectedTab: Int = 0, // 0: Users & Rights, 1: Products & Pricing, 2: Territories & Routes
     val users: List<UserDto> = emptyList(),
     val products: List<ProductDto> = emptyList(),
+    val districts: List<DistrictDto> = emptyList(),
+    val beats: List<BeatDto> = emptyList(),
     val userRoleFilter: String = "ALL",
     val productCategoryFilter: String = "ALL",
+    val districtFilter: String = "ALL",
     val searchQuery: String = "",
     val isLoading: Boolean = false,
     val isActionLoading: Boolean = false,
@@ -39,7 +47,12 @@ data class AdminManagementUiState(
     // Edit User Dialog State
     val editingUser: UserDto? = null,
     // Edit Product Dialog State
-    val editingProduct: ProductDto? = null
+    val editingProduct: ProductDto? = null,
+    // Territory Dialog States
+    val editingDistrict: DistrictDto? = null,
+    val editingBeat: BeatDto? = null,
+    val showCreateBeatDialog: Boolean = false,
+    val targetDistrictForNewBeat: DistrictDto? = null
 )
 
 @HiltViewModel
@@ -66,6 +79,10 @@ class AdminManagementViewModel @Inject constructor(
 
     fun setProductCategoryFilter(category: String) {
         _uiState.update { it.copy(productCategoryFilter = category) }
+    }
+
+    fun setDistrictFilter(districtId: String) {
+        _uiState.update { it.copy(districtFilter = districtId) }
     }
 
     fun setSearchQuery(query: String) {
@@ -104,6 +121,30 @@ class AdminManagementViewModel @Inject constructor(
         _uiState.update { it.copy(editingProduct = null) }
     }
 
+    fun openAssignDistrictManagersDialog(district: DistrictDto) {
+        _uiState.update { it.copy(editingDistrict = district) }
+    }
+
+    fun closeAssignDistrictManagersDialog() {
+        _uiState.update { it.copy(editingDistrict = null) }
+    }
+
+    fun openAssignBeatRepDialog(beat: BeatDto) {
+        _uiState.update { it.copy(editingBeat = beat) }
+    }
+
+    fun closeAssignBeatRepDialog() {
+        _uiState.update { it.copy(editingBeat = null) }
+    }
+
+    fun openCreateBeatDialog(district: DistrictDto? = null) {
+        _uiState.update { it.copy(showCreateBeatDialog = true, targetDistrictForNewBeat = district) }
+    }
+
+    fun closeCreateBeatDialog() {
+        _uiState.update { it.copy(showCreateBeatDialog = false, targetDistrictForNewBeat = null) }
+    }
+
     fun clearMessages() {
         _uiState.update { it.copy(errorMessage = null, successMessage = null) }
     }
@@ -120,10 +161,20 @@ class AdminManagementViewModel @Inject constructor(
                 val productsRes = runCatching { api.getProducts(limit = 100) }.getOrNull()
                 val productList = productsRes?.data ?: emptyList()
 
+                // Fetch Districts
+                val districtsRes = runCatching { api.getDistricts(limit = 100) }.getOrNull()
+                val districtList = districtsRes?.data ?: emptyList()
+
+                // Fetch Beats
+                val beatsRes = runCatching { api.getBeats(limit = 200) }.getOrNull()
+                val beatList = beatsRes?.data ?: emptyList()
+
                 _uiState.update {
                     it.copy(
                         users = userList,
                         products = productList,
+                        districts = districtList,
+                        beats = beatList,
                         isLoading = false
                     )
                 }
@@ -144,6 +195,7 @@ class AdminManagementViewModel @Inject constructor(
         phone: String,
         password: String,
         role: String,
+        managerId: String?,
         vehicleType: String,
         vehicleNumber: String,
         fuelRate: Double,
@@ -158,6 +210,7 @@ class AdminManagementViewModel @Inject constructor(
                     fullName = fullName.trim(),
                     phone = phone.trim(),
                     role = role,
+                    managerId = managerId?.ifBlank { null },
                     vehicleType = vehicleType,
                     vehicleNumber = vehicleNumber.ifBlank { null },
                     fuelRatePerKm = fuelRate,
@@ -216,6 +269,7 @@ class AdminManagementViewModel @Inject constructor(
         newRole: String?,
         fullName: String?,
         phone: String?,
+        managerId: String?,
         vehicleType: String?,
         vehicleNumber: String?,
         fuelRate: Double?,
@@ -229,6 +283,7 @@ class AdminManagementViewModel @Inject constructor(
                     fullName = fullName,
                     phone = phone,
                     role = newRole,
+                    managerId = managerId,
                     vehicleType = vehicleType,
                     vehicleNumber = vehicleNumber,
                     fuelRatePerKm = fuelRate,
@@ -277,6 +332,123 @@ class AdminManagementViewModel @Inject constructor(
                 } else {
                     _uiState.update {
                         it.copy(isActionLoading = false, errorMessage = res.error ?: "Deactivation failed")
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isActionLoading = false, errorMessage = "Error: ${e.localizedMessage}")
+                }
+            }
+        }
+    }
+
+    fun assignDistrictManagers(
+        districtId: String,
+        zsmId: String?,
+        asmId: String?
+    ) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isActionLoading = true, errorMessage = null) }
+            try {
+                val req = UpdateDistrictRequest(
+                    assignedZsmId = zsmId,
+                    assignedAsmId = asmId
+                )
+                val res = api.updateDistrict(districtId, req)
+                if (res.success && res.data != null) {
+                    val updated = res.data
+                    _uiState.update { state ->
+                        state.copy(
+                            isActionLoading = false,
+                            editingDistrict = null,
+                            districts = state.districts.map { if (it.id == districtId) updated else it },
+                            successMessage = "District '${updated.name}' managers updated successfully!"
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(isActionLoading = false, errorMessage = res.error ?: "Failed to assign managers")
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isActionLoading = false, errorMessage = "Error: ${e.localizedMessage}")
+                }
+            }
+        }
+    }
+
+    fun assignBeatRep(
+        beatId: String,
+        repId: String?,
+        dayOfWeek: String? = null
+    ) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isActionLoading = true, errorMessage = null) }
+            try {
+                val req = UpdateBeatRequest(
+                    assignedRepId = repId,
+                    dayOfWeek = dayOfWeek
+                )
+                val res = api.updateBeat(beatId, req)
+                if (res.success && res.data != null) {
+                    val updated = res.data
+                    _uiState.update { state ->
+                        state.copy(
+                            isActionLoading = false,
+                            editingBeat = null,
+                            beats = state.beats.map { if (it.id == beatId) updated else it },
+                            successMessage = "Beat '${updated.name}' rep updated!"
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(isActionLoading = false, errorMessage = res.error ?: "Failed to assign rep")
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isActionLoading = false, errorMessage = "Error: ${e.localizedMessage}")
+                }
+            }
+        }
+    }
+
+    fun createBeat(
+        districtId: String,
+        name: String,
+        code: String,
+        dayOfWeek: String,
+        assignedRepId: String?
+    ) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isActionLoading = true, errorMessage = null) }
+            try {
+                val req = CreateBeatRequest(
+                    districtId = districtId,
+                    name = name.trim(),
+                    code = code.trim().uppercase(),
+                    dayOfWeek = dayOfWeek,
+                    assignedRepId = assignedRepId?.ifBlank { null }
+                )
+                val res = api.createBeat(req)
+                if (res.success && res.data != null) {
+                    val newBeat = res.data
+                    _uiState.update { state ->
+                        state.copy(
+                            isActionLoading = false,
+                            showCreateBeatDialog = false,
+                            targetDistrictForNewBeat = null,
+                            beats = listOf(newBeat) + state.beats,
+                            districts = state.districts.map { d ->
+                                if (d.id == districtId) d.copy(totalBeats = d.totalBeats + 1) else d
+                            },
+                            successMessage = "Beat route '${newBeat.name}' created successfully!"
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(isActionLoading = false, errorMessage = res.error ?: "Failed to create beat route")
                     }
                 }
             } catch (e: Exception) {

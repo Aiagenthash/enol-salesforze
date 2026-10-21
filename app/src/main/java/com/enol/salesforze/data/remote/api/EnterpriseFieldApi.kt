@@ -36,13 +36,16 @@ import com.enol.salesforze.data.remote.models.SubmitTadaClaimRequest
 import com.enol.salesforze.data.remote.models.ApiKeyDto
 import com.enol.salesforze.data.remote.models.CreateApiKeyRequest
 import com.enol.salesforze.data.remote.models.CreateApiKeyResponse
-import com.enol.salesforze.data.remote.models.CreateWebhookSubscriptionRequest
+import com.enol.salesforze.data.remote.models.CreateBeatRequest
 import com.enol.salesforze.data.remote.models.CreateProductRequest
 import com.enol.salesforze.data.remote.models.CreateUserRequest
+import com.enol.salesforze.data.remote.models.CreateWebhookSubscriptionRequest
 import com.enol.salesforze.data.remote.models.SimpleActionResponse
 import com.enol.salesforze.data.remote.models.SubordinatesResponse
 import com.enol.salesforze.data.remote.models.TadaClaimDto
 import com.enol.salesforze.data.remote.models.TargetKpiDto
+import com.enol.salesforze.data.remote.models.UpdateBeatRequest
+import com.enol.salesforze.data.remote.models.UpdateDistrictRequest
 import com.enol.salesforze.data.remote.models.UpdateOrderStatusRequest
 import com.enol.salesforze.data.remote.models.UpdateProductRequest
 import com.enol.salesforze.data.remote.models.UpdateUserRequest
@@ -142,6 +145,23 @@ interface EnterpriseFieldApi {
         @Query("page") page: Int? = null,
         @Query("limit") limit: Int? = null
     ): PaginatedResponse<BeatDto>
+
+    @PUT("api/v1/territories/districts/{id}")
+    suspend fun updateDistrict(
+        @Path("id") id: String,
+        @Body request: UpdateDistrictRequest
+    ): ApiResponse<DistrictDto>
+
+    @POST("api/v1/territories/beats")
+    suspend fun createBeat(
+        @Body request: CreateBeatRequest
+    ): ApiResponse<BeatDto>
+
+    @PUT("api/v1/territories/beats/{id}")
+    suspend fun updateBeat(
+        @Path("id") id: String,
+        @Body request: UpdateBeatRequest
+    ): ApiResponse<BeatDto>
 
     // ========================================================================
     // CLIENTS & LEDGER
